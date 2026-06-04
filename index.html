@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base href="/running_analysis/">
+  <!-- <base href="/running-analysis-frontend/"> -->
+
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    name="viewport">
+  <meta name="description" content="百米分析">
+
+  <!-- ===== Global styles ===== -->
+  <style>
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #A5C3ED;
+    }
+
+    flt-glass-pane {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    /* ===== Splash Screen ===== */
+    #splash {
+      position: fixed;
+      inset: 0;
+      background: #A5C3ED;
+      /* 跟你原本背景色一致 */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    #lottie {
+      width: 200px;
+      height: 200px;
+    }
+
+    .hide {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+    }
+
+    #watermark-mask {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 80px;
+      /* 視 watermark 大小調 */
+      height: 80px;
+      background: #A5C3ED;
+      /* 跟 splash 背景色一致 */
+      z-index: 10000;
+    }
+  </style>
+
+  <!-- ===== iOS meta tags & icons ===== -->
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="百米分析">
+  <link rel="apple-touch-icon" href="icons/running-icon-192.png">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="icons/running-icon-32.png" />
+
+  <title>百米分析</title>
+  <link rel="manifest" href="manifest.json">
+
+  <!-- ===== Lottie Web ===== -->
+  <script src="https://unpkg.com/lottie-web/build/player/lottie.min.js"></script>
+</head>
+
+<body>
+
+  <!-- ===== Splash DOM ===== -->
+  <div id="splash">
+    <div id="lottie"></div>
+    <div id="watermark-mask"></div>
+  </div>
+
+  <!-- Flutter bootstrap -->
+  <script src="flutter_bootstrap.js" async></script>
+
+  <!-- ===== Splash Logic ===== -->
+  <script>
+    // 啟動 Lottie 動畫
+    const anim = lottie.loadAnimation({
+      container: document.getElementById('lottie'),
+      renderer: 'svg',
+      loop: true,
+      autoplay: true,
+      path: 'splash.json'   // 放在 web/splash.json
+    });
+
+    // Flutter 第一幀出來後，關閉 splash
+    window.addEventListener('flutter-first-frame', function () {
+      document.getElementById('splash').classList.add('hide');
+    });
+
+    // 保底：避免某些情況 flutter-first-frame 沒觸發
+    setTimeout(() => {
+      document.getElementById('splash').classList.add('hide');
+    }, 4000);
+  </script>
+
+</body>
+
+</html>
