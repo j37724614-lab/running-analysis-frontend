@@ -295,22 +295,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tapToMarkPoint => 'Tap or drag to mark point';
 
   @override
-  String get point1 => 'Pt 1 (Top-Left)';
+  String get point1 => 'Point 1 (Top-Left)';
 
   @override
-  String get point2 => 'Pt 2 (Top-Right)';
+  String get point2 => 'Point 2 (Top-Right)';
 
   @override
-  String get point3 => 'Pt 3 (Bottom-Right)';
+  String get point3 => 'Point 3 (Bottom-Right)';
 
   @override
-  String get point4 => 'Pt 4 (Bottom-Left)';
+  String get point4 => 'Point 4 (Bottom-Left)';
 
   @override
-  String get point5 => 'Pt 5 (Top-Middle)';
+  String get point5 => 'Point 5 (Top-Middle)';
 
   @override
-  String get point6 => 'Pt 6 (Bottom-Middle)';
+  String get point6 => 'Point 6 (Bottom-Middle)';
 
   @override
   String get cameraNotAssigned => 'Camera not assigned';
@@ -425,7 +425,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get guideDescription =>
-      'Please mark the 4 track corners in order (Top-Left, Top-Right, Bottom-Right, Bottom-Left). Center line will be auto-calculated, and can be fine-tuned by tapping or dragging.';
+      'Click sequentially to mark the 4 runway corners (TL, TR, BR, BL). Center points are auto-calculated. Drag markers on the canvas to fine-tune.';
+
+  @override
+  String get guideDescriptionMobile =>
+      'Select a target point (Point 1–Point 6) below, then tap or drag on the image to position it. Center points are auto-calculated and adjustable.';
 
   @override
   String get noUnanalyzedSessions => 'No unanalyzed records';
@@ -680,4 +684,399 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get legendRight => 'Right';
+
+  @override
+  String tourStep(int current, int total) {
+    return 'Step $current / $total';
+  }
+
+  @override
+  String get tourPrevious => 'Previous';
+
+  @override
+  String get tourNext => 'Next';
+
+  @override
+  String get tourSkip => 'Skip Tour';
+
+  @override
+  String get tourFinish => 'Finish';
+
+  @override
+  String get tourHelp => 'Tour Guide';
+
+  @override
+  String get tourReplay => 'Replay Tutorial';
+
+  @override
+  String get tourNavSidebarTitle => 'Navigation Sidebar';
+
+  @override
+  String get tourNavSidebarDesc =>
+      'Quickly switch between Playback, Upload, and Synchronized Recording modules.';
+
+  @override
+  String get tourNavLangTitle => 'Language Switcher';
+
+  @override
+  String get tourNavLangDesc =>
+      'Switch seamlessly between Traditional Chinese and English with automatic system language detection.';
+
+  @override
+  String get tourNavHelpTitle => 'On-demand Help Guide';
+
+  @override
+  String get tourNavHelpDesc =>
+      'Click the \'❓\' button at any time on any page to restart the step-by-step walkthrough.';
+
+  @override
+  String get tourPlaybackRunnerTitle => 'Runner Selector';
+
+  @override
+  String get tourPlaybackRunnerDesc =>
+      'Select a runner from the dropdown to load all historical running analysis sessions.';
+
+  @override
+  String get tourPlaybackSidebarToggleTitle => 'Sidebar Collapse & Expand';
+
+  @override
+  String get tourPlaybackSidebarToggleDesc =>
+      'Click this toggle button to collapse or expand the left history panel, maximizing workspace for videos and charts.';
+
+  @override
+  String get tourPlaybackHistoryTitle => 'Session History List';
+
+  @override
+  String get tourPlaybackHistoryDesc =>
+      'Displays all recorded sessions for the selected runner. Click any session to switch records.';
+
+  @override
+  String get tourPlaybackMobileRecordTitle => 'Open Session History';
+
+  @override
+  String get tourPlaybackMobileRecordDesc =>
+      'Tap this card to open the runner\'s session history list and switch between recorded sessions.';
+
+  @override
+  String get tourPlaybackPlayerTitle => 'Continuous Video Player';
+
+  @override
+  String get tourPlaybackPlayerDesc =>
+      'Sequentially plays continuous running footage across all camera views. Dragging the timeline synchronizes real-time analysis with kinematic charts.';
+
+  @override
+  String get tourPlaybackInfoTitle => 'Session & Biomechanical Metrics';
+
+  @override
+  String get tourPlaybackInfoDesc =>
+      'View cadence, step length, average velocity, total time, and processing status.';
+
+  @override
+  String get tourPlaybackChartsTitle => 'Kinematic & Joint Angle Charts';
+
+  @override
+  String get tourPlaybackChartsDesc =>
+      'Interactive time-series curves for distance, velocity, acceleration, and knee/hip/elbow/torso joint angles.';
+
+  @override
+  String get tourPlaybackActionsTitle => 'Actions & Report Export';
+
+  @override
+  String get tourPlaybackActionsDesc =>
+      'Download comprehensive PDF analysis reports, export raw kinematic CSV data, or delete the current analysis session.';
+
+  @override
+  String get tourRecordMasterTitle => 'Master: Create Room';
+
+  @override
+  String get tourRecordMasterDesc =>
+      'The Master controller creates a recording room with the expected camera count (1-5 devices).';
+
+  @override
+  String get tourRecordSlaveTitle => 'Slave: Join Room & Camera Slot';
+
+  @override
+  String get tourRecordSlaveDesc =>
+      'Slave devices enter the room number and select their assigned camera slot (e.g., Camera 2) to join.';
+
+  @override
+  String get tourRecordConfigTitle => 'Master: Session Config & Runner';
+
+  @override
+  String get tourRecordConfigDesc =>
+      'The Master configures the runner, expected camera count, FPS, and session notes.';
+
+  @override
+  String get tourRecordLocalTitle => 'Master: Local Camera Recording';
+
+  @override
+  String get tourRecordLocalDesc =>
+      'The Master device can also act as one of the recording cameras. Enable this toggle to assign its camera index.';
+
+  @override
+  String get tourRecordDevicesTitle => 'Connected Devices & Readiness';
+
+  @override
+  String get tourRecordDevicesDesc =>
+      'Monitor all Master and Slave connections. Devices turn green when held horizontally and calibrated.';
+
+  @override
+  String get tourRecordCameraTitle => 'Camera Live Preview & Fullscreen';
+
+  @override
+  String get tourRecordCameraDesc =>
+      'Live camera preview with lens switching and zoom controls. Tap the top-right fullscreen button to enter fullscreen.';
+
+  @override
+  String get tourRecordAnchorToggleTitle =>
+      'Fullscreen Camera & Start Calibration';
+
+  @override
+  String get tourRecordAnchorToggleDesc =>
+      'In fullscreen camera view, tap the top-left \'Set Anchor\' button to capture the current frame and enter calibration mode.';
+
+  @override
+  String get tourRecordAnchorPointsTitle => 'Track 6-Point Spatial Calibration';
+
+  @override
+  String get tourRecordAnchorPointsDesc =>
+      'Click sequentially to mark the 4 corner points and 2 midpoints on the frozen frame, or drag existing anchors to fine-tune, then tap \'Confirm Anchors\'.';
+
+  @override
+  String get tourRecordAnchorPointsDescMobile =>
+      'Tap the anchor buttons (\'Point 1\' to \'Point 6\') below to select a target point, then tap or drag on the fullscreen snapshot to position it, and tap \'Confirm Anchors\'.';
+
+  @override
+  String get tourRecordDistanceDialogTitle => 'Input Track Physical Distances';
+
+  @override
+  String get tourRecordDistanceDialogDesc =>
+      'Enter the actual physical distances in meters for the track (Left-to-Center and Center-to-Right), then tap \'Apply & Save\'.';
+
+  @override
+  String get tourRecordFullscreenRecordTitle =>
+      'Master: Fullscreen Synchronized Recording';
+
+  @override
+  String get tourRecordFullscreenRecordDesc =>
+      'In fullscreen camera mode, the Master can directly click the bottom-right red recording button to start synchronized recording on all devices without returning to the main room screen.';
+
+  @override
+  String get tourRecordAnchorDoneTitle => 'Calibration Done & Return to Room';
+
+  @override
+  String get tourRecordAnchorDoneDesc =>
+      'Live preview resumes cleanly with the green \'Anchor Set\' badge on the top-left. Tap the top-right button to exit fullscreen and return to the room.';
+
+  @override
+  String get tourRecordButtonTitle => 'Slave Control & Synchronized Recording';
+
+  @override
+  String get tourRecordButtonDesc =>
+      'Slaves can request control transfer. Once all devices are ready, the Master triggers synchronized recording with parallel automated uploading.';
+
+  @override
+  String get tourRecordMasterButtonTitle => 'Master: Sync Recording & Upload';
+
+  @override
+  String get tourRecordMasterButtonDesc =>
+      'Once all camera devices are calibrated and ready (green indicator), the Master host clicks \'Start Recording\' to trigger synchronous recording on all cameras simultaneously, with automatic parallel uploads when finished!';
+
+  @override
+  String get tourRecordSlaveButtonTitle => 'Slave: Awaiting Commands & Control';
+
+  @override
+  String get tourRecordSlaveButtonDesc =>
+      'The slave device waits for sync recording commands from the Master host. If needed, a slave device can also tap \'Request Host Control\' to become the Master host!';
+
+  @override
+  String get tourRecordSlaveCameraPosTitle => 'Slave: Change Camera Position';
+
+  @override
+  String get tourRecordSlaveCameraPosDesc =>
+      'After joining the room, if you need to reassign your camera angle (e.g. switch to Camera 3), select from this dropdown to update your assigned camera position instantly.';
+
+  @override
+  String get tourRecordRequestControlTitle => 'Slave: Request Host Control';
+
+  @override
+  String get tourRecordRequestControlDesc =>
+      'Once calibrated and ready, the Slave device waits for recording commands; if control needs to be transferred, click this button to \'Request Control\'. Once approved by the Master, this device becomes the Master host.';
+
+  @override
+  String get tourRecordLeaveRoomTitle => 'Leave Room';
+
+  @override
+  String get tourRecordLeaveRoomDesc =>
+      'Click this button to disconnect from the current room and return to the Record home screen. If the Master leaves, the entire room session will end; if a Slave leaves, only this device disconnects.';
+
+  @override
+  String get tourRecordChoicePrompt => 'Choose workflow to explore:';
+
+  @override
+  String get tourRecordChoiceBoth => 'Explore Both';
+
+  @override
+  String get tourRecordChoiceMaster => 'Master Host Only';
+
+  @override
+  String get tourRecordChoiceSlave => 'Slave Device Only';
+
+  @override
+  String get tourRecordRoomInfoTitle => 'Room Number & Active Role';
+
+  @override
+  String get tourRecordRoomInfoDesc =>
+      'Displays the unique Room ID (for other camera devices to join) and your active role badge (Master Host or Slave Device).';
+
+  @override
+  String get tourRecordMasterRoomInfoDesc =>
+      'Generates a unique Room ID and assigns the Master Host role. Other devices enter this Room ID to connect.';
+
+  @override
+  String get tourRecordSlaveRoomInfoDesc =>
+      'Displays the connected Room ID and Slave Device badge, confirming successful connection to the host recording room.';
+
+  @override
+  String get tourRecordInquiryTitle => 'Choose Recording Workflow Tour';
+
+  @override
+  String get tourRecordInquirySubtitle =>
+      'Master Host and Slave Device have different initial setups. Please choose a role to explore:';
+
+  @override
+  String get tourRecordInquiryBothTitle => 'Explore Both (Full Tour)';
+
+  @override
+  String get tourRecordInquiryBothDesc =>
+      'Learn all setup, calibration, and recording steps for both Master and Slave devices.';
+
+  @override
+  String get tourRecordInquiryBothSteps => '16 Steps';
+
+  @override
+  String get tourRecordInquiryMasterTitle => 'Master Host Workflow';
+
+  @override
+  String get tourRecordInquiryMasterDesc =>
+      'Create room, configure parameters, monitor device readiness, calibrate track, and trigger sync recording.';
+
+  @override
+  String get tourRecordInquiryMasterSteps => '13 Steps';
+
+  @override
+  String get tourRecordInquirySlaveTitle => 'Slave Device Workflow';
+
+  @override
+  String get tourRecordInquirySlaveDesc =>
+      'Join room by room code, assign camera angle, verify readiness, calibrate track, and request host control.';
+
+  @override
+  String get tourRecordInquirySlaveSteps => '11 Steps';
+
+  @override
+  String get tourRecordInquiryStartButton => 'Start Tour';
+
+  @override
+  String get tourUploadTabsTitle => 'Upload Mode Selection';
+
+  @override
+  String get tourUploadTabsDesc =>
+      'Provides two workflows: \'Upload All\' (multi-camera synchronized upload) and \'Upload Separately\' (upload by individual camera or continue incomplete sessions).';
+
+  @override
+  String get tourUploadRunnerTitle => 'Runner Identity';
+
+  @override
+  String get tourUploadRunnerDesc =>
+      'Switch to \'Select Runner\' to choose from existing runners or \'Add Runner\' to register a new runner name.';
+
+  @override
+  String get tourUploadConfigTitle => 'Session Parameters & Setup';
+
+  @override
+  String get tourUploadConfigDesc =>
+      'Configure recording date/time, expected camera count (1-5), video frame rate (FPS), and session notes.';
+
+  @override
+  String get tourUploadVideoTitle => 'Video Selection & Preview';
+
+  @override
+  String get tourUploadVideoDesc =>
+      'Select video files for each camera angle, supporting MP4, MOV, AVI, MKV, WebM, M4V and other major formats with instant thumbnail preview.';
+
+  @override
+  String get tourUploadAnchorTitle => 'Spatial Anchor Calibration';
+
+  @override
+  String get tourUploadAnchorDesc =>
+      'Calibrate the 4 track corner points (TL, TR, BR, BL) sequentially on the first frame and input actual meter distances to establish a precise coordinate system.';
+
+  @override
+  String get tourUploadAnchorDescMobile =>
+      'Tap anchor buttons (\'Point 1\' to \'Point 6\') below to select a target point, tap or drag on the video frame to place it, and input real physical distances.';
+
+  @override
+  String get tourUploadSubmitTitle => 'Upload & Start Analysis';
+
+  @override
+  String get tourUploadSubmitDesc =>
+      'Submit videos and calibration data to the backend AI pipeline for tracking, pose estimation, and kinematics calculation.';
+
+  @override
+  String get tourUploadSepTabsTitle => 'Batch Workflow Switch';
+
+  @override
+  String get tourUploadSepTabsDesc =>
+      'Batch Upload offers \'New Record\' and \'Select Record\' paths. Select an option below and click \'Next\' to start.';
+
+  @override
+  String get tourUploadSepNewTitle => 'New Record (Camera Setup)';
+
+  @override
+  String get tourUploadSepNewDesc =>
+      'Set recording date/time, expected cameras (1-5), FPS, and notes for a new session, uploading from camera 1 sequentially.';
+
+  @override
+  String get tourUploadSepSelectTitle => 'Select Record (Resume Session)';
+
+  @override
+  String get tourUploadSepSelectDesc =>
+      'Lists incomplete past sessions (e.g. cam 1 uploaded, cam 2 & 3 pending) to resume uploading remaining camera angles.';
+
+  @override
+  String get tourUploadSepCameraTitle => 'Camera Angle Selection';
+
+  @override
+  String get tourUploadSepCameraDesc =>
+      'Switch the target camera number from the dropdown (e.g. Camera 1 through 5).';
+
+  @override
+  String get tourUploadSepVideoTitle => 'Single Camera Video Selection';
+
+  @override
+  String get tourUploadSepVideoDesc =>
+      'Select or drag the video file for this camera angle, supporting MP4, MOV, AVI, and generating instant preview.';
+
+  @override
+  String get tourUploadSepSubmitTitle => 'Batch Submit & Analysis Trigger';
+
+  @override
+  String get tourUploadSepSubmitDesc =>
+      'Upload the current camera video. Once all expected cameras are uploaded, the system automatically begins multi-camera AI analysis.';
+
+  @override
+  String get tourUploadSepChoicePrompt => 'Choose workflow to explore:';
+
+  @override
+  String get tourUploadSepChoiceBoth => 'Explore Both';
+
+  @override
+  String get tourUploadSepChoiceNew => 'New Record Only';
+
+  @override
+  String get tourUploadSepChoiceSelect => 'Select Record Only';
+
+  @override
+  String get uncompletedRecordsPlaceholder => 'Unanalyzed Sessions';
 }

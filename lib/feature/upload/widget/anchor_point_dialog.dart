@@ -48,14 +48,7 @@ const _colors = [
 
 List<String> _getLabels(BuildContext context) {
   final l10n = context.l10n;
-  return [
-    l10n.point1,
-    l10n.point2,
-    l10n.point3,
-    l10n.point4,
-    l10n.point5,
-    l10n.point6,
-  ];
+  return [l10n.point1, l10n.point2, l10n.point3, l10n.point4, l10n.point5, l10n.point6];
 }
 
 /// Hit-test radius for grabbing an existing anchor (logical pixels)
@@ -139,10 +132,8 @@ class _AnchorPointDialogState extends State<_AnchorPointDialog>
   @override
   void initState() {
     super.initState();
-    _pulse = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 900),
-    )..repeat(reverse: true);
+    _pulse = AnimationController(vsync: this, duration: const Duration(milliseconds: 900))
+      ..repeat(reverse: true);
     _pulseAnim = Tween<double>(
       begin: 0.85,
       end: 1.15,
@@ -200,13 +191,12 @@ class _AnchorPointDialogState extends State<_AnchorPointDialog>
   int get _nextIdx => _pts.length;
 
   /// Normalise local position to [0, 1]
-  Offset _norm(Offset local) => Offset(
-    (local.dx / _imgW).clamp(0.0, 1.0),
-    (local.dy / _imgH).clamp(0.0, 1.0),
-  );
+  Offset _norm(Offset local) =>
+      Offset((local.dx / _imgW).clamp(0.0, 1.0), (local.dy / _imgH).clamp(0.0, 1.0));
 
   bool _isMobile(BuildContext context) {
-    final isMobilePlatform = defaultTargetPlatform == TargetPlatform.android ||
+    final isMobilePlatform =
+        defaultTargetPlatform == TargetPlatform.android ||
         defaultTargetPlatform == TargetPlatform.iOS;
     final isShortScreen = MediaQuery.of(context).size.shortestSide < 600;
     return isMobilePlatform || isShortScreen;
@@ -536,9 +526,7 @@ class _AnchorPointDialogState extends State<_AnchorPointDialog>
                         return Container(
                           color: Colors.black26,
                           alignment: Alignment.center,
-                          child: const CircularProgressIndicator(
-                            color: Color(0xFF2979FF),
-                          ),
+                          child: const CircularProgressIndicator(color: Color(0xFF2979FF)),
                         );
                       },
                     ),
@@ -553,10 +541,7 @@ class _AnchorPointDialogState extends State<_AnchorPointDialog>
                         child: _pts.isEmpty
                             ? Text(
                                 l10n.tapToMarkPoint,
-                                style: const TextStyle(
-                                  color: Colors.white70,
-                                  fontSize: 14,
-                                ),
+                                style: const TextStyle(color: Colors.white70, fontSize: 14),
                               )
                             : null,
                       ),
@@ -605,15 +590,10 @@ class _AnchorPointDialogState extends State<_AnchorPointDialog>
                       right: 8,
                       child: AnimatedBuilder(
                         animation: _pulseAnim,
-                        builder: (_, child) => Transform.scale(
-                          scale: _pulseAnim.value,
-                          child: child,
-                        ),
+                        builder: (_, child) =>
+                            Transform.scale(scale: _pulseAnim.value, child: child),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 5,
-                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                           decoration: BoxDecoration(
                             color: _colors[_nextIdx].withValues(alpha: 0.9),
                             borderRadius: BorderRadius.circular(20),
@@ -636,10 +616,7 @@ class _AnchorPointDialogState extends State<_AnchorPointDialog>
                       top: 8,
                       right: 8,
                       child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 5,
-                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                         decoration: BoxDecoration(
                           color: Colors.black54,
                           borderRadius: BorderRadius.circular(20),
@@ -647,26 +624,18 @@ class _AnchorPointDialogState extends State<_AnchorPointDialog>
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(
-                              Icons.open_with,
-                              size: 12,
-                              color: Colors.white70,
-                            ),
+                            const Icon(Icons.open_with, size: 12, color: Colors.white70),
                             const SizedBox(width: 4),
                             Text(
                               l10n.dragToAdjust,
-                              style: const TextStyle(
-                                color: Colors.white70,
-                                fontSize: 11,
-                              ),
+                              style: const TextStyle(color: Colors.white70, fontSize: 11),
                             ),
                           ],
                         ),
                       ),
                     ),
 
-                  if (_draggingIdx != null && _magPos != null)
-                    _buildMagnifier(),
+                  if (_draggingIdx != null && _magPos != null) _buildMagnifier(),
                 ],
               ),
             );
@@ -695,9 +664,7 @@ class _AnchorPointDialogState extends State<_AnchorPointDialog>
     final tx = r - cx * zoom;
     final ty = r - cy * zoom;
 
-    final draggingColor = _draggingIdx != null
-        ? _colors[_draggingIdx!]
-        : Colors.white;
+    final draggingColor = _draggingIdx != null ? _colors[_draggingIdx!] : Colors.white;
 
     return Positioned(
       left: left,
@@ -709,11 +676,7 @@ class _AnchorPointDialogState extends State<_AnchorPointDialog>
           shape: BoxShape.circle,
           border: Border.all(color: draggingColor, width: 2.5),
           boxShadow: [
-            BoxShadow(
-              color: draggingColor.withValues(alpha: 0.4),
-              blurRadius: 12,
-              spreadRadius: 2,
-            ),
+            BoxShadow(color: draggingColor.withValues(alpha: 0.4), blurRadius: 12, spreadRadius: 2),
           ],
         ),
         clipBehavior: Clip.antiAlias,
@@ -737,9 +700,7 @@ class _AnchorPointDialogState extends State<_AnchorPointDialog>
             ),
             // Crosshair overlay
             Positioned.fill(
-              child: CustomPaint(
-                painter: _CrosshairPainter(color: draggingColor),
-              ),
+              child: CustomPaint(painter: _CrosshairPainter(color: draggingColor)),
             ),
           ],
         ),
@@ -768,11 +729,7 @@ class _AnchorPointDialogState extends State<_AnchorPointDialog>
     if (isMobile) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          field1,
-          const SizedBox(height: 12),
-          field2,
-        ],
+        children: [field1, const SizedBox(height: 12), field2],
       );
     }
 
@@ -795,13 +752,7 @@ class _AnchorPointDialogState extends State<_AnchorPointDialog>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: const TextStyle(
-            color: Colors.white70,
-            fontSize: 12,
-          ),
-        ),
+        Text(label, style: const TextStyle(color: Colors.white70, fontSize: 12)),
         const SizedBox(height: 8),
         TextField(
           controller: controller,
@@ -848,24 +799,14 @@ class _AnchorPointDialogState extends State<_AnchorPointDialog>
           decoration: BoxDecoration(
             color: isActive
                 ? color.withValues(alpha: 0.25)
-                : (isSet
-                    ? color.withValues(alpha: 0.08)
-                    : Colors.white.withValues(alpha: 0.03)),
+                : (isSet ? color.withValues(alpha: 0.08) : Colors.white.withValues(alpha: 0.03)),
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
-              color: isActive
-                  ? color
-                  : (isSet ? color.withValues(alpha: 0.4) : Colors.white12),
+              color: isActive ? color : (isSet ? color.withValues(alpha: 0.4) : Colors.white12),
               width: isActive ? 2 : 1.5,
             ),
             boxShadow: isActive
-                ? [
-                    BoxShadow(
-                      color: color.withValues(alpha: 0.3),
-                      blurRadius: 8,
-                      spreadRadius: 1,
-                    )
-                  ]
+                ? [BoxShadow(color: color.withValues(alpha: 0.3), blurRadius: 8, spreadRadius: 1)]
                 : null,
           ),
           child: Row(
@@ -887,11 +828,7 @@ class _AnchorPointDialogState extends State<_AnchorPointDialog>
                     ? const Icon(Icons.check, size: 10, color: Colors.white)
                     : Text(
                         '${i + 1}',
-                        style: TextStyle(
-                          color: color,
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.bold),
                       ),
               ),
               const SizedBox(width: 6),
@@ -900,9 +837,7 @@ class _AnchorPointDialogState extends State<_AnchorPointDialog>
                   labels[i],
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    color: isActive
-                        ? Colors.white
-                        : (isSet ? Colors.white70 : Colors.white30),
+                    color: isActive ? Colors.white : (isSet ? Colors.white70 : Colors.white30),
                     fontSize: 13,
                     fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
                   ),
@@ -922,11 +857,7 @@ class _AnchorPointDialogState extends State<_AnchorPointDialog>
       children: [
         Text(
           l10n.selectAnchorToMark,
-          style: const TextStyle(
-            color: Colors.white70,
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-          ),
+          style: const TextStyle(color: Colors.white70, fontSize: 14, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 10),
         Row(
@@ -953,6 +884,7 @@ class _AnchorPointDialogState extends State<_AnchorPointDialog>
   Widget _buildGuide() {
     final l10n = context.l10n;
     final labels = _getLabels(context);
+    final isMobile = _isMobile(context);
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -969,11 +901,8 @@ class _AnchorPointDialogState extends State<_AnchorPointDialog>
               const SizedBox(width: 6),
               Expanded(
                 child: Text(
-                  l10n.guideDescription,
-                  style: const TextStyle(
-                    color: Colors.white54,
-                    fontSize: 11,
-                  ),
+                  isMobile ? l10n.guideDescriptionMobile : l10n.guideDescription,
+                  style: const TextStyle(color: Colors.white54, fontSize: 11),
                 ),
               ),
             ],
@@ -1005,44 +934,36 @@ class _AnchorPointDialogState extends State<_AnchorPointDialog>
           onPressed: _pts.isEmpty
               ? null
               : () => setState(() {
-                    if (_pts.length == 6) {
-                      _pts.removeRange(3, 6);
-                    } else {
-                      _pts.removeLast();
-                    }
-                    _selectedActivePointIdx = _pts.length;
-                  }),
+                  if (_pts.length == 6) {
+                    _pts.removeRange(3, 6);
+                  } else {
+                    _pts.removeLast();
+                  }
+                  _selectedActivePointIdx = _pts.length;
+                }),
           style: OutlinedButton.styleFrom(
             foregroundColor: Colors.white70,
             side: const BorderSide(color: Colors.white24),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           ),
           icon: const Icon(Icons.undo, size: 16),
-          label: Text(
-            l10n.undo,
-            style: const TextStyle(fontSize: 13),
-          ),
+          label: Text(l10n.undo, style: const TextStyle(fontSize: 13)),
         ),
         const SizedBox(width: 8),
         OutlinedButton.icon(
-          onPressed: _pts.isEmpty ? null : () => setState(() {
-            _pts.clear();
-            _selectedActivePointIdx = 0;
-          }),
+          onPressed: _pts.isEmpty
+              ? null
+              : () => setState(() {
+                  _pts.clear();
+                  _selectedActivePointIdx = 0;
+                }),
           style: OutlinedButton.styleFrom(
             foregroundColor: Colors.white54,
             side: const BorderSide(color: Colors.white12),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           ),
           icon: const Icon(Icons.refresh, size: 16),
-          label: Text(
-            l10n.clear,
-            style: const TextStyle(fontSize: 13),
-          ),
+          label: Text(l10n.clear, style: const TextStyle(fontSize: 13)),
         ),
         const Spacer(),
         AnimatedOpacity(
@@ -1054,17 +975,12 @@ class _AnchorPointDialogState extends State<_AnchorPointDialog>
               backgroundColor: const Color(0xFF00BFA5),
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             ),
             icon: const Icon(Icons.check_circle_outline, size: 18),
             label: Text(
               l10n.confirmAnchor,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 14,
-              ),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
             ),
           ),
         ),
@@ -1179,13 +1095,7 @@ class _GuideStep extends StatelessWidget {
               width: active ? 2.5 : 1.5,
             ),
             boxShadow: active
-                ? [
-                    BoxShadow(
-                      color: color.withValues(alpha: 0.5),
-                      blurRadius: 8,
-                      spreadRadius: 1,
-                    ),
-                  ]
+                ? [BoxShadow(color: color.withValues(alpha: 0.5), blurRadius: 8, spreadRadius: 1)]
                 : null,
           ),
           alignment: Alignment.center,
@@ -1332,28 +1242,12 @@ class _CrosshairPainter extends CustomPainter {
       ..style = PaintingStyle.stroke;
 
     // Horizontal lines (left gap ← center → right gap)
-    canvas.drawLine(
-      Offset(cx - gapRadius - lineLength, cy),
-      Offset(cx - gapRadius, cy),
-      linePaint,
-    );
-    canvas.drawLine(
-      Offset(cx + gapRadius, cy),
-      Offset(cx + gapRadius + lineLength, cy),
-      linePaint,
-    );
+    canvas.drawLine(Offset(cx - gapRadius - lineLength, cy), Offset(cx - gapRadius, cy), linePaint);
+    canvas.drawLine(Offset(cx + gapRadius, cy), Offset(cx + gapRadius + lineLength, cy), linePaint);
 
     // Vertical lines
-    canvas.drawLine(
-      Offset(cx, cy - gapRadius - lineLength),
-      Offset(cx, cy - gapRadius),
-      linePaint,
-    );
-    canvas.drawLine(
-      Offset(cx, cy + gapRadius),
-      Offset(cx, cy + gapRadius + lineLength),
-      linePaint,
-    );
+    canvas.drawLine(Offset(cx, cy - gapRadius - lineLength), Offset(cx, cy - gapRadius), linePaint);
+    canvas.drawLine(Offset(cx, cy + gapRadius), Offset(cx, cy + gapRadius + lineLength), linePaint);
 
     // Colored center dot
     canvas.drawCircle(Offset(cx, cy), dotRadius, Paint()..color = color);

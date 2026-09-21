@@ -6,12 +6,7 @@ class AuthState {
   final String? username;
   final String? errorMessage;
 
-  const AuthState({
-    required this.status,
-    this.token,
-    this.username,
-    this.errorMessage,
-  });
+  const AuthState({required this.status, this.token, this.username, this.errorMessage});
 
   factory AuthState.initial() {
     return const AuthState(status: AuthStatus.initial);
@@ -22,11 +17,7 @@ class AuthState {
   }
 
   factory AuthState.authenticated(String token, String username) {
-    return AuthState(
-      status: AuthStatus.authenticated,
-      token: token,
-      username: username,
-    );
+    return AuthState(status: AuthStatus.authenticated, token: token, username: username);
   }
 
   factory AuthState.unauthenticated() {
@@ -34,18 +25,10 @@ class AuthState {
   }
 
   factory AuthState.error(String message) {
-    return AuthState(
-      status: AuthStatus.error,
-      errorMessage: message,
-    );
+    return AuthState(status: AuthStatus.error, errorMessage: message);
   }
 
-  AuthState copyWith({
-    AuthStatus? status,
-    String? token,
-    String? username,
-    String? errorMessage,
-  }) {
+  AuthState copyWith({AuthStatus? status, String? token, String? username, String? errorMessage}) {
     return AuthState(
       status: status ?? this.status,
       token: token ?? this.token,

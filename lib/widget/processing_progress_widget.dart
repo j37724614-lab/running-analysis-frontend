@@ -43,10 +43,7 @@ class ProcessingProgressWidget extends StatelessWidget {
               SpinKitCircle(
                 size: 60,
                 itemBuilder: (context, index) {
-                  final colors = [
-                    Colors.white,
-                    Theme.of(context).secondaryHeaderColor,
-                  ];
+                  final colors = [Colors.white, Theme.of(context).secondaryHeaderColor];
                   final color = colors[index % colors.length];
                   return DecoratedBox(decoration: BoxDecoration(color: color));
                 },

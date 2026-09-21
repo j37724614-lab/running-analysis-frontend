@@ -50,10 +50,7 @@ class DateTimeSelectionWidget extends StatelessWidget {
                   ),
                   child: Text(
                     l10n.date,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
                 SizedBox(
@@ -75,18 +72,12 @@ class DateTimeSelectionWidget extends StatelessWidget {
                       decoration: InputDecoration(
                         hintText: l10n.selectDate,
                         enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Theme.of(context).primaryColor,
-                          ),
+                          borderSide: BorderSide(color: Theme.of(context).primaryColor),
                         ),
                         focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Theme.of(context).primaryColor,
-                          ),
+                          borderSide: BorderSide(color: Theme.of(context).primaryColor),
                         ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          vertical: 14,
-                        ),
+                        contentPadding: const EdgeInsets.symmetric(vertical: 14),
                       ),
                       child: Text(
                         '${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}',
@@ -109,10 +100,7 @@ class DateTimeSelectionWidget extends StatelessWidget {
                   ),
                   child: Text(
                     l10n.time,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
                 SizedBox(
@@ -132,18 +120,12 @@ class DateTimeSelectionWidget extends StatelessWidget {
                       decoration: InputDecoration(
                         hintText: l10n.time,
                         enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Theme.of(context).primaryColor,
-                          ),
+                          borderSide: BorderSide(color: Theme.of(context).primaryColor),
                         ),
                         focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Theme.of(context).primaryColor,
-                          ),
+                          borderSide: BorderSide(color: Theme.of(context).primaryColor),
                         ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          vertical: 14,
-                        ),
+                        contentPadding: const EdgeInsets.symmetric(vertical: 14),
                       ),
                       child: Text(
                         selectedTime.format(context),
@@ -167,10 +149,7 @@ class DateTimeSelectionWidget extends StatelessWidget {
                   ),
                   child: Text(
                     l10n.cameraCount,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
                 DropdownButtonHideUnderline(
@@ -179,10 +158,7 @@ class DateTimeSelectionWidget extends StatelessWidget {
                       children: [
                         Text(
                           l10n.cameraCount,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ],
@@ -193,10 +169,7 @@ class DateTimeSelectionWidget extends StatelessWidget {
                             value: item,
                             child: Text(
                               item.toString(),
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
@@ -213,11 +186,7 @@ class DateTimeSelectionWidget extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(vertical: 4),
                       overlayColor: WidgetStateProperty.all(Colors.transparent),
                       decoration: BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(
-                            color: Theme.of(context).primaryColor,
-                          ),
-                        ),
+                        border: Border(bottom: BorderSide(color: Theme.of(context).primaryColor)),
                       ),
                     ),
                     iconStyleData: const IconStyleData(
@@ -226,12 +195,8 @@ class DateTimeSelectionWidget extends StatelessWidget {
                     ),
                     dropdownStyleData: DropdownStyleData(
                       maxHeight: 200,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      scrollbarTheme: const ScrollbarThemeData(
-                        radius: Radius.circular(40),
-                      ),
+                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+                      scrollbarTheme: const ScrollbarThemeData(radius: Radius.circular(40)),
                     ),
                     menuItemStyleData: const MenuItemStyleData(
                       height: 40,
@@ -253,10 +218,7 @@ class DateTimeSelectionWidget extends StatelessWidget {
                   ),
                   child: Text(
                     l10n.fps,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
                 DropdownButtonHideUnderline(
@@ -265,10 +227,7 @@ class DateTimeSelectionWidget extends StatelessWidget {
                       children: [
                         Text(
                           l10n.fps,
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ],
@@ -279,10 +238,7 @@ class DateTimeSelectionWidget extends StatelessWidget {
                             value: item,
                             child: Text(
                               item.toString(),
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
@@ -299,11 +255,7 @@ class DateTimeSelectionWidget extends StatelessWidget {
                       width: 100,
                       overlayColor: WidgetStateProperty.all(Colors.transparent),
                       decoration: BoxDecoration(
-                        border: Border(
-                          bottom: BorderSide(
-                            color: Theme.of(context).primaryColor,
-                          ),
-                        ),
+                        border: Border(bottom: BorderSide(color: Theme.of(context).primaryColor)),
                       ),
                     ),
                     iconStyleData: const IconStyleData(
@@ -312,12 +264,8 @@ class DateTimeSelectionWidget extends StatelessWidget {
                     ),
                     dropdownStyleData: DropdownStyleData(
                       maxHeight: 200,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      scrollbarTheme: const ScrollbarThemeData(
-                        radius: Radius.circular(40),
-                      ),
+                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+                      scrollbarTheme: const ScrollbarThemeData(radius: Radius.circular(40)),
                     ),
                     menuItemStyleData: const MenuItemStyleData(
                       height: 40,
@@ -343,10 +291,7 @@ class DateTimeSelectionWidget extends StatelessWidget {
                   ),
                   child: Text(
                     l10n.notes,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
                 if (constraints.maxWidth < 800)
@@ -360,18 +305,12 @@ class DateTimeSelectionWidget extends StatelessWidget {
                       decoration: InputDecoration(
                         hintText: l10n.notes,
                         enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Theme.of(context).primaryColor,
-                          ),
+                          borderSide: BorderSide(color: Theme.of(context).primaryColor),
                         ),
                         focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Theme.of(context).primaryColor,
-                          ),
+                          borderSide: BorderSide(color: Theme.of(context).primaryColor),
                         ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          vertical: 14,
-                        ),
+                        contentPadding: const EdgeInsets.symmetric(vertical: 14),
                       ),
                     ),
                   )
@@ -387,18 +326,12 @@ class DateTimeSelectionWidget extends StatelessWidget {
                       decoration: InputDecoration(
                         hintText: l10n.notes,
                         enabledBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Theme.of(context).primaryColor,
-                          ),
+                          borderSide: BorderSide(color: Theme.of(context).primaryColor),
                         ),
                         focusedBorder: UnderlineInputBorder(
-                          borderSide: BorderSide(
-                            color: Theme.of(context).primaryColor,
-                          ),
+                          borderSide: BorderSide(color: Theme.of(context).primaryColor),
                         ),
-                        contentPadding: const EdgeInsets.symmetric(
-                          vertical: 14,
-                        ),
+                        contentPadding: const EdgeInsets.symmetric(vertical: 14),
                       ),
                     ),
                   ),

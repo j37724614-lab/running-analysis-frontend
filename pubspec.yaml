@@ -94,6 +94,7 @@ flutter:
   assets:
     - assets/splash.json
     - assets/icon.png
+    - assets/mock_runner_frame.jpg
 
 flutter_launcher_icons:
   android: true

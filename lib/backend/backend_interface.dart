@@ -11,9 +11,7 @@ abstract class BackendInterface {
   Future<List<GraphData>> getGraphData(String runSessionId);
   Future<RunSessionInfo> getRunSessionInfo(String runSessionId);
   Future<List<RunSessionInfo>> getRunnerHistory(String runnerId);
-  Future<List<UnanalyzedRunSessionInfo>> getRunnerUnanalyzedHistory(
-    String runnerId,
-  );
+  Future<List<UnanalyzedRunSessionInfo>> getRunnerUnanalyzedHistory(String runnerId);
 
   Future<String> addRunner(String name);
   Future<String> uploadAllInfo(

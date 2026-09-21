@@ -32,9 +32,7 @@ class RunnerHistoryShimmer extends StatelessWidget {
           ),
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
           child: Shimmer.fromColors(
-            baseColor: Theme.of(
-              context,
-            ).primaryColorDark.withValues(alpha: 0.8),
+            baseColor: Theme.of(context).primaryColorDark.withValues(alpha: 0.8),
             highlightColor: Colors.white,
             child: OneRunnerHistoryPlaceholder(),
           ),

@@ -41,9 +41,7 @@ class GraphListView extends ConsumerWidget {
               alignment: Alignment.center,
               children: [
                 const GraphListPlaceholder(),
-                Positioned.fill(
-                  child: Container(color: Colors.black.withValues(alpha: 0.5)),
-                ),
+                Positioned.fill(child: Container(color: Colors.black.withValues(alpha: 0.5))),
                 Container(
                   width: 300,
                   padding: const EdgeInsets.all(24.0),
@@ -55,11 +53,7 @@ class GraphListView extends ConsumerWidget {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(
-                        Icons.error_outline_rounded,
-                        color: Colors.redAccent,
-                        size: 40,
-                      ),
+                      const Icon(Icons.error_outline_rounded, color: Colors.redAccent, size: 40),
                       const SizedBox(height: 16),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -120,12 +114,8 @@ class GraphListView extends ConsumerWidget {
           value: graphData,
           loading: const GraphListShimmer(),
           data: (List<GraphData> graphs) {
-            final metricsGraphs = graphs
-                .where((g) => g.category == 'metrics')
-                .toList();
-            final anglesGraphs = graphs
-                .where((g) => g.category == 'angles')
-                .toList();
+            final metricsGraphs = graphs.where((g) => g.category == 'metrics').toList();
+            final anglesGraphs = graphs.where((g) => g.category == 'angles').toList();
 
             return Column(
               children: [
@@ -188,11 +178,7 @@ class _GraphSection extends StatelessWidget {
         leading: Icon(icon, color: Colors.white70, size: 22),
         title: Text(
           title,
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w600,
-            fontSize: 16,
-          ),
+          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 16),
         ),
         iconColor: Colors.white70,
         collapsedIconColor: Colors.white54,
@@ -223,16 +209,15 @@ class _GraphSection extends StatelessWidget {
     return (progress * (spots.length - 1)).floor().clamp(0, spots.length - 1);
   }
 
-  List<VerticalLine> _secondTicks(BuildContext context, List<double> xValues) =>
-      [
-        for (double x = 1.0; x <= (xValues.lastOrNull ?? 0); x += 1.0)
-          VerticalLine(
-            x: x,
-            color: Theme.of(context).primaryColorDark.withAlpha(128),
-            strokeWidth: 2,
-            dashArray: [5, 5],
-          ),
-      ];
+  List<VerticalLine> _secondTicks(BuildContext context, List<double> xValues) => [
+    for (double x = 1.0; x <= (xValues.lastOrNull ?? 0); x += 1.0)
+      VerticalLine(
+        x: x,
+        color: Theme.of(context).primaryColorDark.withAlpha(128),
+        strokeWidth: 2,
+        dashArray: [5, 5],
+      ),
+  ];
 
   String _localizeTitle(BuildContext context, String rawTitle) {
     final l10n = context.l10n;
@@ -300,42 +285,33 @@ class _GraphSection extends StatelessWidget {
     },
   );
 
-  FlTitlesData _titlesData(BuildContext context, String yLabel, double yMax) =>
-      FlTitlesData(
-        topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-        rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-        bottomTitles: AxisTitles(
-          axisNameSize: 32,
-          axisNameWidget: Text(
-            context.l10n.timeWithUnit,
-            style: const TextStyle(color: Colors.white, fontSize: 16),
-          ),
-          sideTitles: SideTitles(
-            interval: 1.0,
-            showTitles: true,
-            getTitlesWidget: (value, meta) => Text(
-              value.toStringAsFixed(1),
-              style: const TextStyle(color: Colors.white),
-            ),
-          ),
-        ),
-        leftTitles: AxisTitles(
-          axisNameSize: 32,
-          axisNameWidget: Text(
-            yLabel,
-            style: const TextStyle(color: Colors.white, fontSize: 16),
-          ),
-          sideTitles: _leftTitles(yMax),
-        ),
-      );
+  FlTitlesData _titlesData(BuildContext context, String yLabel, double yMax) => FlTitlesData(
+    topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+    rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+    bottomTitles: AxisTitles(
+      axisNameSize: 32,
+      axisNameWidget: Text(
+        context.l10n.timeWithUnit,
+        style: const TextStyle(color: Colors.white, fontSize: 16),
+      ),
+      sideTitles: SideTitles(
+        interval: 1.0,
+        showTitles: true,
+        getTitlesWidget: (value, meta) =>
+            Text(value.toStringAsFixed(1), style: const TextStyle(color: Colors.white)),
+      ),
+    ),
+    leftTitles: AxisTitles(
+      axisNameSize: 32,
+      axisNameWidget: Text(yLabel, style: const TextStyle(color: Colors.white, fontSize: 16)),
+      sideTitles: _leftTitles(yMax),
+    ),
+  );
 
   FlBorderData _borderData(BuildContext context) => FlBorderData(
     show: true,
     border: Border(
-      bottom: BorderSide(
-        color: Theme.of(context).primaryColorDark.withAlpha(128),
-        width: 3,
-      ),
+      bottom: BorderSide(color: Theme.of(context).primaryColorDark.withAlpha(128), width: 3),
     ),
   );
 
@@ -366,10 +342,7 @@ class _GraphSection extends StatelessWidget {
   Widget _buildSingleChart(BuildContext context, GraphData graph) {
     final primaryColor = Theme.of(context).primaryColorDark;
     final y = graph.series.first.y;
-    final spots = List.generate(
-      y.length,
-      (i) => FlSpot(graph.x[i].toDouble(), y[i]),
-    );
+    final spots = List.generate(y.length, (i) => FlSpot(graph.x[i].toDouble(), y[i]));
     final ci = _currentIndex(spots);
     final playedSpots = spots.sublist(0, ci + 1);
 
@@ -394,11 +367,7 @@ class _GraphSection extends StatelessWidget {
       context: context,
       titleWidget: Text(
         displayTitle,
-        style: const TextStyle(
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
-          fontSize: 20,
-        ),
+        style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20),
       ),
       chart: LineChart(
         LineChartData(
@@ -412,10 +381,7 @@ class _GraphSection extends StatelessWidget {
                 if (isFaded && spot.bar.spots.indexOf(spot) <= ci) return null;
                 return LineTooltipItem(
                   '${spot.y}',
-                  TextStyle(
-                    fontSize: 16,
-                    color: isFaded ? Colors.white : primaryColor,
-                  ),
+                  TextStyle(fontSize: 16, color: isFaded ? Colors.white : primaryColor),
                 );
               }).toList(),
             ),
@@ -424,9 +390,7 @@ class _GraphSection extends StatelessWidget {
           minY: graph.yMin,
           maxY: graph.yMax,
           clipData: const FlClipData.none(),
-          extraLinesData: ExtraLinesData(
-            verticalLines: _secondTicks(context, graph.x),
-          ),
+          extraLinesData: ExtraLinesData(verticalLines: _secondTicks(context, graph.x)),
           titlesData: _titlesData(context, displayYLabel, graph.yMax),
           borderData: _borderData(context),
         ),
@@ -442,10 +406,7 @@ class _GraphSection extends StatelessWidget {
     final leftY = graph.series[0].y; // name == "left"
     final rightY = graph.series[1].y; // name == "right"
 
-    final leftSpots = List.generate(
-      leftY.length,
-      (i) => FlSpot(graph.x[i].toDouble(), leftY[i]),
-    );
+    final leftSpots = List.generate(leftY.length, (i) => FlSpot(graph.x[i].toDouble(), leftY[i]));
     final rightSpots = List.generate(
       rightY.length,
       (i) => FlSpot(graph.x[i].toDouble(), rightY[i]),
@@ -495,11 +456,7 @@ class _GraphSection extends StatelessWidget {
         children: [
           Text(
             displayTitle,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              fontSize: 20,
-            ),
+            style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20),
           ),
           const SizedBox(height: 4),
           Row(
@@ -507,17 +464,11 @@ class _GraphSection extends StatelessWidget {
             children: [
               _legendDot(primaryColor),
               const SizedBox(width: 4),
-              Text(
-                l10n.legendLeft,
-                style: const TextStyle(color: Colors.white70, fontSize: 13),
-              ),
+              Text(l10n.legendLeft, style: const TextStyle(color: Colors.white70, fontSize: 13)),
               const SizedBox(width: 16),
               _legendDot(Colors.white),
               const SizedBox(width: 4),
-              Text(
-                l10n.legendRight,
-                style: const TextStyle(color: Colors.white70, fontSize: 13),
-              ),
+              Text(l10n.legendRight, style: const TextStyle(color: Colors.white70, fontSize: 13)),
             ],
           ),
         ],
@@ -540,10 +491,7 @@ class _GraphSection extends StatelessWidget {
                 final sideLabel = isLeft ? l10n.legendLeft : l10n.legendRight;
                 return LineTooltipItem(
                   '$sideLabel: ${spot.y.toStringAsFixed(1)}°',
-                  TextStyle(
-                    fontSize: 16,
-                    color: isLeft ? primaryColor : Colors.white,
-                  ),
+                  TextStyle(fontSize: 16, color: isLeft ? primaryColor : Colors.white),
                 );
               }).toList(),
             ),
@@ -552,9 +500,7 @@ class _GraphSection extends StatelessWidget {
           minY: graph.yMin,
           maxY: graph.yMax,
           clipData: const FlClipData.none(),
-          extraLinesData: ExtraLinesData(
-            verticalLines: _secondTicks(context, graph.x),
-          ),
+          extraLinesData: ExtraLinesData(verticalLines: _secondTicks(context, graph.x)),
           titlesData: _titlesData(context, displayYLabel, graph.yMax),
           borderData: _borderData(context),
         ),

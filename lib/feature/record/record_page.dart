@@ -4,10 +4,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:frontend/feature/guide/guide_steps_factory.dart';
+import 'package:frontend/feature/guide/guide_tour_service.dart';
 import 'package:frontend/feature/record/record_controller.dart';
 import 'package:frontend/feature/record/record_enums.dart';
 import 'package:frontend/feature/record/record_state.dart';
 import 'package:frontend/feature/record/widget/record_camera_view.dart';
+import 'package:frontend/feature/record/widget/record_tour_placeholder_view.dart';
 import 'package:frontend/feature/upload/upload_controller.dart';
 import 'package:frontend/feature/upload/widget/upload_enums.dart';
 import 'package:frontend/utils/locale_provider.dart';
@@ -32,6 +35,19 @@ class _RecordPageState extends ConsumerState<RecordPage> {
   final ExpansibleController _expansionController = ExpansibleController();
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        Future.delayed(const Duration(milliseconds: 600), () {
+          if (!mounted) return;
+          GuideTourService.startRecordTour(context: context, ref: ref, force: false);
+        });
+      }
+    });
+  }
+
+  @override
   void dispose() {
     _roomController.dispose();
     super.dispose();
@@ -42,12 +58,30 @@ class _RecordPageState extends ConsumerState<RecordPage> {
     final l10n = context.l10n;
     final state = ref.watch(recordControllerProvider);
     final controller = ref.read(recordControllerProvider.notifier);
+    final isDemoInRoom = ref.watch(recordTourDemoInRoomProvider);
+    final demoRole = ref.watch(recordTourDemoRoleProvider);
+    final inRealRoom = state.status != RecordStatus.idle && state.status != RecordStatus.connecting;
+
+    final displayState = (isDemoInRoom && !inRealRoom)
+        ? RecordState(
+            role: demoRole,
+            status: RecordStatus.ready,
+            roomId: '8888',
+            expectedCameraCount: 2,
+            isRecordingEnabled: demoRole == RecordRole.master,
+            myCameraIndex: demoRole == RecordRole.master ? 0 : 1,
+            runnerSource: RunnerSource.select,
+            fps: 60,
+            note: '100m 衝刺同步錄影',
+            members: [
+              RecordMember(id: 'Master-01', isMaster: true, cameraIndex: 0, isReady: true),
+              RecordMember(id: 'Slave-02', isMaster: false, cameraIndex: 1, isReady: true),
+            ],
+          )
+        : state;
 
     // 監聽狀態變化來觸發動畫，而不使用會破壞動畫的 Key
-    ref.listen(recordControllerProvider.select((s) => s.isRecordingEnabled), (
-      prev,
-      next,
-    ) {
+    ref.listen(recordControllerProvider.select((s) => s.isRecordingEnabled), (prev, next) {
       if (next) {
         _expansionController.expand();
       } else {
@@ -55,17 +89,11 @@ class _RecordPageState extends ConsumerState<RecordPage> {
       }
     });
 
-    ref.listen(recordControllerProvider.select((s) => s.isAllUploaded), (
-      prev,
-      next,
-    ) {
+    ref.listen(recordControllerProvider.select((s) => s.isAllUploaded), (prev, next) {
       if (next == true && prev != true) {
         toastification.show(
           context: context,
-          title: const Text(
-            'Success',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
+          title: const Text('Success', style: TextStyle(fontWeight: FontWeight.bold)),
           description: Text(l10n.uploadSuccess),
           type: ToastificationType.success,
           style: ToastificationStyle.minimal,
@@ -79,10 +107,7 @@ class _RecordPageState extends ConsumerState<RecordPage> {
       if (next != null && next != prev) {
         toastification.show(
           context: context,
-          title: const Text(
-            'Error',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
+          title: const Text('Error', style: TextStyle(fontWeight: FontWeight.bold)),
           description: Text(next),
           type: ToastificationType.error,
           style: ToastificationStyle.minimal,
@@ -92,37 +117,34 @@ class _RecordPageState extends ConsumerState<RecordPage> {
       }
     });
 
-    ref.listen(
-      recordControllerProvider.select((s) => s.pendingControlRequestFrom),
-      (prev, next) {
-        if (next != null) {
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (context) => AlertDialog(
-              title: Text(l10n.controlTransferRequest),
-              content: Text(l10n.controlTransferMessage(next)),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    controller.respondControlRequest(next, false);
-                    Navigator.of(context).pop();
-                  },
-                  child: Text(l10n.reject),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    controller.respondControlRequest(next, true);
-                    Navigator.of(context).pop();
-                  },
-                  child: Text(l10n.approve),
-                ),
-              ],
-            ),
-          );
-        }
-      },
-    );
+    ref.listen(recordControllerProvider.select((s) => s.pendingControlRequestFrom), (prev, next) {
+      if (next != null) {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) => AlertDialog(
+            title: Text(l10n.controlTransferRequest),
+            content: Text(l10n.controlTransferMessage(next)),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  controller.respondControlRequest(next, false);
+                  Navigator.of(context).pop();
+                },
+                child: Text(l10n.reject),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  controller.respondControlRequest(next, true);
+                  Navigator.of(context).pop();
+                },
+                child: Text(l10n.approve),
+              ),
+            ],
+          ),
+        );
+      }
+    });
 
     // 同步本機物理轉向狀態到控制器
     final orientation = MediaQuery.of(context).orientation;
@@ -135,10 +157,12 @@ class _RecordPageState extends ConsumerState<RecordPage> {
       }
     });
 
-    return state.status == RecordStatus.idle ||
-            state.status == RecordStatus.connecting
-        ? _buildInitialView(state, controller)
-        : _buildRoomView(state, controller);
+    final body =
+        displayState.status == RecordStatus.idle || displayState.status == RecordStatus.connecting
+        ? _buildInitialView(displayState, controller)
+        : _buildRoomView(displayState, controller, isTourDemo: isDemoInRoom && !inRealRoom);
+
+    return body;
   }
 
   Widget _buildInitialView(RecordState state, RecordController controller) {
@@ -158,34 +182,22 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                     spacing: 24,
                     children: [
                       Container(
+                        key: GuideKeys.recordRoleMasterKey,
                         padding: const EdgeInsets.all(24),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            width: 3,
-                            color: Theme.of(context).primaryColor,
-                          ),
+                          border: Border.all(width: 3, color: Theme.of(context).primaryColor),
                         ),
                         child: Column(
                           spacing: 12,
                           children: [
-                            Icon(
-                              Icons.stars,
-                              size: 48,
-                              color: Theme.of(context).primaryColorDark,
-                            ),
+                            Icon(Icons.stars, size: 48, color: Theme.of(context).primaryColorDark),
                             Text(
                               l10n.masterDevice,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                             ),
-                            Text(
-                              l10n.masterDeviceDescription,
-                              textAlign: TextAlign.center,
-                            ),
+                            Text(l10n.masterDeviceDescription, textAlign: TextAlign.center),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -194,18 +206,13 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                                   value: _createExpectedCount,
                                   items: [1, 2, 3, 4, 5]
                                       .map(
-                                        (e) => DropdownMenuItem(
-                                          value: e,
-                                          child: Text(e.toString()),
-                                        ),
+                                        (e) =>
+                                            DropdownMenuItem(value: e, child: Text(e.toString())),
                                       )
                                       .toList(),
-                                  onChanged: (v) =>
-                                      setState(() => _createExpectedCount = v!),
+                                  onChanged: (v) => setState(() => _createExpectedCount = v!),
                                   iconStyleData: const IconStyleData(
-                                    icon: Icon(
-                                      Icons.arrow_forward_ios_outlined,
-                                    ),
+                                    icon: Icon(Icons.arrow_forward_ios_outlined),
                                     iconSize: 12,
                                   ),
                                   dropdownStyleData: DropdownStyleData(
@@ -226,8 +233,7 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                                 foregroundColor: Colors.black,
                                 minimumSize: const Size(double.infinity, 48),
                               ),
-                              onPressed: () =>
-                                  controller.createRoom(_createExpectedCount),
+                              onPressed: () => controller.createRoom(_createExpectedCount),
                               child: Text(
                                 l10n.createRecordingRoom,
                                 style: const TextStyle(fontWeight: FontWeight.bold),
@@ -236,19 +242,14 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                           ],
                         ),
                       ),
-                      Text(
-                        l10n.orDivider,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
+                      Text(l10n.orDivider, style: const TextStyle(fontWeight: FontWeight.bold)),
                       Container(
+                        key: GuideKeys.recordRoleSlaveKey,
                         padding: const EdgeInsets.all(24),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(
-                            width: 3,
-                            color: Theme.of(context).primaryColor,
-                          ),
+                          border: Border.all(width: 3, color: Theme.of(context).primaryColor),
                         ),
                         child: Column(
                           spacing: 12,
@@ -260,10 +261,7 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                             ),
                             Text(
                               l10n.slaveDevice,
-                              style: const TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                             ),
                             TextField(
                               controller: _roomController,
@@ -287,8 +285,7 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                                   child: Text('${l10n.camera} ${i + 1}'),
                                 ),
                               ),
-                              onChanged: (v) =>
-                                  setState(() => _selectedCameraIndex = v!),
+                              onChanged: (v) => setState(() => _selectedCameraIndex = v!),
                             ),
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
@@ -298,10 +295,7 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                               ),
                               onPressed: () {
                                 if (_roomController.text.isNotEmpty) {
-                                  controller.joinRoom(
-                                    _roomController.text,
-                                    _selectedCameraIndex,
-                                  );
+                                  controller.joinRoom(_roomController.text, _selectedCameraIndex);
                                 }
                               },
                               child: Text(
@@ -323,12 +317,9 @@ class _RecordPageState extends ConsumerState<RecordPage> {
     );
   }
 
-  Widget _buildRoomView(RecordState state, RecordController controller) {
+  Widget _buildRoomView(RecordState state, RecordController controller, {bool isTourDemo = false}) {
     final l10n = context.l10n;
-    final connectedCameraIndexes = state.members
-        .map((m) => m.cameraIndex)
-        .whereType<int>()
-        .toSet();
+    final connectedCameraIndexes = state.members.map((m) => m.cameraIndex).whereType<int>().toSet();
     final areAllCamerasConnected =
         state.expectedCameraCount > 0 &&
         List.generate(
@@ -336,12 +327,8 @@ class _RecordPageState extends ConsumerState<RecordPage> {
           (i) => i,
         ).every((i) => connectedCameraIndexes.contains(i));
 
-    final participatingMembers = state.members.where(
-      (m) => m.cameraIndex != null,
-    );
-    final areAllParticipatingReady = participatingMembers.every(
-      (m) => m.isReady,
-    );
+    final participatingMembers = state.members.where((m) => m.cameraIndex != null);
+    final areAllParticipatingReady = participatingMembers.every((m) => m.isReady);
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -351,61 +338,58 @@ class _RecordPageState extends ConsumerState<RecordPage> {
             constraints: BoxConstraints(minHeight: constraints.maxHeight),
             child: Center(
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 24,
-                  horizontal: 16,
-                ),
+                padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
                 child: MaxWidth(
                   maxWidth: 600,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     spacing: 24,
                     children: [
-                      Text(
-                        '${l10n.roomNumber}: ${state.roomId}',
-                        style: const TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                        decoration: BoxDecoration(
-                          color: state.role == RecordRole.master
-                              ? Colors.amber[100]
-                              : Colors.blue[100],
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Text(
-                          '${l10n.currentRole}: ${state.role == RecordRole.master ? l10n.roleMaster : l10n.roleSlave}',
-                          style: TextStyle(
-                            color: state.role == RecordRole.master
-                                ? Colors.amber[900]
-                                : Colors.blue[900],
-                            fontWeight: FontWeight.bold,
+                      Column(
+                        key: GuideKeys.recordRoomInfoKey,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            '${l10n.roomNumber}: ${state.roomId}',
+                            style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
                           ),
-                        ),
+                          const SizedBox(height: 24),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            decoration: BoxDecoration(
+                              color: state.role == RecordRole.master
+                                  ? Colors.amber[100]
+                                  : Colors.blue[100],
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Text(
+                              '${l10n.currentRole}: ${state.role == RecordRole.master ? l10n.roleMaster : l10n.roleSlave}',
+                              style: TextStyle(
+                                color: state.role == RecordRole.master
+                                    ? Colors.amber[900]
+                                    : Colors.blue[900],
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       if (state.role == RecordRole.master &&
                           state.status != RecordStatus.recording &&
                           state.status != RecordStatus.uploading) ...[
-                        _buildConfigSection(state, controller),
+                        KeyedSubtree(
+                          key: GuideKeys.recordConfigKey,
+                          child: _buildConfigSection(state, controller),
+                        ),
                         Container(
+                          key: GuideKeys.recordLocalRecordKey,
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                              width: 3,
-                              color: Theme.of(context).primaryColor,
-                            ),
+                            border: Border.all(width: 3, color: Theme.of(context).primaryColor),
                           ),
                           child: Theme(
-                            data: Theme.of(
-                              context,
-                            ).copyWith(dividerColor: Colors.transparent),
+                            data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
                             child: ExpansionTile(
                               controller: _expansionController,
                               maintainState: true,
@@ -438,15 +422,9 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                               ),
                               children: [
                                 Padding(
-                                  padding: const EdgeInsets.fromLTRB(
-                                    16,
-                                    0,
-                                    16,
-                                    16,
-                                  ),
+                                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
                                   child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       const Divider(),
                                       const SizedBox(height: 8),
@@ -462,25 +440,17 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                                         scrollDirection: Axis.horizontal,
                                         child: Row(
                                           spacing: 8,
-                                          children: List.generate(
-                                            state.expectedCameraCount,
-                                            (i) {
-                                              return ChoiceChip(
-                                                label: Text('${l10n.camera} ${i + 1}'),
-                                                selected:
-                                                    state.myCameraIndex == i,
-                                                onSelected: (selected) {
-                                                  if (selected) {
-                                                    controller
-                                                        .toggleMasterRecording(
-                                                          true,
-                                                          i,
-                                                        );
-                                                  }
-                                                },
-                                              );
-                                            },
-                                          ),
+                                          children: List.generate(state.expectedCameraCount, (i) {
+                                            return ChoiceChip(
+                                              label: Text('${l10n.camera} ${i + 1}'),
+                                              selected: state.myCameraIndex == i,
+                                              onSelected: (selected) {
+                                                if (selected) {
+                                                  controller.toggleMasterRecording(true, i);
+                                                }
+                                              },
+                                            );
+                                          }),
                                         ),
                                       ),
                                     ],
@@ -494,47 +464,51 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                       if (state.role == RecordRole.slave &&
                           state.status != RecordStatus.recording &&
                           state.status != RecordStatus.uploading) ...[
-                        Text(
-                          l10n.changeCameraPosition,
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        DropdownButtonFormField<int>(
-                          value:
-                              (state.myCameraIndex != null &&
-                                  state.myCameraIndex! <
-                                      (state.expectedCameraCount > 0
-                                          ? state.expectedCameraCount
-                                          : 5))
-                              ? state.myCameraIndex
-                              : null,
-                          decoration: const InputDecoration(
-                            border: OutlineInputBorder(),
-                            prefixIcon: Icon(Icons.camera_alt),
-                          ),
-                          items: List.generate(
-                            state.expectedCameraCount > 0
-                                ? state.expectedCameraCount
-                                : 5,
-                            (i) => DropdownMenuItem(
-                              value: i,
-                              child: Text('${l10n.camera} ${i + 1}'),
+                        Column(
+                          key: GuideKeys.recordSlaveCameraPosKey,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              l10n.changeCameraPosition,
+                              style: const TextStyle(fontWeight: FontWeight.bold),
                             ),
-                          ).toList(),
-                          onChanged: (v) {
-                            if (v != null) {
-                              controller.joinRoom(state.roomId!, v);
-                            }
-                          },
+                            const SizedBox(height: 8),
+                            DropdownButtonFormField<int>(
+                              value:
+                                  (state.myCameraIndex != null &&
+                                      state.myCameraIndex! <
+                                          (state.expectedCameraCount > 0
+                                              ? state.expectedCameraCount
+                                              : 5))
+                                  ? state.myCameraIndex
+                                  : null,
+                              decoration: const InputDecoration(
+                                border: OutlineInputBorder(),
+                                prefixIcon: Icon(Icons.camera_alt),
+                              ),
+                              items: List.generate(
+                                state.expectedCameraCount > 0 ? state.expectedCameraCount : 5,
+                                (i) => DropdownMenuItem(
+                                  value: i,
+                                  child: Text('${l10n.camera} ${i + 1}'),
+                                ),
+                              ).toList(),
+                              onChanged: (v) {
+                                if (v != null) {
+                                  controller.joinRoom(state.roomId!, v);
+                                }
+                              },
+                            ),
+                          ],
                         ),
                       ],
                       Text(
                         l10n.connectedDevices,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       RoundedBoxWidget(
+                        key: GuideKeys.recordDevicesKey,
                         child: state.members.isEmpty
                             ? Padding(
                                 padding: const EdgeInsets.all(32),
@@ -544,14 +518,11 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
                                 itemCount: state.members.length,
-                                separatorBuilder: (context, index) =>
-                                    const Divider(),
+                                separatorBuilder: (context, index) => const Divider(),
                                 itemBuilder: (context, index) {
                                   final member = state.members[index];
                                   return ListTile(
-                                    leading: CircleAvatar(
-                                      child: Text('${index + 1}'),
-                                    ),
+                                    leading: CircleAvatar(child: Text('${index + 1}')),
                                     title: Row(
                                       children: [
                                         Text('ID: ${member.id}'),
@@ -564,8 +535,7 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                                             ),
                                             decoration: BoxDecoration(
                                               color: Colors.amber[100],
-                                              borderRadius:
-                                                  BorderRadius.circular(4),
+                                              borderRadius: BorderRadius.circular(4),
                                             ),
                                             child: Text(
                                               l10n.roomHost,
@@ -585,12 +555,8 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                                           : l10n.cameraNotAssigned,
                                     ),
                                     trailing: Icon(
-                                      member.isReady
-                                          ? Icons.check_circle
-                                          : Icons.error,
-                                      color: member.isReady
-                                          ? Colors.green
-                                          : Colors.red,
+                                      member.isReady ? Icons.check_circle : Icons.error,
+                                      color: member.isReady ? Colors.green : Colors.red,
                                     ),
                                   );
                                 },
@@ -617,10 +583,7 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.black,
                               foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 64,
-                                vertical: 16,
-                              ),
+                              padding: const EdgeInsets.symmetric(horizontal: 64, vertical: 16),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30),
                               ),
@@ -635,10 +598,7 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const SpinKitDoubleBounce(
-                                color: Color(0xFF79A9EA),
-                                size: 20,
-                              ),
+                              const SpinKitDoubleBounce(color: Color(0xFF79A9EA), size: 20),
                               const SizedBox(width: 8),
                               Text(
                                 l10n.autoUploading,
@@ -655,10 +615,7 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.grey[400],
                               foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 64,
-                                vertical: 16,
-                              ),
+                              padding: const EdgeInsets.symmetric(horizontal: 64, vertical: 16),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30),
                               ),
@@ -676,22 +633,17 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                                   ),
                                 ),
                                 const SizedBox(width: 12),
-                                Text(
-                                  l10n.autoUploading,
-                                  style: const TextStyle(fontSize: 20),
-                                ),
+                                Text(l10n.autoUploading, style: const TextStyle(fontSize: 20)),
                               ],
                             ),
                           ),
                         ] else ...[
                           ElevatedButton(
+                            key: GuideKeys.recordButtonKey,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.red,
                               foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 64,
-                                vertical: 16,
-                              ),
+                              padding: const EdgeInsets.symmetric(horizontal: 64, vertical: 16),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30),
                               ),
@@ -702,9 +654,7 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                                   context: context,
                                   title: const Text(
                                     'Error',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                    style: TextStyle(fontWeight: FontWeight.bold),
                                   ),
                                   description: Text(l10n.selectRunnerRequired),
                                   type: ToastificationType.error,
@@ -719,9 +669,7 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                                   context: context,
                                   title: const Text(
                                     'Error',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                    style: TextStyle(fontWeight: FontWeight.bold),
                                   ),
                                   description: Text(
                                     '${l10n.cameraNotAssigned} (${connectedCameraIndexes.length}/${state.expectedCameraCount})',
@@ -739,9 +687,7 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                                   context: context,
                                   title: const Text(
                                     'Warning',
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                    style: TextStyle(fontWeight: FontWeight.bold),
                                   ),
                                   description: Text(l10n.orientationLandscapeRequired),
                                   alignment: Alignment.bottomCenter,
@@ -760,13 +706,18 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                           ),
                         ],
                       ],
-                      if (state.role == RecordRole.slave ||
-                          state.isRecordingEnabled) ...[
-                        const RecordCameraView(),
+                      if (state.role == RecordRole.slave || state.isRecordingEnabled) ...[
+                        KeyedSubtree(
+                          key: GuideKeys.recordCameraKey,
+                          child: isTourDemo
+                              ? const RecordTourCameraPlaceholderView()
+                              : const RecordCameraView(),
+                        ),
                       ],
                       if (state.role == RecordRole.slave) ...[
                         const SizedBox(height: 16),
                         ElevatedButton.icon(
+                          key: GuideKeys.recordRequestControlKey,
                           icon: state.isWaitingForControlApproval
                               ? const SizedBox(
                                   width: 14,
@@ -776,17 +727,12 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                                     color: Colors.black54,
                                   ),
                                 )
-                              : const Icon(
-                                  Icons.swap_horizontal_circle_outlined,
-                                  size: 16,
-                                ),
+                              : const Icon(Icons.swap_horizontal_circle_outlined, size: 16),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Theme.of(context).primaryColor,
                             foregroundColor: Colors.black,
                             minimumSize: const Size(200, 40),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20),
-                            ),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                           ),
                           onPressed: state.isWaitingForControlApproval
                               ? null
@@ -795,13 +741,14 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                             state.isWaitingForControlApproval
                                 ? l10n.waitingForControlApproval
                                 : (state.members.any((m) => m.isMaster)
-                                    ? l10n.requestControl
-                                    : l10n.takeControl),
+                                      ? l10n.requestControl
+                                      : l10n.takeControl),
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),
                       ],
                       TextButton.icon(
+                        key: GuideKeys.recordLeaveRoomKey,
                         icon: const Icon(Icons.exit_to_app),
                         onPressed: () => controller.leaveRoom(),
                         label: Text(l10n.leaveRoom),
@@ -891,92 +838,70 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                     value: runners,
                     loading: Shimmer.fromColors(
                       baseColor: Theme.of(context).primaryColorDark,
-                      highlightColor: Theme.of(
-                        context,
-                      ).primaryColor.withValues(alpha: 0.3),
+                      highlightColor: Theme.of(context).primaryColor.withValues(alpha: 0.3),
                       child: Container(
                         height: 40,
-                        decoration: const BoxDecoration(
-                          border: Border(bottom: BorderSide()),
-                        ),
+                        decoration: const BoxDecoration(border: Border(bottom: BorderSide())),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
                               l10n.selectRunner,
-                              style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                             ),
                             const Icon(Icons.arrow_forward_ios_outlined, size: 12),
                           ],
                         ),
                       ),
                     ),
-                    data: (List<RunnerInfo> items) =>
-                        DropdownButtonHideUnderline(
-                          child: DropdownButton2<String>(
-                            hint: Row(
-                              children: [
-                                Text(
-                                  l10n.selectRunner,
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                    data: (List<RunnerInfo> items) => DropdownButtonHideUnderline(
+                      child: DropdownButton2<String>(
+                        hint: Row(
+                          children: [
+                            Text(
+                              l10n.selectRunner,
+                              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                        items: items
+                            .map(
+                              (RunnerInfo item) => DropdownMenuItem<String>(
+                                value: item.id,
+                                child: Text(
+                                  item.name,
+                                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                                   overflow: TextOverflow.ellipsis,
                                 ),
-                              ],
-                            ),
-                            items: items
-                                .map(
-                                  (RunnerInfo item) => DropdownMenuItem<String>(
-                                    value: item.id,
-                                    child: Text(
-                                      item.name,
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                )
-                                .toList(),
-                            value: state.runnerId,
-                            onChanged: (v) => controller.setRunner(v),
-                            buttonStyleData: ButtonStyleData(
-                              overlayColor: WidgetStateProperty.all(
-                                Colors.transparent,
                               ),
-                              decoration: BoxDecoration(
-                                border: Border(
-                                  bottom: BorderSide(
-                                    color: Theme.of(context).primaryColor,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            iconStyleData: const IconStyleData(
-                              icon: Icon(Icons.arrow_forward_ios_outlined),
-                              iconSize: 12,
-                            ),
-                            dropdownStyleData: DropdownStyleData(
-                              maxHeight: 200,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              scrollbarTheme: const ScrollbarThemeData(
-                                radius: Radius.circular(40),
-                              ),
-                            ),
-                            menuItemStyleData: const MenuItemStyleData(
-                              height: 40,
-                              padding: EdgeInsets.only(left: 12, right: 12),
+                            )
+                            .toList(),
+                        value: state.runnerId,
+                        onChanged: (v) => controller.setRunner(v),
+                        buttonStyleData: ButtonStyleData(
+                          overlayColor: WidgetStateProperty.all(Colors.transparent),
+                          decoration: BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(color: Theme.of(context).primaryColor),
                             ),
                           ),
                         ),
+                        iconStyleData: const IconStyleData(
+                          icon: Icon(Icons.arrow_forward_ios_outlined),
+                          iconSize: 12,
+                        ),
+                        dropdownStyleData: DropdownStyleData(
+                          maxHeight: 200,
+                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+                          scrollbarTheme: const ScrollbarThemeData(radius: Radius.circular(40)),
+                        ),
+                        menuItemStyleData: const MenuItemStyleData(
+                          height: 40,
+                          padding: EdgeInsets.only(left: 12, right: 12),
+                        ),
+                      ),
+                    ),
                   ),
                 )
               else
@@ -987,26 +912,17 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                     children: [
                       Expanded(
                         child: TextField(
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                           decoration: InputDecoration(
                             isDense: true,
                             hintText: l10n.enterRunnerName,
                             enabledBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Theme.of(context).primaryColor,
-                              ),
+                              borderSide: BorderSide(color: Theme.of(context).primaryColor),
                             ),
                             focusedBorder: UnderlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Theme.of(context).primaryColor,
-                              ),
+                              borderSide: BorderSide(color: Theme.of(context).primaryColor),
                             ),
-                            contentPadding: const EdgeInsets.symmetric(
-                              vertical: 14,
-                            ),
+                            contentPadding: const EdgeInsets.symmetric(vertical: 14),
                           ),
                           onChanged: (v) => setState(() => _newRunnerName = v),
                         ),
@@ -1027,16 +943,9 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                         },
                         label: Text(
                           l10n.save,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                         ),
-                        icon: const Icon(
-                          Icons.add_circle_rounded,
-                          color: Colors.white,
-                          size: 24,
-                        ),
+                        icon: const Icon(Icons.add_circle_rounded, color: Colors.white, size: 24),
                       ),
                     ],
                   ),
@@ -1047,30 +956,21 @@ class _RecordPageState extends ConsumerState<RecordPage> {
             spacing: 16,
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 8,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                 decoration: BoxDecoration(
                   color: Theme.of(context).primaryColor,
                   borderRadius: BorderRadius.circular(25),
                 ),
                 child: Text(
                   l10n.fps,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
               DropdownButtonHideUnderline(
                 child: DropdownButton2<int>(
                   hint: Text(
                     l10n.fps,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                   ),
                   value: state.fps,
                   items: [30, 60]
@@ -1079,10 +979,7 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                           value: e,
                           child: Text(
                             e.toString(),
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                           ),
                         ),
                       )
@@ -1093,11 +990,7 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                     padding: const EdgeInsets.symmetric(vertical: 4),
                     overlayColor: WidgetStateProperty.all(Colors.transparent),
                     decoration: BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(
-                          color: Theme.of(context).primaryColor,
-                        ),
-                      ),
+                      border: Border(bottom: BorderSide(color: Theme.of(context).primaryColor)),
                     ),
                   ),
                   iconStyleData: const IconStyleData(
@@ -1106,9 +999,7 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                   ),
                   dropdownStyleData: DropdownStyleData(
                     maxHeight: 200,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
+                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
                   ),
                   menuItemStyleData: const MenuItemStyleData(
                     height: 40,
@@ -1122,40 +1013,27 @@ class _RecordPageState extends ConsumerState<RecordPage> {
             spacing: 16,
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 8,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
                 decoration: BoxDecoration(
                   color: Theme.of(context).primaryColor,
                   borderRadius: BorderRadius.circular(25),
                 ),
                 child: Text(
                   l10n.notes,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
               ),
               Expanded(
                 child: TextField(
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                   decoration: InputDecoration(
                     isDense: true,
                     hintText: l10n.notes,
                     enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Theme.of(context).primaryColor,
-                      ),
+                      borderSide: BorderSide(color: Theme.of(context).primaryColor),
                     ),
                     focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Theme.of(context).primaryColor,
-                      ),
+                      borderSide: BorderSide(color: Theme.of(context).primaryColor),
                     ),
                     contentPadding: const EdgeInsets.symmetric(vertical: 14),
                   ),

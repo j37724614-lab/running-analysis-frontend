@@ -47,8 +47,7 @@ class UploadSeperatelyController extends StateNotifier<UploadSeperatelyState> {
   final BackendInterface backend;
   final Ref ref;
 
-  UploadSeperatelyController(this.backend, this.ref)
-    : super(UploadSeperatelyState.initial());
+  UploadSeperatelyController(this.backend, this.ref) : super(UploadSeperatelyState.initial());
 
   Future<void> uploadVideo(int index, UploadVideoFile file) async {
     state = state.copyWith(isUploading: true, error: null);
@@ -61,12 +60,8 @@ class UploadSeperatelyController extends StateNotifier<UploadSeperatelyState> {
         final separator = thumbnailUrl.contains('?') ? '&' : '?';
         thumbnailUrl = '$thumbnailUrl${separator}token=$token';
       }
-      
-      state = state.copyWith(
-        thumbnail: thumbnailUrl,
-        tempVideoId: tempVideoId,
-        isUploading: false,
-      );
+
+      state = state.copyWith(thumbnail: thumbnailUrl, tempVideoId: tempVideoId, isUploading: false);
     } catch (e) {
       state = state.copyWith(isUploading: false, error: e.toString());
     }
@@ -86,10 +81,7 @@ class UploadSeperatelyController extends StateNotifier<UploadSeperatelyState> {
 }
 
 final uploadSeperatelyControllerProvider =
-    StateNotifierProvider.autoDispose<
-      UploadSeperatelyController,
-      UploadSeperatelyState
-    >((ref) {
+    StateNotifierProvider.autoDispose<UploadSeperatelyController, UploadSeperatelyState>((ref) {
       final backend = ref.watch(backendProvider);
       return UploadSeperatelyController(backend, ref);
     });

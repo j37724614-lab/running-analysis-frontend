@@ -17,8 +17,7 @@ class RecordController extends StateNotifier<RecordState> {
 
   String get _wsUrl {
     final baseUrl = API.baseUrl;
-    final url =
-        '${baseUrl.replaceFirst('https://', 'wss://').replaceFirst('http://', 'ws://')}/ws';
+    final url = '${baseUrl.replaceFirst('https://', 'wss://').replaceFirst('http://', 'ws://')}/ws';
 
     return url;
   }
@@ -40,19 +39,16 @@ class RecordController extends StateNotifier<RecordState> {
       case RecordMessageType.roomStatus:
         final roomId = msg.data['roomId'];
         final membersJson = msg.data['members'] as List;
-        final members = membersJson
-            .map((e) => RecordMember.fromJson(e))
-            .toList();
-        final newStatus = (state.status == RecordStatus.idle ||
-                state.status == RecordStatus.connecting)
+        final members = membersJson.map((e) => RecordMember.fromJson(e)).toList();
+        final newStatus =
+            (state.status == RecordStatus.idle || state.status == RecordStatus.connecting)
             ? RecordStatus.ready
             : state.status;
         state = state.copyWith(
           status: newStatus,
           roomId: roomId,
           members: members,
-          expectedCameraCount:
-              msg.data['expectedCameraCount'] ?? state.expectedCameraCount,
+          expectedCameraCount: msg.data['expectedCameraCount'] ?? state.expectedCameraCount,
         );
         break;
       case RecordMessageType.startRecording:
@@ -79,21 +75,13 @@ class RecordController extends StateNotifier<RecordState> {
         );
         break;
       case RecordMessageType.controlRequest:
-        state = state.copyWith(
-          pendingControlRequestFrom: msg.data['requesterId'],
-        );
+        state = state.copyWith(pendingControlRequestFrom: msg.data['requesterId']);
         break;
       case RecordMessageType.controlGranted:
-        state = state.copyWith(
-          role: RecordRole.master,
-          isWaitingForControlApproval: false,
-        );
+        state = state.copyWith(role: RecordRole.master, isWaitingForControlApproval: false);
         break;
       case RecordMessageType.controlRevoked:
-        state = state.copyWith(
-          role: RecordRole.slave,
-          isRecordingEnabled: false,
-        );
+        state = state.copyWith(role: RecordRole.slave, isRecordingEnabled: false);
         break;
       case RecordMessageType.controlRejected:
         state = state.copyWith(
@@ -102,10 +90,7 @@ class RecordController extends StateNotifier<RecordState> {
         );
         break;
       case RecordMessageType.error:
-        state = state.copyWith(
-          status: RecordStatus.idle,
-          error: msg.data['message'],
-        );
+        state = state.copyWith(status: RecordStatus.idle, error: msg.data['message']);
         break;
       default:
         break;
@@ -139,20 +124,13 @@ class RecordController extends StateNotifier<RecordState> {
   }
 
   void toggleMasterRecording(bool enabled, [int? index]) {
-    state = state.copyWith(
-      isRecordingEnabled: enabled,
-      myCameraIndex: enabled ? index : null,
-    );
+    state = state.copyWith(isRecordingEnabled: enabled, myCameraIndex: enabled ? index : null);
 
     if (state.status == RecordStatus.ready) {
       // 1. 回報加入/離開為相機身分
       final msg = RecordMessage(
         type: RecordMessageType.joinRoom,
-        data: {
-          'roomId': state.roomId,
-          'cameraIndex': enabled ? index : null,
-          'isMaster': true,
-        },
+        data: {'roomId': state.roomId, 'cameraIndex': enabled ? index : null, 'isMaster': true},
       );
       _channel?.sink.add(jsonEncode(msg.toJson()));
 
@@ -165,10 +143,7 @@ class RecordController extends StateNotifier<RecordState> {
 
   /// Sets the anchor calibration result and re-evaluates ready status.
   void setAnchor(AnchorResult? anchor) {
-    state = state.copyWith(
-      anchorResult: anchor,
-      clearAnchor: anchor == null,
-    );
+    state = state.copyWith(anchorResult: anchor, clearAnchor: anchor == null);
     // Re-send ready status if we now have (or lost) the anchor
     if (state.myCameraIndex != null) {
       updateReadyStatus(state.isPhysicallyReady && state.anchorIsSet);
@@ -250,11 +225,7 @@ class RecordController extends StateNotifier<RecordState> {
     _channel?.sink.add(jsonEncode(msg.toJson()));
   }
 
-  void notifyUploadComplete(
-    String runSessionId, {
-    String? runnerId,
-    bool isAllUploaded = false,
-  }) {
+  void notifyUploadComplete(String runSessionId, {String? runnerId, bool isAllUploaded = false}) {
     final msg = RecordMessage(
       type: RecordMessageType.uploadComplete,
       data: {
@@ -268,28 +239,19 @@ class RecordController extends StateNotifier<RecordState> {
 
   void updateReadyStatus(bool isReady) {
     if (state.status != RecordStatus.ready) return;
-    final msg = RecordMessage(
-      type: RecordMessageType.updateReady,
-      data: {'isReady': isReady},
-    );
+    final msg = RecordMessage(type: RecordMessageType.updateReady, data: {'isReady': isReady});
     _channel?.sink.add(jsonEncode(msg.toJson()));
   }
 
   void sendCameraPreview(String base64Image) {
     if (state.role != RecordRole.slave) return;
-    final msg = RecordMessage(
-      type: RecordMessageType.cameraPreview,
-      data: {'image': base64Image},
-    );
+    final msg = RecordMessage(type: RecordMessageType.cameraPreview, data: {'image': base64Image});
     _channel?.sink.add(jsonEncode(msg.toJson()));
   }
 
   void requestControl() {
     state = state.copyWith(isWaitingForControlApproval: true);
-    final msg = RecordMessage(
-      type: RecordMessageType.requestControl,
-      data: {},
-    );
+    final msg = RecordMessage(type: RecordMessageType.requestControl, data: {});
     _channel?.sink.add(jsonEncode(msg.toJson()));
   }
 
@@ -314,7 +276,24 @@ class RecordController extends StateNotifier<RecordState> {
   }
 }
 
-final recordControllerProvider =
-    StateNotifierProvider.autoDispose<RecordController, RecordState>((ref) {
-      return RecordController(ref);
-    });
+final recordControllerProvider = StateNotifierProvider.autoDispose<RecordController, RecordState>((
+  ref,
+) {
+  return RecordController(ref);
+});
+
+final recordTourDemoInRoomProvider = StateProvider<bool>((ref) => false);
+final recordTourDemoRoleProvider = StateProvider<RecordRole>((ref) => RecordRole.master);
+
+final recordTourAnchorFullscreenOpenProvider = StateProvider<bool>((ref) => false);
+
+enum RecordTourAnchorStage {
+  normalFullscreen, // 全螢幕相機預覽（尚未進入錨點設定）
+  anchorMode, // 6 點跑道錨點校正畫布模式
+  distanceDialog, // 輸入跑道實際物理長度對話框
+  calibratedFullscreen, // 校正完成後的全螢幕預覽（無錨點殘留，左上角綠燈就緒）
+}
+
+final recordTourAnchorStageProvider = StateProvider<RecordTourAnchorStage>(
+  (ref) => RecordTourAnchorStage.normalFullscreen,
+);

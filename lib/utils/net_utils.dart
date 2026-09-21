@@ -22,8 +22,7 @@ class NetUtils {
     _dio.options.headers["Access-Control-Allow-Credentials"] = true;
     _dio.options.headers["Access-Control-Allow-Headers"] =
         "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale";
-    _dio.options.headers["Access-Control-Allow-Methods"] =
-        "GET, HEAD, POST, PATCH, OPTIONS";
+    _dio.options.headers["Access-Control-Allow-Methods"] = "GET, HEAD, POST, PATCH, OPTIONS";
   }
 
   NetUtils._internal() {

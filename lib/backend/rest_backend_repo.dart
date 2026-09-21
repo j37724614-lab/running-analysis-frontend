@@ -92,16 +92,12 @@ class RestBackendRepo implements BackendInterface {
   }
 
   @override
-  Future<List<UnanalyzedRunSessionInfo>> getRunnerUnanalyzedHistory(
-    String runnerId,
-  ) async {
+  Future<List<UnanalyzedRunSessionInfo>> getRunnerUnanalyzedHistory(String runnerId) async {
     final response = await NetUtils().reqeustData(
       API.getRunnerUnanalyzedHistory(runnerId)[1],
       method: API.getRunnerUnanalyzedHistory(runnerId)[0],
     );
-    return (response as List)
-        .map((e) => UnanalyzedRunSessionInfo.fromJson(e))
-        .toList();
+    return (response as List).map((e) => UnanalyzedRunSessionInfo.fromJson(e)).toList();
   }
 
   @override
@@ -166,16 +162,12 @@ class RestBackendRepo implements BackendInterface {
 
   @override
   Future<List<int>> getRunSessionPdf(String runSessionId) async {
-    return await NetUtils().requestBytes(
-      API.getRunSessionPdf(runSessionId)[1],
-    );
+    return await NetUtils().requestBytes(API.getRunSessionPdf(runSessionId)[1]);
   }
 
   @override
   Future<List<int>> getRunSessionCsv(String runSessionId) async {
-    return await NetUtils().requestBytes(
-      API.getRunSessionCsv(runSessionId)[1],
-    );
+    return await NetUtils().requestBytes(API.getRunSessionCsv(runSessionId)[1]);
   }
 
   @override

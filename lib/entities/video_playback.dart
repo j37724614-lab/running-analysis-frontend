@@ -11,12 +11,7 @@ class VideoPlayback {
     required this.isDragging,
   });
 
-  VideoPlayback copyWith({
-    int? position,
-    int? duration,
-    int? currentFrame,
-    bool? isDragging,
-  }) {
+  VideoPlayback copyWith({int? position, int? duration, int? currentFrame, bool? isDragging}) {
     return VideoPlayback(
       position: position ?? this.position,
       duration: duration ?? this.duration,

@@ -56,3 +56,7 @@ final runnerSourceProvider = StateProvider.autoDispose<RunnerSource>((ref) {
 final runnerNameInputProvider = StateProvider.autoDispose<String>((ref) {
   return '';
 });
+
+final uploadSeparatelyTypeProvider = StateProvider.autoDispose<SperatedType>((ref) {
+  return SperatedType.newOne;
+});

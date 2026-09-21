@@ -136,9 +136,7 @@ class FakeBackendRepo implements BackendInterface {
   }
 
   @override
-  Future<List<UnanalyzedRunSessionInfo>> getRunnerUnanalyzedHistory(
-    String runnerId,
-  ) {
+  Future<List<UnanalyzedRunSessionInfo>> getRunnerUnanalyzedHistory(String runnerId) {
     return Future.delayed(
       const Duration(seconds: 100),
       () => [

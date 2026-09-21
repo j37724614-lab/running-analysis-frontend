@@ -46,30 +46,18 @@ class API {
     "$baseUrl/temp_video/$tempVideoId/thumbnail",
   ];
 
-  static List uploadVideo(int index) => [
-    DioMethod.post,
-    "$baseUrl/temp_video/$index",
-  ];
+  static List uploadVideo(int index) => [DioMethod.post, "$baseUrl/temp_video/$index"];
 
   static List uploadAllInfo = [DioMethod.post, "$baseUrl/upload_all_info"];
 
-  static List uploadSeperatelyNew = [
-    DioMethod.post,
-    "$baseUrl/upload_seperately_new",
-  ];
+  static List uploadSeperatelyNew = [DioMethod.post, "$baseUrl/upload_seperately_new"];
 
-  static List uploadSeperatelySelect = [
-    DioMethod.post,
-    "$baseUrl/upload_seperately_select",
-  ];
+  static List uploadSeperatelySelect = [DioMethod.post, "$baseUrl/upload_seperately_select"];
 
   static List deleteRunSession(String runSessionId) => [
     DioMethod.delete,
     "$baseUrl/run_session/$runSessionId",
   ];
 
-  static List deleteRunner(String runnerId) => [
-    DioMethod.delete,
-    "$baseUrl/runner/$runnerId",
-  ];
+  static List deleteRunner(String runnerId) => [DioMethod.delete, "$baseUrl/runner/$runnerId"];
 }

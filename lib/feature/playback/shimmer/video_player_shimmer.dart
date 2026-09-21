@@ -18,9 +18,7 @@ class VideoPlayerShimmer extends StatelessWidget {
         children: [
           // 只有背景在做 Shimmer 閃爍
           Shimmer.fromColors(
-            baseColor: Theme.of(
-              context,
-            ).primaryColorDark.withValues(alpha: 0.3),
+            baseColor: Theme.of(context).primaryColorDark.withValues(alpha: 0.3),
             highlightColor: Colors.white,
             child: Container(
               decoration: BoxDecoration(
@@ -30,11 +28,7 @@ class VideoPlayerShimmer extends StatelessWidget {
             ),
           ),
           // Icon 放在 Shimmer 之上，不參與閃爍，這樣才看得清楚
-          Icon(
-            Icons.ondemand_video_rounded,
-            size: 64,
-            color: Colors.white.withValues(alpha: 0.5),
-          ),
+          Icon(Icons.ondemand_video_rounded, size: 64, color: Colors.white.withValues(alpha: 0.5)),
         ],
       ),
     );

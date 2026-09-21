@@ -74,7 +74,10 @@ final goRouterProvider = Provider<GoRouter>((ref) {
 
       if (!isLoggedIn) {
         // 未登入：非登入/註冊/隱私/支援頁，強制導向登入頁
-        if (!isLoggingIn && !isRegistering && state.uri.path != '/policy' && state.uri.path != '/support') {
+        if (!isLoggingIn &&
+            !isRegistering &&
+            state.uri.path != '/policy' &&
+            state.uri.path != '/support') {
           return '/login';
         }
       } else {
@@ -88,28 +91,23 @@ final goRouterProvider = Provider<GoRouter>((ref) {
     routes: [
       GoRoute(
         path: '/splash',
-        pageBuilder: (context, state) =>
-            _buildFadePage(state, const SplashPage()),
+        pageBuilder: (context, state) => _buildFadePage(state, const SplashPage()),
       ),
       GoRoute(
         path: '/login',
-        pageBuilder: (context, state) =>
-            _buildFadePage(state, const LoginPage()),
+        pageBuilder: (context, state) => _buildFadePage(state, const LoginPage()),
       ),
       GoRoute(
         path: '/register',
-        pageBuilder: (context, state) =>
-            _buildFadePage(state, const RegisterPage()),
+        pageBuilder: (context, state) => _buildFadePage(state, const RegisterPage()),
       ),
       GoRoute(
         path: '/policy',
-        pageBuilder: (context, state) =>
-            _buildFadePage(state, const PolicyPage()),
+        pageBuilder: (context, state) => _buildFadePage(state, const PolicyPage()),
       ),
       GoRoute(
         path: '/support',
-        pageBuilder: (context, state) =>
-            _buildFadePage(state, const SupportPage()),
+        pageBuilder: (context, state) => _buildFadePage(state, const SupportPage()),
       ),
       ShellRoute(
         builder: (context, state, child) => HomePage(child: child),
@@ -120,10 +118,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             pageBuilder: (context, state) {
               final runnerId = state.uri.queryParameters['runnerId'];
               final videoId = state.uri.queryParameters['videoId'];
-              return _buildFadePage(
-                state,
-                PlaybackPage(runnerId: runnerId, videoId: videoId),
-              );
+              return _buildFadePage(state, PlaybackPage(runnerId: runnerId, videoId: videoId));
             },
           ),
           GoRoute(

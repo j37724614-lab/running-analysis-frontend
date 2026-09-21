@@ -19,43 +19,49 @@ final runnerProvider = FutureProvider.autoDispose<List<RunnerInfo>>((ref) {
   return backend.getRunners();
 });
 
-final graphDataProvider = FutureProvider.autoDispose
-    .family<List<GraphData>, String>((ref, runSessionId) {
-      final backend = ref.watch(backendProvider);
-      return backend.getGraphData(runSessionId);
+final graphDataProvider = FutureProvider.autoDispose.family<List<GraphData>, String>((
+  ref,
+  runSessionId,
+) {
+  final backend = ref.watch(backendProvider);
+  return backend.getGraphData(runSessionId);
+});
+
+final videoInfoProvider = FutureProvider.autoDispose.family<RunSessionInfo, String>((
+  ref,
+  runSessionId,
+) async {
+  final backend = ref.watch(backendProvider);
+  final info = await backend.getRunSessionInfo(runSessionId);
+
+  // If status is processing, poll every 5 seconds
+  if (info.status == 'processing') {
+    final timer = Timer(const Duration(seconds: 5), () {
+      ref.invalidateSelf();
     });
+    ref.onDispose(timer.cancel);
+  }
 
-final videoInfoProvider = FutureProvider.autoDispose
-    .family<RunSessionInfo, String>((ref, runSessionId) async {
-      final backend = ref.watch(backendProvider);
-      final info = await backend.getRunSessionInfo(runSessionId);
+  return info;
+});
 
-      // If status is processing, poll every 5 seconds
-      if (info.status == 'processing') {
-        final timer = Timer(const Duration(seconds: 5), () {
-          ref.invalidateSelf();
-        });
-        ref.onDispose(timer.cancel);
-      }
+final runnerHistoryProvider = FutureProvider.autoDispose.family<List<RunSessionInfo>, String>((
+  ref,
+  runnerId,
+) async {
+  final backend = ref.watch(backendProvider);
+  final history = await backend.getRunnerHistory(runnerId);
 
-      return info;
+  // If any video is processing, poll every 5 seconds
+  if (history.any((info) => info.status == 'processing')) {
+    final timer = Timer(const Duration(seconds: 5), () {
+      ref.invalidateSelf();
     });
+    ref.onDispose(timer.cancel);
+  }
 
-final runnerHistoryProvider = FutureProvider.autoDispose
-    .family<List<RunSessionInfo>, String>((ref, runnerId) async {
-      final backend = ref.watch(backendProvider);
-      final history = await backend.getRunnerHistory(runnerId);
-
-      // If any video is processing, poll every 5 seconds
-      if (history.any((info) => info.status == 'processing')) {
-        final timer = Timer(const Duration(seconds: 5), () {
-          ref.invalidateSelf();
-        });
-        ref.onDispose(timer.cancel);
-      }
-
-      return history;
-    });
+  return history;
+});
 
 final runnerUnanalyzedHistoryProvider = FutureProvider.autoDispose
     .family<List<UnanalyzedRunSessionInfo>, String>((ref, runnerId) {

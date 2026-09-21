@@ -51,10 +51,7 @@ class AuthNotifier extends Notifier<AuthState> {
       final response = await NetUtils().reqeustData<Map<String, dynamic>>(
         '${API.baseUrl}/auth/login',
         method: DioMethod.post,
-        postData: {
-          'username': username,
-          'password': password,
-        },
+        postData: {'username': username, 'password': password},
       );
 
       final token = response['access_token'] as String;
@@ -76,10 +73,7 @@ class AuthNotifier extends Notifier<AuthState> {
       await NetUtils().reqeustData<Map<String, dynamic>>(
         '${API.baseUrl}/auth/register',
         method: DioMethod.post,
-        postData: {
-          'username': username,
-          'password': password,
-        },
+        postData: {'username': username, 'password': password},
       );
       // 註冊成功後直接自動登入
       return await login(username, password);

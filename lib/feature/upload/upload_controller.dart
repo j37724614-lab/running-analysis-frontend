@@ -9,8 +9,7 @@ import 'package:frontend/utils/combine_date_and_time.dart';
 import 'package:frontend/feature/upload/widget/anchor_point_dialog.dart';
 
 class UploadController extends StateNotifier<AsyncValue<void>> {
-  UploadController({required this.backend})
-    : super(const AsyncValue.data(null));
+  UploadController({required this.backend}) : super(const AsyncValue.data(null));
   final BackendInterface backend;
 
   Future<UploadSeperatelyStatus?> uploadSeperatelyNew(
@@ -96,13 +95,11 @@ class UploadController extends StateNotifier<AsyncValue<void>> {
   }
 }
 
-final uploadControllerProvider =
-    StateNotifierProvider<UploadController, AsyncValue<void>>((ref) {
-      return UploadController(backend: ref.watch(backendProvider));
-    });
+final uploadControllerProvider = StateNotifierProvider<UploadController, AsyncValue<void>>((ref) {
+  return UploadController(backend: ref.watch(backendProvider));
+});
 
-class UploadRunnerListNotifier
-    extends StateNotifier<AsyncValue<List<RunnerInfo>>> {
+class UploadRunnerListNotifier extends StateNotifier<AsyncValue<List<RunnerInfo>>> {
   final BackendInterface backend;
 
   UploadRunnerListNotifier(this.backend) : super(const AsyncValue.loading()) {
@@ -125,7 +122,6 @@ class UploadRunnerListNotifier
 }
 
 final uploadRunnerListProvider =
-    StateNotifierProvider<
-      UploadRunnerListNotifier,
-      AsyncValue<List<RunnerInfo>>
-    >((ref) => UploadRunnerListNotifier(ref.watch(backendProvider)));
+    StateNotifierProvider<UploadRunnerListNotifier, AsyncValue<List<RunnerInfo>>>(
+      (ref) => UploadRunnerListNotifier(ref.watch(backendProvider)),
+    );

@@ -10,16 +10,8 @@ class GraphListPlaceholder extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final titles = [
-      l10n.metricDistance,
-      l10n.metricVelocity,
-      l10n.metricAcceleration,
-    ];
-    final yLabels = [
-      l10n.metricDistanceUnit,
-      l10n.metricVelocityUnit,
-      l10n.metricAccelerationUnit,
-    ];
+    final titles = [l10n.metricDistance, l10n.metricVelocity, l10n.metricAcceleration];
+    final yLabels = [l10n.metricDistanceUnit, l10n.metricVelocityUnit, l10n.metricAccelerationUnit];
 
     return Container(
       padding: const EdgeInsets.all(12),
@@ -33,10 +25,7 @@ class GraphListPlaceholder extends StatelessWidget {
         itemCount: itemCount,
         itemBuilder: (context, index) => Container(
           padding: const EdgeInsets.only(top: 8, bottom: 4, left: 12, right: 24),
-          child: OneGraphPlaceholderItem(
-            title: titles[index],
-            yLabel: yLabels[index],
-          ),
+          child: OneGraphPlaceholderItem(title: titles[index], yLabel: yLabels[index]),
         ),
       ),
     );

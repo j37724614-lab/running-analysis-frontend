@@ -48,9 +48,7 @@ class MyApp extends ConsumerWidget {
           //
           // This works for code too, not just values: Most code changes can be
           // tested with just a hot reload.
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromARGB(255, 165, 195, 237),
-          ),
+          colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 165, 195, 237)),
           primaryColor: const Color.fromARGB(255, 165, 195, 237),
           primaryColorDark: const Color.fromARGB(255, 80, 143, 232),
           highlightColor: Colors.transparent,
@@ -66,9 +64,7 @@ class MyApp extends ConsumerWidget {
           outlinedButtonTheme: OutlinedButtonThemeData(
             style: OutlinedButton.styleFrom(overlayColor: Colors.transparent),
           ),
-          inputDecorationTheme: InputDecorationTheme(
-            hoverColor: Colors.transparent,
-          ),
+          inputDecorationTheme: InputDecorationTheme(hoverColor: Colors.transparent),
         ),
         routerConfig: router,
       ),
