@@ -72,17 +72,40 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         return null;
       }
 
+      // 若在 Web 端透過頂層 URL Query 帶入 roomId（如 /running_analysis/?roomId=XXXX 或 /?roomId=XXXX）
+      if (kIsWeb && state.uri.path != '/record' && !isLoggingIn && !isRegistering) {
+        final baseRoomId = Uri.base.queryParameters['roomId'];
+        if (baseRoomId != null && baseRoomId.isNotEmpty) {
+          final cameraIndex =
+              Uri.base.queryParameters['cameraIndex'] ?? Uri.base.queryParameters['camera'];
+          final cameraQuery = cameraIndex != null ? '&cameraIndex=$cameraIndex' : '';
+          final target = '/record?roomId=$baseRoomId$cameraQuery';
+          if (!isLoggedIn) {
+            return '/login?redirect=${Uri.encodeComponent(target)}';
+          }
+          return target;
+        }
+      }
+
       if (!isLoggedIn) {
         // 未登入：非登入/註冊/隱私/支援頁，強制導向登入頁
         if (!isLoggingIn &&
             !isRegistering &&
             state.uri.path != '/policy' &&
             state.uri.path != '/support') {
+          final target = state.uri.toString();
+          if (target.isNotEmpty && target != '/' && target != '/playback') {
+            return '/login?redirect=${Uri.encodeComponent(target)}';
+          }
           return '/login';
         }
       } else {
-        // 已登入：若造訪登入或註冊頁，重導向至主畫面
+        // 已登入：若造訪登入或註冊頁，重導向至 redirect 目標或主畫面
         if (isLoggingIn || isRegistering) {
+          final redirect = state.uri.queryParameters['redirect'];
+          if (redirect != null && redirect.isNotEmpty) {
+            return Uri.decodeComponent(redirect);
+          }
           return '/playback';
         }
       }
@@ -132,7 +155,25 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             path: '/record',
             name: AppRoute.record.name,
             pageBuilder: (context, state) {
-              return _buildFadePage(state, const RecordPage());
+              final roomId =
+                  state.uri.queryParameters['roomId'] ??
+                  (kIsWeb ? Uri.base.queryParameters['roomId'] : null);
+              final cameraParam =
+                  state.uri.queryParameters['cameraIndex'] ??
+                  state.uri.queryParameters['camera'] ??
+                  (kIsWeb
+                      ? Uri.base.queryParameters['cameraIndex'] ??
+                            Uri.base.queryParameters['camera']
+                      : null);
+              final cameraIndex = cameraParam != null ? int.tryParse(cameraParam) : null;
+              return _buildFadePage(
+                state,
+                RecordPage(
+                  key: ValueKey('record_${roomId ?? "none"}_${cameraIndex ?? "none"}'),
+                  initialRoomId: roomId,
+                  initialCameraIndex: cameraIndex,
+                ),
+              );
             },
           ),
         ],

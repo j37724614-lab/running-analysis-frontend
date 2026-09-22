@@ -220,7 +220,12 @@ class _RecordTourAnchorFullscreenDialogState
     final l10n = context.l10n;
     final labels = _getAnchorLabels(context);
     final stage = ref.watch(recordTourAnchorStageProvider);
+    final inRealRoom =
+        ref.watch(recordControllerProvider).status != RecordStatus.idle &&
+        ref.watch(recordControllerProvider).status != RecordStatus.connecting;
+    final realRole = ref.watch(recordControllerProvider).role;
     final demoRole = ref.watch(recordTourDemoRoleProvider);
+    final isMaster = inRealRoom ? realRole == RecordRole.master : demoRole == RecordRole.master;
 
     final isAnchorMode =
         stage == RecordTourAnchorStage.anchorMode || stage == RecordTourAnchorStage.distanceDialog;
@@ -584,7 +589,7 @@ class _RecordTourAnchorFullscreenDialogState
                             ),
 
                             // 底部右側開始錄影按鈕 (僅主控端)
-                            if (demoRole == RecordRole.master)
+                            if (isMaster)
                               Positioned(
                                 bottom: 16,
                                 right: 16,

@@ -914,6 +914,13 @@ class AppLocalizationsZh extends AppLocalizations {
       '成功加入房間後，頂部顯示當前連線之「房間號碼」與「從機端」身分標籤，確認已正確連入主控端所建立之錄影房間。';
 
   @override
+  String get tourRecordShareTitle => '邀請相機加入（QR Code 與連結）';
+
+  @override
+  String get tourRecordShareDesc =>
+      '主控端可點擊「分享房間」產生專屬 QR Code 供其他手機掃描，或點擊「複製連結」發送加入房間網址，其他裝置開啟後將自動進入此房間進行同步錄影。';
+
+  @override
   String get tourRecordInquiryTitle => '請選擇欲導覽的錄影流程';
 
   @override
@@ -927,7 +934,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get tourRecordInquiryBothDesc => '完整檢視主控端與從機端雙方的所有操作步驟與協作流程。';
 
   @override
-  String get tourRecordInquiryBothSteps => '共 16 步驟';
+  String get tourRecordInquiryBothSteps => '共 17 步驟';
 
   @override
   String get tourRecordInquiryMasterTitle => '主控端流程 (Master)';
@@ -937,7 +944,7 @@ class AppLocalizationsZh extends AppLocalizations {
       '建立房間、全域參數配置、監控各機位狀態、跑道空間校正與一鍵同步錄影。';
 
   @override
-  String get tourRecordInquiryMasterSteps => '共 13 步驟';
+  String get tourRecordInquiryMasterSteps => '共 14 步驟';
 
   @override
   String get tourRecordInquirySlaveTitle => '從機端流程 (Slave)';
@@ -1051,4 +1058,35 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get uncompletedRecordsPlaceholder => '未分析歷史紀錄';
+
+  @override
+  String get shareRoom => '分享房間';
+
+  @override
+  String get copyLink => '複製連結';
+
+  @override
+  String get copyJoinLink => '複製加入連結';
+
+  @override
+  String get joinLinkCopied => '已複製房間加入連結！';
+
+  @override
+  String get showJoinQrCode => '顯示 QR Code';
+
+  @override
+  String get inviteDeviceTitle => '邀請相機裝置加入';
+
+  @override
+  String get inviteDeviceSubtitle => '使用手機相機掃描下方 QR Code，或透過分享連結直接加入此房間';
+
+  @override
+  String get roomJoinUrl => '加入連結';
+
+  @override
+  String get autoFilledRoomNumber => '已自動帶入房間號碼';
+
+  @override
+  String get deepLinkAppFallbackHint =>
+      '若裝置已安裝 App 將優先自動開啟 App，若未安裝則由瀏覽器開啟網頁版。';
 }

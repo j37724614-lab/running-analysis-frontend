@@ -92,7 +92,24 @@ class GuideTourService {
 
     if (inRealRoom) {
       final steps = GuideStepsFactory.getRecordSteps(context, ref);
-      await startTour(context: context, tourKey: tourRecord, steps: steps, force: true);
+      await startTour(
+        context: context,
+        tourKey: tourRecord,
+        steps: steps,
+        onFinish: () {
+          ref.read(recordTourAnchorFullscreenOpenProvider.notifier).state = false;
+          ref.read(recordTourAnchorStageProvider.notifier).state =
+              RecordTourAnchorStage.normalFullscreen;
+          ref.read(recordTourDemoInRoomProvider.notifier).state = false;
+        },
+        onSkip: () {
+          ref.read(recordTourAnchorFullscreenOpenProvider.notifier).state = false;
+          ref.read(recordTourAnchorStageProvider.notifier).state =
+              RecordTourAnchorStage.normalFullscreen;
+          ref.read(recordTourDemoInRoomProvider.notifier).state = false;
+        },
+        force: true,
+      );
       return;
     }
 

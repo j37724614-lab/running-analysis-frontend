@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:frontend/feature/record/record_enums.dart';
@@ -16,10 +17,21 @@ class RecordController extends StateNotifier<RecordState> {
   RecordController(this._ref) : super(RecordState());
 
   String get _wsUrl {
+    if (kIsWeb) {
+      final base = Uri.base;
+      final isSecure = base.scheme == 'https';
+      final wsScheme = isSecure ? 'wss' : 'ws';
+      if (base.host == 'localhost' || base.host == '127.0.0.1') {
+        return '$wsScheme://${base.host}:19130/running_analysis/api/ws';
+      } else {
+        final portStr = (base.hasPort && base.port != 80 && base.port != 443)
+            ? ':${base.port}'
+            : '';
+        return '$wsScheme://${base.host}$portStr/running_analysis/api/ws';
+      }
+    }
     final baseUrl = API.baseUrl;
-    final url = '${baseUrl.replaceFirst('https://', 'wss://').replaceFirst('http://', 'ws://')}/ws';
-
-    return url;
+    return '${baseUrl.replaceFirst('https://', 'wss://').replaceFirst('http://', 'ws://')}/ws';
   }
 
   void _connect() {
@@ -29,6 +41,18 @@ class RecordController extends StateNotifier<RecordState> {
       _onError(e);
     });
     _channel!.stream.listen(_listen, onError: _onError, onDone: _onDone);
+  }
+
+  Future<void> _send(RecordMessage msg) async {
+    try {
+      if (_channel == null) {
+        _connect();
+      }
+      await _channel?.ready;
+      _channel?.sink.add(jsonEncode(msg.toJson()));
+    } catch (e) {
+      _onError(e);
+    }
   }
 
   void _listen(dynamic message) {
@@ -120,7 +144,7 @@ class RecordController extends StateNotifier<RecordState> {
       type: RecordMessageType.createRoom,
       data: {'expectedCameraCount': expectedCameraCount},
     );
-    _channel!.sink.add(jsonEncode(msg.toJson()));
+    _send(msg);
   }
 
   void toggleMasterRecording(bool enabled, [int? index]) {
@@ -132,7 +156,7 @@ class RecordController extends StateNotifier<RecordState> {
         type: RecordMessageType.joinRoom,
         data: {'roomId': state.roomId, 'cameraIndex': enabled ? index : null, 'isMaster': true},
       );
-      _channel?.sink.add(jsonEncode(msg.toJson()));
+      _send(msg);
 
       // 2. 如果是正在加入且目前設備已橫放，則立即主動補送 Ready 狀態
       if (enabled && state.isPhysicallyReady) {
@@ -176,7 +200,7 @@ class RecordController extends StateNotifier<RecordState> {
       type: RecordMessageType.joinRoom,
       data: {'roomId': roomId, 'cameraIndex': cameraIndex},
     );
-    _channel!.sink.add(jsonEncode(msg.toJson()));
+    _send(msg);
   }
 
   void setRunnerSource(RunnerSource source) {
@@ -216,13 +240,13 @@ class RecordController extends StateNotifier<RecordState> {
         'note': state.note,
       },
     );
-    _channel?.sink.add(jsonEncode(msg.toJson()));
+    _send(msg);
   }
 
   void stopRecording() {
     if (state.role != RecordRole.master) return;
     final msg = RecordMessage(type: RecordMessageType.stopRecording, data: {});
-    _channel?.sink.add(jsonEncode(msg.toJson()));
+    _send(msg);
   }
 
   void notifyUploadComplete(String runSessionId, {String? runnerId, bool isAllUploaded = false}) {
@@ -234,25 +258,25 @@ class RecordController extends StateNotifier<RecordState> {
         'isAllUploaded': isAllUploaded,
       },
     );
-    _channel?.sink.add(jsonEncode(msg.toJson()));
+    _send(msg);
   }
 
   void updateReadyStatus(bool isReady) {
     if (state.status != RecordStatus.ready) return;
     final msg = RecordMessage(type: RecordMessageType.updateReady, data: {'isReady': isReady});
-    _channel?.sink.add(jsonEncode(msg.toJson()));
+    _send(msg);
   }
 
   void sendCameraPreview(String base64Image) {
     if (state.role != RecordRole.slave) return;
     final msg = RecordMessage(type: RecordMessageType.cameraPreview, data: {'image': base64Image});
-    _channel?.sink.add(jsonEncode(msg.toJson()));
+    _send(msg);
   }
 
   void requestControl() {
     state = state.copyWith(isWaitingForControlApproval: true);
     final msg = RecordMessage(type: RecordMessageType.requestControl, data: {});
-    _channel?.sink.add(jsonEncode(msg.toJson()));
+    _send(msg);
   }
 
   void respondControlRequest(String requesterId, bool agree) {
@@ -261,7 +285,7 @@ class RecordController extends StateNotifier<RecordState> {
       type: RecordMessageType.respondControlRequest,
       data: {'requesterId': requesterId, 'agree': agree},
     );
-    _channel?.sink.add(jsonEncode(msg.toJson()));
+    _send(msg);
   }
 
   void leaveRoom() {

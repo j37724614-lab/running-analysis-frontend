@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:frontend/l10n/generated/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/utils/locale_provider.dart';
 import 'package:frontend/utils/router.dart';
-import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:toastification/toastification.dart';
 
 void main() {

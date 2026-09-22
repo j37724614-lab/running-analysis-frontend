@@ -1832,6 +1832,18 @@ abstract class AppLocalizations {
   /// **'成功加入房間後，頂部顯示當前連線之「房間號碼」與「從機端」身分標籤，確認已正確連入主控端所建立之錄影房間。'**
   String get tourRecordSlaveRoomInfoDesc;
 
+  /// No description provided for @tourRecordShareTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'邀請相機加入（QR Code 與連結）'**
+  String get tourRecordShareTitle;
+
+  /// No description provided for @tourRecordShareDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'主控端可點擊「分享房間」產生專屬 QR Code 供其他手機掃描，或點擊「複製連結」發送加入房間網址，其他裝置開啟後將自動進入此房間進行同步錄影。'**
+  String get tourRecordShareDesc;
+
   /// No description provided for @tourRecordInquiryTitle.
   ///
   /// In zh, this message translates to:
@@ -1859,7 +1871,7 @@ abstract class AppLocalizations {
   /// No description provided for @tourRecordInquiryBothSteps.
   ///
   /// In zh, this message translates to:
-  /// **'共 16 步驟'**
+  /// **'共 17 步驟'**
   String get tourRecordInquiryBothSteps;
 
   /// No description provided for @tourRecordInquiryMasterTitle.
@@ -1877,7 +1889,7 @@ abstract class AppLocalizations {
   /// No description provided for @tourRecordInquiryMasterSteps.
   ///
   /// In zh, this message translates to:
-  /// **'共 13 步驟'**
+  /// **'共 14 步驟'**
   String get tourRecordInquiryMasterSteps;
 
   /// No description provided for @tourRecordInquirySlaveTitle.
@@ -2083,6 +2095,66 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'未分析歷史紀錄'**
   String get uncompletedRecordsPlaceholder;
+
+  /// No description provided for @shareRoom.
+  ///
+  /// In zh, this message translates to:
+  /// **'分享房間'**
+  String get shareRoom;
+
+  /// No description provided for @copyLink.
+  ///
+  /// In zh, this message translates to:
+  /// **'複製連結'**
+  String get copyLink;
+
+  /// No description provided for @copyJoinLink.
+  ///
+  /// In zh, this message translates to:
+  /// **'複製加入連結'**
+  String get copyJoinLink;
+
+  /// No description provided for @joinLinkCopied.
+  ///
+  /// In zh, this message translates to:
+  /// **'已複製房間加入連結！'**
+  String get joinLinkCopied;
+
+  /// No description provided for @showJoinQrCode.
+  ///
+  /// In zh, this message translates to:
+  /// **'顯示 QR Code'**
+  String get showJoinQrCode;
+
+  /// No description provided for @inviteDeviceTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'邀請相機裝置加入'**
+  String get inviteDeviceTitle;
+
+  /// No description provided for @inviteDeviceSubtitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'使用手機相機掃描下方 QR Code，或透過分享連結直接加入此房間'**
+  String get inviteDeviceSubtitle;
+
+  /// No description provided for @roomJoinUrl.
+  ///
+  /// In zh, this message translates to:
+  /// **'加入連結'**
+  String get roomJoinUrl;
+
+  /// No description provided for @autoFilledRoomNumber.
+  ///
+  /// In zh, this message translates to:
+  /// **'已自動帶入房間號碼'**
+  String get autoFilledRoomNumber;
+
+  /// No description provided for @deepLinkAppFallbackHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'若裝置已安裝 App 將優先自動開啟 App，若未安裝則由瀏覽器開啟網頁版。'**
+  String get deepLinkAppFallbackHint;
 }
 
 class _AppLocalizationsDelegate

@@ -17,11 +17,16 @@ import 'package:frontend/utils/locale_provider.dart';
 import 'package:frontend/widget/async_value_widget.dart';
 import 'package:frontend/widget/rounded_box_widget.dart';
 import 'package:frontend/entities/runner_info.dart';
+import 'package:frontend/feature/record/widget/record_room_share_dialog.dart';
+import 'package:flutter/services.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:toastification/toastification.dart';
 
 class RecordPage extends ConsumerStatefulWidget {
-  const RecordPage({super.key});
+  final String? initialRoomId;
+  final int? initialCameraIndex;
+
+  const RecordPage({super.key, this.initialRoomId, this.initialCameraIndex});
 
   @override
   ConsumerState<RecordPage> createState() => _RecordPageState();
@@ -37,14 +42,50 @@ class _RecordPageState extends ConsumerState<RecordPage> {
   @override
   void initState() {
     super.initState();
+    if (widget.initialCameraIndex != null) {
+      _selectedCameraIndex = widget.initialCameraIndex!;
+    }
+    if (widget.initialRoomId != null && widget.initialRoomId!.isNotEmpty) {
+      _roomController.text = widget.initialRoomId!;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        final currentState = ref.read(recordControllerProvider);
+        if (currentState.status == RecordStatus.idle ||
+            currentState.roomId != widget.initialRoomId) {
+          final cameraIdx = widget.initialCameraIndex ?? _selectedCameraIndex;
+          ref.read(recordControllerProvider.notifier).joinRoom(widget.initialRoomId!, cameraIdx);
+        }
+      });
+    }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         Future.delayed(const Duration(milliseconds: 600), () {
           if (!mounted) return;
-          GuideTourService.startRecordTour(context: context, ref: ref, force: false);
+          if (widget.initialRoomId == null || widget.initialRoomId!.isEmpty) {
+            GuideTourService.startRecordTour(context: context, ref: ref, force: false);
+          }
         });
       }
     });
+  }
+
+  @override
+  void didUpdateWidget(covariant RecordPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialCameraIndex != null &&
+        widget.initialCameraIndex != oldWidget.initialCameraIndex) {
+      _selectedCameraIndex = widget.initialCameraIndex!;
+    }
+    if (widget.initialRoomId != null &&
+        widget.initialRoomId!.isNotEmpty &&
+        widget.initialRoomId != oldWidget.initialRoomId) {
+      _roomController.text = widget.initialRoomId!;
+      final currentState = ref.read(recordControllerProvider);
+      if (currentState.status == RecordStatus.idle || currentState.roomId != widget.initialRoomId) {
+        final cameraIdx = widget.initialCameraIndex ?? _selectedCameraIndex;
+        ref.read(recordControllerProvider.notifier).joinRoom(widget.initialRoomId!, cameraIdx);
+      }
+    }
   }
 
   @override
@@ -167,6 +208,23 @@ class _RecordPageState extends ConsumerState<RecordPage> {
 
   Widget _buildInitialView(RecordState state, RecordController controller) {
     final l10n = context.l10n;
+    if (state.status == RecordStatus.connecting) {
+      final hasRoomId = state.roomId != null && state.roomId!.isNotEmpty;
+      final loadingText = hasRoomId
+          ? '${l10n.statusProcessing}... (${l10n.roomNumber}: ${state.roomId})'
+          : '${l10n.statusProcessing}...';
+
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SpinKitCubeGrid(color: Theme.of(context).primaryColor, size: 50.0),
+            const SizedBox(height: 20),
+            Text(loadingText, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+          ],
+        ),
+      );
+    }
     return LayoutBuilder(
       builder: (context, constraints) {
         return SingleChildScrollView(
@@ -263,6 +321,33 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                               l10n.slaveDevice,
                               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                             ),
+                            if (_roomController.text.isNotEmpty)
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).primaryColor.withValues(alpha: 0.15),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.auto_awesome,
+                                      size: 14,
+                                      color: Theme.of(context).primaryColorDark,
+                                    ),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      '${l10n.autoFilledRoomNumber}: ${_roomController.text}',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                        color: Theme.of(context).primaryColorDark,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             TextField(
                               controller: _roomController,
                               decoration: InputDecoration(
@@ -353,24 +438,94 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                             '${l10n.roomNumber}: ${state.roomId}',
                             style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
                           ),
-                          const SizedBox(height: 24),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                            decoration: BoxDecoration(
-                              color: state.role == RecordRole.master
-                                  ? Colors.amber[100]
-                                  : Colors.blue[100],
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: Text(
-                              '${l10n.currentRole}: ${state.role == RecordRole.master ? l10n.roleMaster : l10n.roleSlave}',
-                              style: TextStyle(
-                                color: state.role == RecordRole.master
-                                    ? Colors.amber[900]
-                                    : Colors.blue[900],
-                                fontWeight: FontWeight.bold,
+                          const SizedBox(height: 16),
+                          Wrap(
+                            alignment: WrapAlignment.center,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            spacing: 12,
+                            runSpacing: 8,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                decoration: BoxDecoration(
+                                  color: state.role == RecordRole.master
+                                      ? Colors.amber[100]
+                                      : Colors.blue[100],
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Text(
+                                  '${l10n.currentRole}: ${state.role == RecordRole.master ? l10n.roleMaster : l10n.roleSlave}',
+                                  style: TextStyle(
+                                    color: state.role == RecordRole.master
+                                        ? Colors.amber[900]
+                                        : Colors.blue[900],
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                               ),
-                            ),
+                              if (state.role == RecordRole.master && state.roomId != null) ...[
+                                KeyedSubtree(
+                                  key: GuideKeys.recordRoomShareKey,
+                                  child: Wrap(
+                                    spacing: 8,
+                                    runSpacing: 8,
+                                    children: [
+                                      ElevatedButton.icon(
+                                        onPressed: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) =>
+                                                RecordRoomShareDialog(roomId: state.roomId!),
+                                          );
+                                        },
+                                        icon: const Icon(Icons.qr_code_2_rounded, size: 18),
+                                        label: Text(l10n.shareRoom),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: Theme.of(context).primaryColor,
+                                          foregroundColor: Colors.black,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(20),
+                                          ),
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 14,
+                                            vertical: 8,
+                                          ),
+                                          textStyle: const TextStyle(fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                      OutlinedButton.icon(
+                                        onPressed: () {
+                                          final url = getRoomJoinUrl(state.roomId!);
+                                          Clipboard.setData(ClipboardData(text: url));
+                                          toastification.show(
+                                            context: context,
+                                            title: Text(l10n.joinLinkCopied),
+                                            type: ToastificationType.success,
+                                            style: ToastificationStyle.minimal,
+                                            alignment: Alignment.bottomCenter,
+                                            autoCloseDuration: const Duration(seconds: 3),
+                                          );
+                                        },
+                                        icon: const Icon(Icons.copy_rounded, size: 16),
+                                        label: Text(l10n.copyLink),
+                                        style: OutlinedButton.styleFrom(
+                                          foregroundColor: Theme.of(context).primaryColorDark,
+                                          side: BorderSide(color: Theme.of(context).primaryColor),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(20),
+                                          ),
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 14,
+                                            vertical: 8,
+                                          ),
+                                          textStyle: const TextStyle(fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ],
                           ),
                         ],
                       ),
@@ -580,6 +735,7 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                           ),
                           const SizedBox(height: 16),
                           ElevatedButton(
+                            key: GuideKeys.recordButtonKey,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.black,
                               foregroundColor: Colors.white,
@@ -706,7 +862,9 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                           ),
                         ],
                       ],
-                      if (state.role == RecordRole.slave || state.isRecordingEnabled) ...[
+                      if (state.role == RecordRole.slave ||
+                          state.isRecordingEnabled ||
+                          isTourDemo) ...[
                         KeyedSubtree(
                           key: GuideKeys.recordCameraKey,
                           child: isTourDemo

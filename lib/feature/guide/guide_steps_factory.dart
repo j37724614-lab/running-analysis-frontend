@@ -44,6 +44,7 @@ class GuideKeys {
   static final GlobalKey recordRoleMasterKey = GlobalKey();
   static final GlobalKey recordRoleSlaveKey = GlobalKey();
   static final GlobalKey recordRoomInfoKey = GlobalKey();
+  static final GlobalKey recordRoomShareKey = GlobalKey();
   static final GlobalKey recordConfigKey = GlobalKey();
   static final GlobalKey recordLocalRecordKey = GlobalKey();
   static final GlobalKey recordDevicesKey = GlobalKey();
@@ -767,19 +768,47 @@ class GuideStepsFactory {
         ref.read(recordControllerProvider).status != RecordStatus.connecting;
 
     if (inRealRoom) {
-      final isMaster = ref.read(recordControllerProvider).role == RecordRole.master;
-      return [
-        TourStep(
-          targetKey: GuideKeys.recordRoomInfoKey,
-          title: l10n.tourRecordRoomInfoTitle,
-          description: l10n.tourRecordRoomInfoDesc,
-          icon: Icons.meeting_room_rounded,
-          borderRadius: 24,
-          padding: const EdgeInsets.symmetric(horizontal: 36.0, vertical: 20.0),
-        ),
-        if (isMaster) ...[
+      final recordState = ref.read(recordControllerProvider);
+      final isMaster = recordState.role == RecordRole.master;
+
+      if (isMaster) {
+        return [
+          TourStep(
+            targetKey: GuideKeys.recordRoomInfoKey,
+            onBeforeStep: () async {
+              ref.read(recordTourAnchorFullscreenOpenProvider.notifier).state = false;
+              ref.read(recordTourDemoRoleProvider.notifier).state = RecordRole.master;
+              ref.read(recordTourDemoInRoomProvider.notifier).state = false;
+              await Future.delayed(const Duration(milliseconds: 150));
+            },
+            title: l10n.tourRecordRoomInfoTitle,
+            description: l10n.tourRecordMasterRoomInfoDesc,
+            icon: Icons.meeting_room_rounded,
+            borderRadius: 24,
+            padding: const EdgeInsets.symmetric(horizontal: 36.0, vertical: 20.0),
+          ),
+          TourStep(
+            targetKey: GuideKeys.recordRoomShareKey,
+            onBeforeStep: () async {
+              ref.read(recordTourAnchorFullscreenOpenProvider.notifier).state = false;
+              ref.read(recordTourDemoRoleProvider.notifier).state = RecordRole.master;
+              ref.read(recordTourDemoInRoomProvider.notifier).state = false;
+              await Future.delayed(const Duration(milliseconds: 150));
+            },
+            title: l10n.tourRecordShareTitle,
+            description: l10n.tourRecordShareDesc,
+            icon: Icons.qr_code_2_rounded,
+            borderRadius: 20,
+            padding: const EdgeInsets.all(4.0),
+          ),
           TourStep(
             targetKey: GuideKeys.recordConfigKey,
+            onBeforeStep: () async {
+              ref.read(recordTourAnchorFullscreenOpenProvider.notifier).state = false;
+              ref.read(recordTourDemoRoleProvider.notifier).state = RecordRole.master;
+              ref.read(recordTourDemoInRoomProvider.notifier).state = false;
+              await Future.delayed(const Duration(milliseconds: 150));
+            },
             title: l10n.tourRecordConfigTitle,
             description: l10n.tourRecordConfigDesc,
             icon: Icons.tune,
@@ -788,65 +817,313 @@ class GuideStepsFactory {
           ),
           TourStep(
             targetKey: GuideKeys.recordLocalRecordKey,
+            onBeforeStep: () async {
+              ref.read(recordTourAnchorFullscreenOpenProvider.notifier).state = false;
+              ref.read(recordTourDemoRoleProvider.notifier).state = RecordRole.master;
+              ref.read(recordTourDemoInRoomProvider.notifier).state = false;
+              await Future.delayed(const Duration(milliseconds: 150));
+            },
             title: l10n.tourRecordLocalTitle,
             description: l10n.tourRecordLocalDesc,
             icon: Icons.video_camera_front,
             borderRadius: 14,
             padding: const EdgeInsets.all(4.0),
           ),
-        ] else ...[
+          TourStep(
+            targetKey: GuideKeys.recordDevicesKey,
+            onBeforeStep: () async {
+              ref.read(recordTourAnchorFullscreenOpenProvider.notifier).state = false;
+              ref.read(recordTourDemoRoleProvider.notifier).state = RecordRole.master;
+              ref.read(recordTourDemoInRoomProvider.notifier).state = false;
+              await Future.delayed(const Duration(milliseconds: 150));
+            },
+            title: l10n.tourRecordDevicesTitle,
+            description: l10n.tourRecordDevicesDesc,
+            icon: Icons.devices,
+            borderRadius: 25,
+            padding: const EdgeInsets.all(4.0),
+          ),
+          if (recordState.isRecordingEnabled) ...[
+            TourStep(
+              targetKey: GuideKeys.recordCameraKey,
+              onBeforeStep: () async {
+                ref.read(recordTourAnchorFullscreenOpenProvider.notifier).state = false;
+                ref.read(recordTourDemoRoleProvider.notifier).state = RecordRole.master;
+                ref.read(recordTourDemoInRoomProvider.notifier).state = false;
+                await Future.delayed(const Duration(milliseconds: 200));
+              },
+              title: l10n.tourRecordCameraTitle,
+              description: l10n.tourRecordCameraDesc,
+              icon: Icons.camera_alt,
+              borderRadius: 18,
+              padding: const EdgeInsets.all(4.0),
+            ),
+            TourStep(
+              targetKey: GuideKeys.recordAnchorToggleKey,
+              onBeforeStep: () async {
+                ref.read(recordTourDemoInRoomProvider.notifier).state = true;
+                ref.read(recordTourDemoRoleProvider.notifier).state = RecordRole.master;
+                ref.read(recordTourAnchorFullscreenOpenProvider.notifier).state = true;
+                ref.read(recordTourAnchorStageProvider.notifier).state =
+                    RecordTourAnchorStage.normalFullscreen;
+                await Future.delayed(const Duration(milliseconds: 250));
+              },
+              title: l10n.tourRecordAnchorToggleTitle,
+              description: l10n.tourRecordAnchorToggleDesc,
+              icon: Icons.my_location,
+              borderRadius: 22,
+              padding: const EdgeInsets.all(4.0),
+            ),
+            TourStep(
+              targetKey: GuideKeys.recordAnchorCanvasKey,
+              onBeforeStep: () async {
+                ref.read(recordTourDemoInRoomProvider.notifier).state = true;
+                ref.read(recordTourDemoRoleProvider.notifier).state = RecordRole.master;
+                ref.read(recordTourAnchorFullscreenOpenProvider.notifier).state = true;
+                ref.read(recordTourAnchorStageProvider.notifier).state =
+                    RecordTourAnchorStage.anchorMode;
+                await Future.delayed(const Duration(milliseconds: 250));
+              },
+              title: l10n.tourRecordAnchorPointsTitle,
+              description: _isMobileDevice(context)
+                  ? l10n.tourRecordAnchorPointsDescMobile
+                  : l10n.tourRecordAnchorPointsDesc,
+              icon: Icons.crop_free,
+              borderRadius: 16,
+              padding: const EdgeInsets.all(4.0),
+            ),
+            TourStep(
+              targetKey: GuideKeys.recordDistanceDialogKey,
+              onBeforeStep: () async {
+                ref.read(recordTourDemoInRoomProvider.notifier).state = true;
+                ref.read(recordTourDemoRoleProvider.notifier).state = RecordRole.master;
+                ref.read(recordTourAnchorFullscreenOpenProvider.notifier).state = true;
+                ref.read(recordTourAnchorStageProvider.notifier).state =
+                    RecordTourAnchorStage.distanceDialog;
+                await Future.delayed(const Duration(milliseconds: 250));
+              },
+              title: l10n.tourRecordDistanceDialogTitle,
+              description: l10n.tourRecordDistanceDialogDesc,
+              icon: Icons.straighten,
+              borderRadius: 16,
+              padding: const EdgeInsets.all(4.0),
+            ),
+            TourStep(
+              targetKey: GuideKeys.recordFullscreenRecordKey,
+              onBeforeStep: () async {
+                ref.read(recordTourDemoInRoomProvider.notifier).state = true;
+                ref.read(recordTourDemoRoleProvider.notifier).state = RecordRole.master;
+                ref.read(recordTourAnchorFullscreenOpenProvider.notifier).state = true;
+                ref.read(recordTourAnchorStageProvider.notifier).state =
+                    RecordTourAnchorStage.calibratedFullscreen;
+                await Future.delayed(const Duration(milliseconds: 250));
+              },
+              title: l10n.tourRecordFullscreenRecordTitle,
+              description: l10n.tourRecordFullscreenRecordDesc,
+              icon: Icons.fiber_manual_record,
+              borderRadius: 20,
+              padding: const EdgeInsets.all(4.0),
+            ),
+            TourStep(
+              targetKey: GuideKeys.recordExitFullscreenKey,
+              onBeforeStep: () async {
+                ref.read(recordTourDemoInRoomProvider.notifier).state = true;
+                ref.read(recordTourDemoRoleProvider.notifier).state = RecordRole.master;
+                ref.read(recordTourAnchorFullscreenOpenProvider.notifier).state = true;
+                ref.read(recordTourAnchorStageProvider.notifier).state =
+                    RecordTourAnchorStage.calibratedFullscreen;
+                await Future.delayed(const Duration(milliseconds: 250));
+              },
+              title: l10n.tourRecordAnchorDoneTitle,
+              description: l10n.tourRecordAnchorDoneDesc,
+              icon: Icons.fullscreen_exit,
+              shape: TourTargetShape.circle,
+              padding: const EdgeInsets.all(4.0),
+            ),
+          ],
+          TourStep(
+            targetKey: GuideKeys.recordButtonKey,
+            onBeforeStep: () async {
+              ref.read(recordTourAnchorFullscreenOpenProvider.notifier).state = false;
+              ref.read(recordTourDemoRoleProvider.notifier).state = RecordRole.master;
+              ref.read(recordTourDemoInRoomProvider.notifier).state = false;
+              await Future.delayed(const Duration(milliseconds: 200));
+            },
+            title: l10n.tourRecordMasterButtonTitle,
+            description: l10n.tourRecordMasterButtonDesc,
+            icon: Icons.fiber_manual_record,
+            borderRadius: 30,
+            padding: const EdgeInsets.all(4.0),
+          ),
+          TourStep(
+            targetKey: GuideKeys.recordLeaveRoomKey,
+            onBeforeStep: () async {
+              ref.read(recordTourAnchorFullscreenOpenProvider.notifier).state = false;
+              ref.read(recordTourDemoRoleProvider.notifier).state = RecordRole.master;
+              ref.read(recordTourDemoInRoomProvider.notifier).state = false;
+              await Future.delayed(const Duration(milliseconds: 150));
+            },
+            title: l10n.tourRecordLeaveRoomTitle,
+            description: l10n.tourRecordLeaveRoomDesc,
+            icon: Icons.exit_to_app,
+            borderRadius: 20,
+            padding: const EdgeInsets.all(4.0),
+          ),
+        ];
+      } else {
+        return [
+          TourStep(
+            targetKey: GuideKeys.recordRoomInfoKey,
+            onBeforeStep: () async {
+              ref.read(recordTourAnchorFullscreenOpenProvider.notifier).state = false;
+              ref.read(recordTourDemoRoleProvider.notifier).state = RecordRole.slave;
+              ref.read(recordTourDemoInRoomProvider.notifier).state = false;
+              await Future.delayed(const Duration(milliseconds: 150));
+            },
+            title: l10n.tourRecordRoomInfoTitle,
+            description: l10n.tourRecordSlaveRoomInfoDesc,
+            icon: Icons.meeting_room_rounded,
+            borderRadius: 24,
+            padding: const EdgeInsets.symmetric(horizontal: 36.0, vertical: 20.0),
+          ),
           TourStep(
             targetKey: GuideKeys.recordSlaveCameraPosKey,
+            onBeforeStep: () async {
+              ref.read(recordTourAnchorFullscreenOpenProvider.notifier).state = false;
+              ref.read(recordTourDemoRoleProvider.notifier).state = RecordRole.slave;
+              ref.read(recordTourDemoInRoomProvider.notifier).state = false;
+              await Future.delayed(const Duration(milliseconds: 150));
+            },
             title: l10n.tourRecordSlaveCameraPosTitle,
             description: l10n.tourRecordSlaveCameraPosDesc,
             icon: Icons.video_settings,
             borderRadius: 14,
             padding: const EdgeInsets.all(4.0),
           ),
-        ],
-        TourStep(
-          targetKey: GuideKeys.recordDevicesKey,
-          title: l10n.tourRecordDevicesTitle,
-          description: l10n.tourRecordDevicesDesc,
-          icon: Icons.devices,
-          borderRadius: 25,
-          padding: const EdgeInsets.all(4.0),
-        ),
-        TourStep(
-          targetKey: GuideKeys.recordCameraKey,
-          title: l10n.tourRecordCameraTitle,
-          description: l10n.tourRecordCameraDesc,
-          icon: Icons.camera_alt,
-          borderRadius: 18,
-          padding: const EdgeInsets.all(4.0),
-        ),
-        if (isMaster)
           TourStep(
-            targetKey: GuideKeys.recordButtonKey,
-            title: l10n.tourRecordMasterButtonTitle,
-            description: l10n.tourRecordMasterButtonDesc,
-            icon: Icons.fiber_manual_record,
-            borderRadius: 30,
+            targetKey: GuideKeys.recordDevicesKey,
+            onBeforeStep: () async {
+              ref.read(recordTourAnchorFullscreenOpenProvider.notifier).state = false;
+              ref.read(recordTourDemoRoleProvider.notifier).state = RecordRole.slave;
+              ref.read(recordTourDemoInRoomProvider.notifier).state = false;
+              await Future.delayed(const Duration(milliseconds: 150));
+            },
+            title: l10n.tourRecordDevicesTitle,
+            description: l10n.tourRecordDevicesDesc,
+            icon: Icons.devices,
+            borderRadius: 25,
             padding: const EdgeInsets.all(4.0),
-          )
-        else
+          ),
+          TourStep(
+            targetKey: GuideKeys.recordCameraKey,
+            onBeforeStep: () async {
+              ref.read(recordTourAnchorFullscreenOpenProvider.notifier).state = false;
+              ref.read(recordTourDemoRoleProvider.notifier).state = RecordRole.slave;
+              ref.read(recordTourDemoInRoomProvider.notifier).state = true;
+              await Future.delayed(const Duration(milliseconds: 200));
+            },
+            title: l10n.tourRecordCameraTitle,
+            description: l10n.tourRecordCameraDesc,
+            icon: Icons.camera_alt,
+            borderRadius: 18,
+            padding: const EdgeInsets.all(4.0),
+          ),
+          TourStep(
+            targetKey: GuideKeys.recordAnchorToggleKey,
+            onBeforeStep: () async {
+              ref.read(recordTourDemoInRoomProvider.notifier).state = true;
+              ref.read(recordTourDemoRoleProvider.notifier).state = RecordRole.slave;
+              ref.read(recordTourAnchorFullscreenOpenProvider.notifier).state = true;
+              ref.read(recordTourAnchorStageProvider.notifier).state =
+                  RecordTourAnchorStage.normalFullscreen;
+              await Future.delayed(const Duration(milliseconds: 250));
+            },
+            title: l10n.tourRecordAnchorToggleTitle,
+            description: l10n.tourRecordAnchorToggleDesc,
+            icon: Icons.my_location,
+            borderRadius: 22,
+            padding: const EdgeInsets.all(4.0),
+          ),
+          TourStep(
+            targetKey: GuideKeys.recordAnchorCanvasKey,
+            onBeforeStep: () async {
+              ref.read(recordTourDemoInRoomProvider.notifier).state = true;
+              ref.read(recordTourDemoRoleProvider.notifier).state = RecordRole.slave;
+              ref.read(recordTourAnchorFullscreenOpenProvider.notifier).state = true;
+              ref.read(recordTourAnchorStageProvider.notifier).state =
+                  RecordTourAnchorStage.anchorMode;
+              await Future.delayed(const Duration(milliseconds: 250));
+            },
+            title: l10n.tourRecordAnchorPointsTitle,
+            description: _isMobileDevice(context)
+                ? l10n.tourRecordAnchorPointsDescMobile
+                : l10n.tourRecordAnchorPointsDesc,
+            icon: Icons.crop_free,
+            borderRadius: 16,
+            padding: const EdgeInsets.all(4.0),
+          ),
+          TourStep(
+            targetKey: GuideKeys.recordDistanceDialogKey,
+            onBeforeStep: () async {
+              ref.read(recordTourDemoInRoomProvider.notifier).state = true;
+              ref.read(recordTourDemoRoleProvider.notifier).state = RecordRole.slave;
+              ref.read(recordTourAnchorFullscreenOpenProvider.notifier).state = true;
+              ref.read(recordTourAnchorStageProvider.notifier).state =
+                  RecordTourAnchorStage.distanceDialog;
+              await Future.delayed(const Duration(milliseconds: 250));
+            },
+            title: l10n.tourRecordDistanceDialogTitle,
+            description: l10n.tourRecordDistanceDialogDesc,
+            icon: Icons.straighten,
+            borderRadius: 16,
+            padding: const EdgeInsets.all(4.0),
+          ),
+          TourStep(
+            targetKey: GuideKeys.recordExitFullscreenKey,
+            onBeforeStep: () async {
+              ref.read(recordTourDemoInRoomProvider.notifier).state = true;
+              ref.read(recordTourDemoRoleProvider.notifier).state = RecordRole.slave;
+              ref.read(recordTourAnchorFullscreenOpenProvider.notifier).state = true;
+              ref.read(recordTourAnchorStageProvider.notifier).state =
+                  RecordTourAnchorStage.calibratedFullscreen;
+              await Future.delayed(const Duration(milliseconds: 250));
+            },
+            title: l10n.tourRecordAnchorDoneTitle,
+            description: l10n.tourRecordAnchorDoneDesc,
+            icon: Icons.fullscreen_exit,
+            shape: TourTargetShape.circle,
+            padding: const EdgeInsets.all(4.0),
+          ),
           TourStep(
             targetKey: GuideKeys.recordRequestControlKey,
+            onBeforeStep: () async {
+              ref.read(recordTourAnchorFullscreenOpenProvider.notifier).state = false;
+              ref.read(recordTourDemoRoleProvider.notifier).state = RecordRole.slave;
+              ref.read(recordTourDemoInRoomProvider.notifier).state = false;
+              await Future.delayed(const Duration(milliseconds: 200));
+            },
             title: l10n.tourRecordRequestControlTitle,
             description: l10n.tourRecordRequestControlDesc,
             icon: Icons.pan_tool_alt_rounded,
             borderRadius: 20,
             padding: const EdgeInsets.all(4.0),
           ),
-        TourStep(
-          targetKey: GuideKeys.recordLeaveRoomKey,
-          title: l10n.tourRecordLeaveRoomTitle,
-          description: l10n.tourRecordLeaveRoomDesc,
-          icon: Icons.exit_to_app,
-          borderRadius: 20,
-          padding: const EdgeInsets.all(4.0),
-        ),
-      ];
+          TourStep(
+            targetKey: GuideKeys.recordLeaveRoomKey,
+            onBeforeStep: () async {
+              ref.read(recordTourAnchorFullscreenOpenProvider.notifier).state = false;
+              ref.read(recordTourDemoRoleProvider.notifier).state = RecordRole.slave;
+              ref.read(recordTourDemoInRoomProvider.notifier).state = false;
+              await Future.delayed(const Duration(milliseconds: 150));
+            },
+            title: l10n.tourRecordLeaveRoomTitle,
+            description: l10n.tourRecordLeaveRoomDesc,
+            icon: Icons.exit_to_app,
+            borderRadius: 20,
+            padding: const EdgeInsets.all(4.0),
+          ),
+        ];
+      }
     }
 
     return _buildBothRecordSteps(context, ref);
@@ -924,7 +1201,25 @@ class GuideStepsFactory {
         padding: const EdgeInsets.symmetric(horizontal: 36.0, vertical: 20.0),
       ),
 
-      // 步驟 4：主控端參數配置與跑者設定
+      // 步驟 4：邀請相機加入（QR Code 與連結）
+      TourStep(
+        targetKey: GuideKeys.recordRoomShareKey,
+        onBeforeStep: () async {
+          if (ref != null) {
+            ref.read(recordTourAnchorFullscreenOpenProvider.notifier).state = false;
+            ref.read(recordTourDemoRoleProvider.notifier).state = RecordRole.master;
+            ref.read(recordTourDemoInRoomProvider.notifier).state = true;
+            await Future.delayed(const Duration(milliseconds: 200));
+          }
+        },
+        title: l10n.tourRecordShareTitle,
+        description: l10n.tourRecordShareDesc,
+        icon: Icons.qr_code_2_rounded,
+        borderRadius: 20,
+        padding: const EdgeInsets.all(4.0),
+      ),
+
+      // 步驟 5：主控端參數配置與跑者設定
       TourStep(
         targetKey: GuideKeys.recordConfigKey,
         onBeforeStep: () async {
@@ -1206,7 +1501,25 @@ class GuideStepsFactory {
         padding: const EdgeInsets.symmetric(horizontal: 36.0, vertical: 20.0),
       ),
 
-      // 步驟 3：進入房間（參數配置與跑者設定）
+      // 步驟 3：邀請相機加入（QR Code 與連結）
+      TourStep(
+        targetKey: GuideKeys.recordRoomShareKey,
+        onBeforeStep: () async {
+          if (ref != null) {
+            ref.read(recordTourAnchorFullscreenOpenProvider.notifier).state = false;
+            ref.read(recordTourDemoRoleProvider.notifier).state = RecordRole.master;
+            ref.read(recordTourDemoInRoomProvider.notifier).state = true;
+            await Future.delayed(const Duration(milliseconds: 200));
+          }
+        },
+        title: l10n.tourRecordShareTitle,
+        description: l10n.tourRecordShareDesc,
+        icon: Icons.qr_code_2_rounded,
+        borderRadius: 20,
+        padding: const EdgeInsets.all(4.0),
+      ),
+
+      // 步驟 4：進入房間（參數配置與跑者設定）
       TourStep(
         targetKey: GuideKeys.recordConfigKey,
         onBeforeStep: () async {

@@ -938,6 +938,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Displays the connected Room ID and Slave Device badge, confirming successful connection to the host recording room.';
 
   @override
+  String get tourRecordShareTitle => 'Invite Cameras (QR Code & Link)';
+
+  @override
+  String get tourRecordShareDesc =>
+      'The Host can tap \'Share Room\' to generate a dedicated QR Code for other devices to scan, or tap \'Copy Link\' to share the join URL. Other devices opening the link will automatically enter this room for synchronized recording.';
+
+  @override
   String get tourRecordInquiryTitle => 'Choose Recording Workflow Tour';
 
   @override
@@ -952,7 +959,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Learn all setup, calibration, and recording steps for both Master and Slave devices.';
 
   @override
-  String get tourRecordInquiryBothSteps => '16 Steps';
+  String get tourRecordInquiryBothSteps => '17 Steps';
 
   @override
   String get tourRecordInquiryMasterTitle => 'Master Host Workflow';
@@ -962,7 +969,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Create room, configure parameters, monitor device readiness, calibrate track, and trigger sync recording.';
 
   @override
-  String get tourRecordInquiryMasterSteps => '13 Steps';
+  String get tourRecordInquiryMasterSteps => '14 Steps';
 
   @override
   String get tourRecordInquirySlaveTitle => 'Slave Device Workflow';
@@ -1079,4 +1086,36 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get uncompletedRecordsPlaceholder => 'Unanalyzed Sessions';
+
+  @override
+  String get shareRoom => 'Share Room';
+
+  @override
+  String get copyLink => 'Copy Link';
+
+  @override
+  String get copyJoinLink => 'Copy Join Link';
+
+  @override
+  String get joinLinkCopied => 'Room join link copied to clipboard!';
+
+  @override
+  String get showJoinQrCode => 'Show QR Code';
+
+  @override
+  String get inviteDeviceTitle => 'Invite Camera Devices';
+
+  @override
+  String get inviteDeviceSubtitle =>
+      'Scan the QR Code with your phone camera or use the link to join this room directly';
+
+  @override
+  String get roomJoinUrl => 'Join Link';
+
+  @override
+  String get autoFilledRoomNumber => 'Room number auto-filled';
+
+  @override
+  String get deepLinkAppFallbackHint =>
+      'Will automatically open the App if installed, or fallback to the Web version in your browser.';
 }
