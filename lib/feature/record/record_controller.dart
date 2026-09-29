@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
+import 'package:frontend/feature/auth/auth_provider.dart';
 import 'package:frontend/feature/record/record_enums.dart';
 import 'package:frontend/feature/record/record_state.dart';
 import 'package:frontend/feature/upload/widget/anchor_point_dialog.dart';
@@ -303,6 +304,7 @@ class RecordController extends StateNotifier<RecordState> {
 final recordControllerProvider = StateNotifierProvider.autoDispose<RecordController, RecordState>((
   ref,
 ) {
+  ref.watch(authProvider);
   return RecordController(ref);
 });
 

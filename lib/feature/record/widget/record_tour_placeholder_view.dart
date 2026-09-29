@@ -282,8 +282,8 @@ class _RecordTourAnchorFullscreenDialogState
                               final px = _pts[i].dx * w;
                               final py = _pts[i].dy * h;
                               return Positioned(
-                                left: px - 16,
-                                top: py - 16,
+                                left: px,
+                                top: py,
                                 child: _AnchorMarkerBadge(
                                   index: i + 1,
                                   color: _kAnchorColors[i],
@@ -861,44 +861,56 @@ class _AnchorMarkerBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: 30,
-          height: 30,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-            border: Border.all(color: Colors.white, width: 2),
-            boxShadow: [
-              BoxShadow(color: color.withValues(alpha: 0.6), blurRadius: 8, spreadRadius: 2),
-            ],
-          ),
-          alignment: Alignment.center,
-          child: Text(
-            '$index',
-            style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold),
-          ),
-        ),
-        const SizedBox(height: 2),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
-          decoration: BoxDecoration(
-            color: Colors.black.withValues(alpha: 0.8),
-            borderRadius: BorderRadius.circular(4),
-          ),
-          child: Text(
-            label,
-            style: TextStyle(
-              color: color,
-              fontSize: 9.5,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'NotoSansTC',
+    const size = 30.0;
+    return Transform.translate(
+      offset: const Offset(0, -size / 2),
+      child: FractionalTranslation(
+        translation: const Offset(-0.5, 0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              width: size,
+              height: size,
+              decoration: BoxDecoration(
+                color: color,
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white, width: 2),
+                boxShadow: [
+                  BoxShadow(color: color.withValues(alpha: 0.6), blurRadius: 8, spreadRadius: 2),
+                ],
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                '$index',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
-          ),
+            const SizedBox(height: 2),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1.5),
+              decoration: BoxDecoration(
+                color: Colors.black.withValues(alpha: 0.8),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Text(
+                label,
+                style: TextStyle(
+                  color: color,
+                  fontSize: 9.5,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'NotoSansTC',
+                ),
+              ),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

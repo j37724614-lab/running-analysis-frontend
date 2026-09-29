@@ -1089,4 +1089,57 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String get deepLinkAppFallbackHint =>
       '若裝置已安裝 App 將優先自動開啟 App，若未安裝則由瀏覽器開啟網頁版。';
+
+  @override
+  String get enterSessionCodeOrLink => '輸入補傳代碼或貼上連結';
+
+  @override
+  String get sessionCodeInputHint => '輸入 Session ID 或貼上完整連結';
+
+  @override
+  String get loadSession => '載入';
+
+  @override
+  String get loadSessionFailed => '找不到此待補傳紀錄或該紀錄已分析完成';
+
+  @override
+  String get loadSessionSuccess => '已成功載入待補傳紀錄！';
+
+  @override
+  String get copySessionCode => '複製補傳代碼';
+
+  @override
+  String get copySessionLink => '複製補傳連結';
+
+  @override
+  String get sessionCodeCopied => '已複製補傳代碼！';
+
+  @override
+  String get sessionLinkCopied => '已複製補傳連結！';
+
+  @override
+  String get sharedSessionBadge => '外部協同補傳';
+
+  @override
+  String get allCamerasUploadedExternalNotice =>
+      '所有相機影片已全數上傳完畢！系統已自動為房主啟動 AI 運動學分析。';
+
+  @override
+  String get uploadSuccessNotice => '上傳完成通知';
+
+  @override
+  String get sessionLoadedBannerTitle => '已載入外部補傳紀錄';
+
+  @override
+  String sessionLoadedBannerSubtitle(String runnerName, String missingCameras) {
+    return '選手：$runnerName ｜ 缺機位：$missingCameras';
+  }
+
+  @override
+  String missingCameras(String cameras) {
+    return '缺相機 $cameras';
+  }
+
+  @override
+  String get selectRunnerOrEnterCodePrompt => '請先選擇跑者，或於上方輸入補傳代碼/連結';
 }

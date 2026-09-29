@@ -40,8 +40,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
-                    android:scheme="runninganalysis"
-                    android:host="record" />
+                    android:scheme="runninganalysis" />
             </intent-filter>
         </activity>
         <!-- Enable Flutter deep linking -->

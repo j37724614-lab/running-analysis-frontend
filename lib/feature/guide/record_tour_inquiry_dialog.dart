@@ -170,7 +170,7 @@ class _RecordTourInquiryDialogState extends State<RecordTourInquiryDialog> {
                           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 12),
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                         ),
-                        child: Text(l10n.cancel, style: const TextStyle(fontSize: 14)),
+                        child: Text(l10n.tourSkip, style: const TextStyle(fontSize: 14)),
                       ),
                       const SizedBox(width: 10),
                       ElevatedButton(

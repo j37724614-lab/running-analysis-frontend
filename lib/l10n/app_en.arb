@@ -364,5 +364,39 @@
   "inviteDeviceSubtitle": "Scan the QR Code with your phone camera or use the link to join this room directly",
   "roomJoinUrl": "Join Link",
   "autoFilledRoomNumber": "Room number auto-filled",
-  "deepLinkAppFallbackHint": "Will automatically open the App if installed, or fallback to the Web version in your browser."
+  "deepLinkAppFallbackHint": "Will automatically open the App if installed, or fallback to the Web version in your browser.",
+  "enterSessionCodeOrLink": "Enter session code or paste link",
+  "sessionCodeInputHint": "Enter Session ID or paste full link",
+  "loadSession": "Load",
+  "loadSessionFailed": "Unanalyzed session not found or already completed",
+  "loadSessionSuccess": "Unanalyzed session loaded successfully!",
+  "copySessionCode": "Copy Session Code",
+  "copySessionLink": "Copy Session Link",
+  "sessionCodeCopied": "Session code copied to clipboard!",
+  "sessionLinkCopied": "Session link copied to clipboard!",
+  "sharedSessionBadge": "Shared Session",
+  "allCamerasUploadedExternalNotice": "All camera videos have been uploaded! AI kinematic analysis has started for the session owner.",
+  "uploadSuccessNotice": "Upload Complete Notice",
+  "sessionLoadedBannerTitle": "Loaded Shared Session",
+  "sessionLoadedBannerSubtitle": "Runner: {runnerName} | Missing: {missingCameras}",
+  "@sessionLoadedBannerSubtitle": {
+    "placeholders": {
+      "runnerName": {
+        "type": "String"
+      },
+      "missingCameras": {
+        "type": "String"
+      }
+    }
+  },
+  "missingCameras": "Missing Cameras {cameras}",
+  "@missingCameras": {
+    "placeholders": {
+      "cameras": {
+        "type": "String"
+      }
+    }
+  },
+  "selectRunnerOrEnterCodePrompt": "Please select a runner first, or enter session code/link above"
 }
+

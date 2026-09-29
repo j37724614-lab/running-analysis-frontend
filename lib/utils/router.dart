@@ -11,6 +11,8 @@ import 'package:frontend/feature/auth/login_page.dart';
 import 'package:frontend/feature/auth/register_page.dart';
 import 'package:frontend/feature/auth/auth_provider.dart';
 import 'package:frontend/feature/auth/auth_state.dart';
+import 'package:frontend/feature/playback/playback_provider.dart';
+import 'package:frontend/feature/upload/upload_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/foundation.dart';
 
@@ -48,6 +50,13 @@ class RouterNotifier extends ChangeNotifier {
 
   RouterNotifier(this._ref) {
     _ref.listen(authProvider, (previous, next) {
+      if (previous?.status != next.status || previous?.username != next.username) {
+        _ref.read(uploadSelectedRunnerIdProvider.notifier).state = null;
+        _ref.read(uploadSelectedRunSessionIdProvider.notifier).state = null;
+        _ref.read(uploadExternalSessionInfoProvider.notifier).state = null;
+        _ref.read(playbackSelectedRunnerIdProvider.notifier).state = null;
+        _ref.read(playbackSelectedRunSessionIdProvider.notifier).state = null;
+      }
       notifyListeners();
     });
   }
@@ -72,14 +81,27 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         return null;
       }
 
-      // 若在 Web 端透過頂層 URL Query 帶入 roomId（如 /running_analysis/?roomId=XXXX 或 /?roomId=XXXX）
-      if (kIsWeb && state.uri.path != '/record' && !isLoggingIn && !isRegistering) {
+      // 若在 Web 端透過頂層 URL Query 帶入 roomId 或 runSessionId
+      if (kIsWeb &&
+          state.uri.path != '/record' &&
+          state.uri.path != '/upload' &&
+          !isLoggingIn &&
+          !isRegistering) {
         final baseRoomId = Uri.base.queryParameters['roomId'];
         if (baseRoomId != null && baseRoomId.isNotEmpty) {
           final cameraIndex =
               Uri.base.queryParameters['cameraIndex'] ?? Uri.base.queryParameters['camera'];
           final cameraQuery = cameraIndex != null ? '&cameraIndex=$cameraIndex' : '';
           final target = '/record?roomId=$baseRoomId$cameraQuery';
+          if (!isLoggedIn) {
+            return '/login?redirect=${Uri.encodeComponent(target)}';
+          }
+          return target;
+        }
+
+        final baseRunSessionId = Uri.base.queryParameters['runSessionId'];
+        if (baseRunSessionId != null && baseRunSessionId.isNotEmpty) {
+          final target = '/upload?runSessionId=$baseRunSessionId';
           if (!isLoggedIn) {
             return '/login?redirect=${Uri.encodeComponent(target)}';
           }
@@ -148,7 +170,16 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             path: '/upload',
             name: AppRoute.upload.name,
             pageBuilder: (context, state) {
-              return _buildFadePage(state, const UploadPage());
+              final runSessionId =
+                  state.uri.queryParameters['runSessionId'] ??
+                  (kIsWeb ? Uri.base.queryParameters['runSessionId'] : null);
+              return _buildFadePage(
+                state,
+                UploadPage(
+                  key: ValueKey('upload_${runSessionId ?? "none"}'),
+                  runSessionId: runSessionId,
+                ),
+              );
             },
           ),
           GoRoute(

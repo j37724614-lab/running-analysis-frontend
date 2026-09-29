@@ -1118,4 +1118,59 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get deepLinkAppFallbackHint =>
       'Will automatically open the App if installed, or fallback to the Web version in your browser.';
+
+  @override
+  String get enterSessionCodeOrLink => 'Enter session code or paste link';
+
+  @override
+  String get sessionCodeInputHint => 'Enter Session ID or paste full link';
+
+  @override
+  String get loadSession => 'Load';
+
+  @override
+  String get loadSessionFailed =>
+      'Unanalyzed session not found or already completed';
+
+  @override
+  String get loadSessionSuccess => 'Unanalyzed session loaded successfully!';
+
+  @override
+  String get copySessionCode => 'Copy Session Code';
+
+  @override
+  String get copySessionLink => 'Copy Session Link';
+
+  @override
+  String get sessionCodeCopied => 'Session code copied to clipboard!';
+
+  @override
+  String get sessionLinkCopied => 'Session link copied to clipboard!';
+
+  @override
+  String get sharedSessionBadge => 'Shared Session';
+
+  @override
+  String get allCamerasUploadedExternalNotice =>
+      'All camera videos have been uploaded! AI kinematic analysis has started for the session owner.';
+
+  @override
+  String get uploadSuccessNotice => 'Upload Complete Notice';
+
+  @override
+  String get sessionLoadedBannerTitle => 'Loaded Shared Session';
+
+  @override
+  String sessionLoadedBannerSubtitle(String runnerName, String missingCameras) {
+    return 'Runner: $runnerName | Missing: $missingCameras';
+  }
+
+  @override
+  String missingCameras(String cameras) {
+    return 'Missing Cameras $cameras';
+  }
+
+  @override
+  String get selectRunnerOrEnterCodePrompt =>
+      'Please select a runner first, or enter session code/link above';
 }

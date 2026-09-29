@@ -402,5 +402,39 @@
   "inviteDeviceSubtitle": "使用手機相機掃描下方 QR Code，或透過分享連結直接加入此房間",
   "roomJoinUrl": "加入連結",
   "autoFilledRoomNumber": "已自動帶入房間號碼",
-  "deepLinkAppFallbackHint": "若裝置已安裝 App 將優先自動開啟 App，若未安裝則由瀏覽器開啟網頁版。"
+  "deepLinkAppFallbackHint": "若裝置已安裝 App 將優先自動開啟 App，若未安裝則由瀏覽器開啟網頁版。",
+  "enterSessionCodeOrLink": "輸入補傳代碼或貼上連結",
+  "sessionCodeInputHint": "輸入 Session ID 或貼上完整連結",
+  "loadSession": "載入",
+  "loadSessionFailed": "找不到此待補傳紀錄或該紀錄已分析完成",
+  "loadSessionSuccess": "已成功載入待補傳紀錄！",
+  "copySessionCode": "複製補傳代碼",
+  "copySessionLink": "複製補傳連結",
+  "sessionCodeCopied": "已複製補傳代碼！",
+  "sessionLinkCopied": "已複製補傳連結！",
+  "sharedSessionBadge": "外部協同補傳",
+  "allCamerasUploadedExternalNotice": "所有相機影片已全數上傳完畢！系統已自動為房主啟動 AI 運動學分析。",
+  "uploadSuccessNotice": "上傳完成通知",
+  "sessionLoadedBannerTitle": "已載入外部補傳紀錄",
+  "sessionLoadedBannerSubtitle": "選手：{runnerName} ｜ 缺機位：{missingCameras}",
+  "@sessionLoadedBannerSubtitle": {
+    "placeholders": {
+      "runnerName": {
+        "type": "String"
+      },
+      "missingCameras": {
+        "type": "String"
+      }
+    }
+  },
+  "missingCameras": "缺相機 {cameras}",
+  "@missingCameras": {
+    "placeholders": {
+      "cameras": {
+        "type": "String"
+      }
+    }
+  },
+  "selectRunnerOrEnterCodePrompt": "請先選擇跑者，或於上方輸入補傳代碼/連結"
 }
+

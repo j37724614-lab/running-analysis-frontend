@@ -16,6 +16,11 @@ class API {
     "$baseUrl/runner/$runnerId/run_sessions/unanalyzed",
   ];
 
+  static List getUnanalyzedRunSessionById(String runSessionId) => [
+    DioMethod.get,
+    "$baseUrl/run_session/$runSessionId/unanalyzed",
+  ];
+
   static List getRunSessionInfo(String runSessionId) => [
     DioMethod.get,
     "$baseUrl/run_session/$runSessionId",

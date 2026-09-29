@@ -2155,6 +2155,102 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'若裝置已安裝 App 將優先自動開啟 App，若未安裝則由瀏覽器開啟網頁版。'**
   String get deepLinkAppFallbackHint;
+
+  /// No description provided for @enterSessionCodeOrLink.
+  ///
+  /// In zh, this message translates to:
+  /// **'輸入補傳代碼或貼上連結'**
+  String get enterSessionCodeOrLink;
+
+  /// No description provided for @sessionCodeInputHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'輸入 Session ID 或貼上完整連結'**
+  String get sessionCodeInputHint;
+
+  /// No description provided for @loadSession.
+  ///
+  /// In zh, this message translates to:
+  /// **'載入'**
+  String get loadSession;
+
+  /// No description provided for @loadSessionFailed.
+  ///
+  /// In zh, this message translates to:
+  /// **'找不到此待補傳紀錄或該紀錄已分析完成'**
+  String get loadSessionFailed;
+
+  /// No description provided for @loadSessionSuccess.
+  ///
+  /// In zh, this message translates to:
+  /// **'已成功載入待補傳紀錄！'**
+  String get loadSessionSuccess;
+
+  /// No description provided for @copySessionCode.
+  ///
+  /// In zh, this message translates to:
+  /// **'複製補傳代碼'**
+  String get copySessionCode;
+
+  /// No description provided for @copySessionLink.
+  ///
+  /// In zh, this message translates to:
+  /// **'複製補傳連結'**
+  String get copySessionLink;
+
+  /// No description provided for @sessionCodeCopied.
+  ///
+  /// In zh, this message translates to:
+  /// **'已複製補傳代碼！'**
+  String get sessionCodeCopied;
+
+  /// No description provided for @sessionLinkCopied.
+  ///
+  /// In zh, this message translates to:
+  /// **'已複製補傳連結！'**
+  String get sessionLinkCopied;
+
+  /// No description provided for @sharedSessionBadge.
+  ///
+  /// In zh, this message translates to:
+  /// **'外部協同補傳'**
+  String get sharedSessionBadge;
+
+  /// No description provided for @allCamerasUploadedExternalNotice.
+  ///
+  /// In zh, this message translates to:
+  /// **'所有相機影片已全數上傳完畢！系統已自動為房主啟動 AI 運動學分析。'**
+  String get allCamerasUploadedExternalNotice;
+
+  /// No description provided for @uploadSuccessNotice.
+  ///
+  /// In zh, this message translates to:
+  /// **'上傳完成通知'**
+  String get uploadSuccessNotice;
+
+  /// No description provided for @sessionLoadedBannerTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'已載入外部補傳紀錄'**
+  String get sessionLoadedBannerTitle;
+
+  /// No description provided for @sessionLoadedBannerSubtitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'選手：{runnerName} ｜ 缺機位：{missingCameras}'**
+  String sessionLoadedBannerSubtitle(String runnerName, String missingCameras);
+
+  /// No description provided for @missingCameras.
+  ///
+  /// In zh, this message translates to:
+  /// **'缺相機 {cameras}'**
+  String missingCameras(String cameras);
+
+  /// No description provided for @selectRunnerOrEnterCodePrompt.
+  ///
+  /// In zh, this message translates to:
+  /// **'請先選擇跑者，或於上方輸入補傳代碼/連結'**
+  String get selectRunnerOrEnterCodePrompt;
 }
 
 class _AppLocalizationsDelegate

@@ -7,6 +7,7 @@ import 'package:frontend/entities/graph_data.dart';
 import 'package:frontend/entities/runner_info.dart';
 import 'package:frontend/entities/unanalyzed_run_session_info.dart';
 import 'package:frontend/entities/run_session_info.dart';
+import 'package:frontend/feature/auth/auth_provider.dart';
 import 'package:frontend/utils/config.dart';
 
 final backendProvider = Provider<BackendInterface>((ref) {
@@ -15,6 +16,7 @@ final backendProvider = Provider<BackendInterface>((ref) {
 });
 
 final runnerProvider = FutureProvider.autoDispose<List<RunnerInfo>>((ref) {
+  ref.watch(authProvider);
   final backend = ref.watch(backendProvider);
   return backend.getRunners();
 });

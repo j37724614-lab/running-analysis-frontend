@@ -1012,54 +1012,68 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                         ),
                       ),
                     ),
-                    data: (List<RunnerInfo> items) => DropdownButtonHideUnderline(
-                      child: DropdownButton2<String>(
-                        hint: Row(
-                          children: [
-                            Text(
-                              l10n.selectRunner,
-                              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
-                        ),
-                        items: items
-                            .map(
-                              (RunnerInfo item) => DropdownMenuItem<String>(
-                                value: item.id,
-                                child: Text(
-                                  item.name,
-                                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
+                    data: (List<RunnerInfo> items) {
+                      final isRunnerValid =
+                          state.runnerId != null && items.any((r) => r.id == state.runnerId);
+                      if (!isRunnerValid && state.runnerId != null) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          if (mounted) controller.setRunner(null);
+                        });
+                      }
+                      final effectiveRunnerId = isRunnerValid ? state.runnerId : null;
+
+                      return DropdownButtonHideUnderline(
+                        child: DropdownButton2<String>(
+                          hint: Row(
+                            children: [
+                              Text(
+                                l10n.selectRunner,
+                                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                overflow: TextOverflow.ellipsis,
                               ),
-                            )
-                            .toList(),
-                        value: state.runnerId,
-                        onChanged: (v) => controller.setRunner(v),
-                        buttonStyleData: ButtonStyleData(
-                          overlayColor: WidgetStateProperty.all(Colors.transparent),
-                          decoration: BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(color: Theme.of(context).primaryColor),
+                            ],
+                          ),
+                          items: items
+                              .map(
+                                (RunnerInfo item) => DropdownMenuItem<String>(
+                                  value: item.id,
+                                  child: Text(
+                                    item.name,
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              )
+                              .toList(),
+                          value: effectiveRunnerId,
+                          onChanged: (v) => controller.setRunner(v),
+                          buttonStyleData: ButtonStyleData(
+                            overlayColor: WidgetStateProperty.all(Colors.transparent),
+                            decoration: BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(color: Theme.of(context).primaryColor),
+                              ),
                             ),
                           ),
+                          iconStyleData: const IconStyleData(
+                            icon: Icon(Icons.arrow_forward_ios_outlined),
+                            iconSize: 12,
+                          ),
+                          dropdownStyleData: DropdownStyleData(
+                            maxHeight: 200,
+                            decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+                            scrollbarTheme: const ScrollbarThemeData(radius: Radius.circular(40)),
+                          ),
+                          menuItemStyleData: const MenuItemStyleData(
+                            height: 40,
+                            padding: EdgeInsets.only(left: 12, right: 12),
+                          ),
                         ),
-                        iconStyleData: const IconStyleData(
-                          icon: Icon(Icons.arrow_forward_ios_outlined),
-                          iconSize: 12,
-                        ),
-                        dropdownStyleData: DropdownStyleData(
-                          maxHeight: 200,
-                          decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
-                          scrollbarTheme: const ScrollbarThemeData(radius: Radius.circular(40)),
-                        ),
-                        menuItemStyleData: const MenuItemStyleData(
-                          height: 40,
-                          padding: EdgeInsets.only(left: 12, right: 12),
-                        ),
-                      ),
-                    ),
+                      );
+                    },
                   ),
                 )
               else

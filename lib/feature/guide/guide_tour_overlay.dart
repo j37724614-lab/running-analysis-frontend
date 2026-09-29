@@ -328,7 +328,7 @@ class _GuideTourOverlayState extends State<GuideTourOverlay>
     }
 
     final isFirst = _currentIndex == 0;
-    final isLast = _currentIndex == widget.steps.length - 1;
+    final isLast = _currentIndex == _steps.length - 1;
 
     return AnimatedPositioned(
       duration: const Duration(milliseconds: 300),

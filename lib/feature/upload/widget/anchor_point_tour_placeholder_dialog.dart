@@ -246,25 +246,21 @@ class _AnchorPointTourPlaceholderDialogState extends State<AnchorPointTourPlaceh
                     ),
                   ),
 
-                  // ── Anchor Markers ────────────────────────
+                  // ── Anchor markers ────────────────────────
                   ..._pts.asMap().entries.map((e) {
                     final i = e.key;
                     final pt = e.value;
                     final isDragging = i == _draggingIdx;
                     final isActive = _isMobile(context) && i == _selectedActivePointIdx;
                     return Positioned(
-                      left: pt.dx * _imgW - 16,
-                      top: pt.dy * _imgH - 16,
-                      child: AnimatedScale(
-                        scale: (isDragging || isActive) ? 1.35 : 1.0,
-                        duration: const Duration(milliseconds: 150),
-                        child: _AnchorMarker(
-                          label: labels[i],
-                          color: _colors[i],
-                          index: i + 1,
-                          isDragging: isDragging,
-                          isActive: isActive,
-                        ),
+                      left: pt.dx * _imgW,
+                      top: pt.dy * _imgH,
+                      child: _AnchorMarker(
+                        label: labels[i],
+                        color: _colors[i],
+                        index: i + 1,
+                        isDragging: isDragging,
+                        isActive: isActive,
                       ),
                     );
                   }),
@@ -569,54 +565,64 @@ class _AnchorMarker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final highlight = isDragging || isActive;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: highlight ? 34 : 28,
-          height: highlight ? 34 : 28,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: color,
-            border: Border.all(
-              color: highlight ? Colors.white : Colors.white70,
-              width: highlight ? 2.5 : 2,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: color.withValues(alpha: highlight ? 0.8 : 0.5),
-                blurRadius: highlight ? 14 : 8,
-                spreadRadius: highlight ? 3 : 1,
+    final circleSize = highlight ? 34.0 : 28.0;
+
+    return Transform.translate(
+      offset: Offset(0, -circleSize / 2),
+      child: FractionalTranslation(
+        translation: const Offset(-0.5, 0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              width: circleSize,
+              height: circleSize,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: color,
+                border: Border.all(
+                  color: highlight ? Colors.white : Colors.white70,
+                  width: highlight ? 2.5 : 2,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: color.withValues(alpha: highlight ? 0.8 : 0.5),
+                    blurRadius: highlight ? 14 : 8,
+                    spreadRadius: highlight ? 3 : 1,
+                  ),
+                ],
               ),
-            ],
-          ),
-          alignment: Alignment.center,
-          child: Text(
-            '$index',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: highlight ? 14 : 12,
-              fontWeight: FontWeight.bold,
+              alignment: Alignment.center,
+              child: Text(
+                '$index',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: highlight ? 14 : 12,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
-          ),
-        ),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: highlight ? 1.0 : 0.85),
-            borderRadius: BorderRadius.circular(4),
-          ),
-          child: Text(
-            label,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 10,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'NotoSansTC',
+            const SizedBox(height: 2),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: highlight ? 1.0 : 0.85),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Text(
+                label,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'NotoSansTC',
+                ),
+              ),
             ),
-          ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }

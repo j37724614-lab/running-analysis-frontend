@@ -167,6 +167,24 @@ class FakeBackendRepo implements BackendInterface {
   }
 
   @override
+  Future<UnanalyzedRunSessionInfo?> getUnanalyzedRunSessionById(String runSessionId) {
+    return Future.delayed(
+      const Duration(milliseconds: 200),
+      () => UnanalyzedRunSessionInfo(
+        runSessionId: runSessionId,
+        runnerId: 'runnerId1',
+        runnerName: 'runnerName1',
+        date: DateTime.now(),
+        cameraCount: 5,
+        fps: 60,
+        note: 'shared session',
+        unuploadedCameraIndexes: [1, 2],
+        videoPaths: ['videoPath0'],
+      ),
+    );
+  }
+
+  @override
   Future<UploadSeperatelyStatus> uploadSeperatelyNew(
     String runnerId,
     DateTime date,

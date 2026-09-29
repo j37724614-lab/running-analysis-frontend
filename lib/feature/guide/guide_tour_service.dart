@@ -6,6 +6,8 @@ import 'package:frontend/feature/guide/guide_tour_overlay.dart';
 import 'package:frontend/feature/guide/record_tour_inquiry_dialog.dart';
 import 'package:frontend/feature/record/record_controller.dart';
 import 'package:frontend/feature/record/record_enums.dart';
+import 'package:frontend/utils/api.dart';
+import 'package:frontend/utils/net_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class GuideTourService {
@@ -16,31 +18,76 @@ class GuideTourService {
   static const String tourUpload = 'upload';
   static const String tourNavigation = 'navigation';
 
+  /// Sync seen tours from backend to local SharedPreferences cache
+  static Future<void> syncSeenTours(List<String> seenTours) async {
+    final prefs = await SharedPreferences.getInstance();
+    final keys = prefs.getKeys().where((k) => k.startsWith(keyPrefix)).toList();
+    for (final k in keys) {
+      await prefs.remove(k);
+    }
+    for (final tourKey in seenTours) {
+      await prefs.setBool('$keyPrefix$tourKey', true);
+    }
+  }
+
+  /// Reset all local tour flags (e.g. on logout)
+  static Future<void> resetAllLocalTours() async {
+    final prefs = await SharedPreferences.getInstance();
+    final keys = prefs.getKeys().where((k) => k.startsWith(keyPrefix)).toList();
+    for (final k in keys) {
+      await prefs.remove(k);
+    }
+  }
+
   /// Check if the user has already seen the specified tour
   static Future<bool> hasSeenTour(String tourKey) async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool('$keyPrefix$tourKey') ?? false;
   }
 
-  /// Mark the specified tour as seen
+  /// Mark the specified tour as seen (both locally and on backend)
   static Future<void> markTourSeen(String tourKey) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('$keyPrefix$tourKey', true);
+
+    try {
+      await NetUtils().reqeustData<Map<String, dynamic>>(
+        '${API.baseUrl}/auth/seen-tours',
+        method: DioMethod.post,
+        postData: {'tour_key': tourKey},
+      );
+    } catch (_) {}
   }
 
   /// Reset tour seen status (for testing or "Replay Tutorial" action)
   static Future<void> resetTourSeen(String tourKey) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove('$keyPrefix$tourKey');
+
+    try {
+      await NetUtils().reqeustData<Map<String, dynamic>>(
+        '${API.baseUrl}/auth/reset-tours',
+        method: DioMethod.post,
+        postData: {'tour_key': tourKey},
+      );
+    } catch (_) {}
   }
 
   /// Reset all tours
   static Future<void> resetAllTours() async {
     final prefs = await SharedPreferences.getInstance();
-    final keys = prefs.getKeys().where((k) => k.startsWith(keyPrefix));
+    final keys = prefs.getKeys().where((k) => k.startsWith(keyPrefix)).toList();
     for (final k in keys) {
       await prefs.remove(k);
     }
+
+    try {
+      await NetUtils().reqeustData<Map<String, dynamic>>(
+        '${API.baseUrl}/auth/reset-tours',
+        method: DioMethod.post,
+        postData: {},
+      );
+    } catch (_) {}
   }
 
   /// Launch a guide tour if not yet seen, or if forced (e.g. user tapped '❓')
@@ -115,7 +162,12 @@ class GuideTourService {
 
     // Show Inquiry Dialog first
     final choice = await RecordTourInquiryDialog.show(context);
-    if (choice == null || !context.mounted) return;
+    if (choice == null || !context.mounted) {
+      if (!force) {
+        markTourSeen(tourRecord);
+      }
+      return;
+    }
 
     final steps = GuideStepsFactory.getRecordStepsByChoice(context, ref, choice);
 

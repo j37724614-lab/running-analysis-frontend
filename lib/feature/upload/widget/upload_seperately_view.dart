@@ -39,11 +39,36 @@ class _UploadSeperatelyViewState extends ConsumerState<UploadSeperatelyView> {
     final l10n = context.l10n;
     final runnerId = ref.watch(uploadSelectedRunnerIdProvider);
     final selectedVideoId = ref.watch(uploadSelectedRunSessionIdProvider);
+    final externalSession = ref.watch(uploadExternalSessionInfoProvider);
     final selectedRunnerSource = ref.watch(uploadSeparatelyTypeProvider);
     final formData = ref.watch(uploadSeperatelyFormProvider);
     final formNotifier = ref.read(uploadSeperatelyFormProvider.notifier);
     final state = ref.watch(uploadSeperatelyControllerProvider);
     final controller = ref.read(uploadSeperatelyControllerProvider.notifier);
+
+    ref.listen(uploadExternalSessionInfoProvider, (previous, next) {
+      if (next != null) {
+        setState(() {
+          unuploadedCameraIndexes = next.unuploadedCameraIndexes;
+          if (unuploadedCameraIndexes.isNotEmpty && !unuploadedCameraIndexes.contains(_index)) {
+            _index = unuploadedCameraIndexes.first;
+          }
+        });
+      }
+    });
+
+    final effectiveCameraIndexes = unuploadedCameraIndexes.isNotEmpty
+        ? unuploadedCameraIndexes
+        : (selectedRunnerSource == SperatedType.newOne
+              ? List.generate(_selectedCameraCount, (i) => i)
+              : [0, 1, 2, 3, 4]);
+    final effectiveIndex = effectiveCameraIndexes.contains(_index)
+        ? _index
+        : effectiveCameraIndexes.first;
+
+    final isRecordSelected =
+        selectedRunnerSource == SperatedType.newOne ||
+        (selectedVideoId != null || externalSession != null);
 
     return Column(
       spacing: 16,
@@ -70,7 +95,7 @@ class _UploadSeperatelyViewState extends ConsumerState<UploadSeperatelyView> {
 
             setState(() {
               if (value == SperatedType.newOne) {
-                unuploadedCameraIndexes = [0, 1, 2, 3, 4];
+                unuploadedCameraIndexes = List.generate(_selectedCameraCount, (i) => i);
                 _index = 0;
               } else {
                 // 切換到選擇模式時，重置索引，具體索引會在選擇影片後更新
@@ -122,6 +147,12 @@ class _UploadSeperatelyViewState extends ConsumerState<UploadSeperatelyView> {
             onCameraCountSelected: (cameraCount) {
               setState(() {
                 _selectedCameraCount = cameraCount;
+                if (selectedRunnerSource == SperatedType.newOne) {
+                  unuploadedCameraIndexes = List.generate(cameraCount, (i) => i);
+                  if (_index >= cameraCount) {
+                    _index = 0;
+                  }
+                }
               });
             },
             onFpsSelected: (fps) {
@@ -134,100 +165,103 @@ class _UploadSeperatelyViewState extends ConsumerState<UploadSeperatelyView> {
         if (selectedRunnerSource == SperatedType.selectOne)
           Container(
             key: GuideKeys.uploadSepHistoryKey,
-            child: runnerId == null
-                ? const _UnanalyzedHistoryPlaceholder()
-                : UnanalyzedHistoryView(
-                    onVideoSelected: (video) {
-                      setState(() {
-                        unuploadedCameraIndexes = video.unuploadedCameraIndexes;
-                        if (unuploadedCameraIndexes.isNotEmpty) {
-                          _index = unuploadedCameraIndexes.first;
-                        }
-                      });
-                    },
-                  ),
+            child: UnanalyzedHistoryView(
+              onVideoSelected: (video) {
+                setState(() {
+                  unuploadedCameraIndexes = video.unuploadedCameraIndexes;
+                  if (unuploadedCameraIndexes.isNotEmpty) {
+                    _index = unuploadedCameraIndexes.first;
+                  }
+                });
+              },
+            ),
           ),
-        if (selectedVideoId != null ||
-            selectedRunnerSource == SperatedType.newOne ||
-            runnerId == null)
-          Row(
-            key: GuideKeys.uploadSepCameraKey,
-            spacing: 16,
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                height: 36,
-                padding: const EdgeInsets.symmetric(horizontal: 20),
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: Theme.of(context).primaryColor,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Text(
-                  l10n.cameraIndexNumber,
-                  style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
-                ),
-              ),
-              DropdownButtonHideUnderline(
-                child: DropdownButton2<int>(
-                  hint: Row(
-                    children: [
-                      Text(
-                        l10n.cameraCount,
-                        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
+        IgnorePointer(
+          ignoring: !isRecordSelected,
+          child: Opacity(
+            opacity: isRecordSelected ? 1.0 : 0.45,
+            child: Row(
+              key: GuideKeys.uploadSepCameraKey,
+              spacing: 16,
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  height: 36,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).primaryColor,
+                    borderRadius: BorderRadius.circular(20),
                   ),
-                  items: unuploadedCameraIndexes
-                      .map(
-                        (item) => DropdownMenuItem<int>(
-                          value: item,
-                          child: Text(
-                            '${l10n.camera} ${item + 1}',
-                            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                            overflow: TextOverflow.ellipsis,
-                          ),
+                  child: Text(
+                    l10n.cameraIndexNumber,
+                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                DropdownButtonHideUnderline(
+                  child: DropdownButton2<int>(
+                    hint: Row(
+                      children: [
+                        Text(
+                          l10n.cameraCount,
+                          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                          overflow: TextOverflow.ellipsis,
                         ),
-                      )
-                      .toList(),
-                  value: _index,
-                  onChanged: (value) {
-                    if (value != null) {
-                      setState(() {
-                        _index = value;
-                      });
-                    }
-                  },
-                  buttonStyleData: ButtonStyleData(
-                    height: 36,
-                    width: 120,
-                    padding: const EdgeInsets.symmetric(horizontal: 4),
-                    overlayColor: WidgetStateProperty.all(Colors.transparent),
-                    decoration: BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(color: Theme.of(context).primaryColor, width: 2),
+                      ],
+                    ),
+                    items: effectiveCameraIndexes
+                        .map(
+                          (item) => DropdownMenuItem<int>(
+                            value: item,
+                            child: Text(
+                              '${l10n.camera} ${item + 1}',
+                              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        )
+                        .toList(),
+                    value: effectiveIndex,
+                    onChanged: isRecordSelected
+                        ? (value) {
+                            if (value != null) {
+                              setState(() {
+                                _index = value;
+                              });
+                            }
+                          }
+                        : null,
+                    buttonStyleData: ButtonStyleData(
+                      height: 36,
+                      width: 120,
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      overlayColor: WidgetStateProperty.all(Colors.transparent),
+                      decoration: BoxDecoration(
+                        border: Border(
+                          bottom: BorderSide(color: Theme.of(context).primaryColor, width: 2),
+                        ),
                       ),
                     ),
-                  ),
-                  iconStyleData: const IconStyleData(
-                    icon: Icon(Icons.arrow_forward_ios_outlined),
-                    iconSize: 12,
-                  ),
-                  dropdownStyleData: DropdownStyleData(
-                    maxHeight: 200,
-                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
-                    scrollbarTheme: const ScrollbarThemeData(radius: Radius.circular(40)),
-                  ),
-                  menuItemStyleData: const MenuItemStyleData(
-                    height: 36,
-                    padding: EdgeInsets.symmetric(horizontal: 8),
+                    iconStyleData: const IconStyleData(
+                      icon: Icon(Icons.arrow_forward_ios_outlined),
+                      iconSize: 12,
+                    ),
+                    dropdownStyleData: DropdownStyleData(
+                      maxHeight: 200,
+                      decoration: BoxDecoration(borderRadius: BorderRadius.circular(12)),
+                      scrollbarTheme: const ScrollbarThemeData(radius: Radius.circular(40)),
+                    ),
+                    menuItemStyleData: const MenuItemStyleData(
+                      height: 36,
+                      padding: EdgeInsets.symmetric(horizontal: 8),
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
+        ),
 
         LayoutBuilder(
           builder: (context, constraints) {
@@ -236,234 +270,313 @@ class _UploadSeperatelyViewState extends ConsumerState<UploadSeperatelyView> {
             final itemHeight = itemWidth * 9 / 16;
             final spacing = 12.0;
 
-            return Wrap(
-              key: GuideKeys.uploadSepVideoKey,
-              spacing: spacing,
-              runSpacing: spacing,
-              alignment: WrapAlignment.center,
-              children: [
-                GestureDetector(
-                  onTap: state.isUploading
-                      ? null // 上傳中不能再點
-                      : () async {
-                          final result = await FilePicker.platform.pickFiles(
-                            type: FileType.custom,
-                            allowedExtensions: [
-                              'mp4',
-                              'mov',
-                              'avi',
-                              'mkv',
-                              'webm',
-                              'm4v',
-                              '3gp',
-                              'flv',
-                              'wmv',
-                              'ts',
-                            ],
-                            withData: true,
-                          );
+            return IgnorePointer(
+              ignoring: !isRecordSelected,
+              child: Opacity(
+                opacity: isRecordSelected ? 1.0 : 0.45,
+                child: Wrap(
+                  key: GuideKeys.uploadSepVideoKey,
+                  spacing: spacing,
+                  runSpacing: spacing,
+                  alignment: WrapAlignment.center,
+                  children: [
+                    GestureDetector(
+                      onTap: (!isRecordSelected || state.isUploading)
+                          ? null // 未選取紀錄或上傳中不能再點
+                          : () async {
+                              final result = await FilePicker.platform.pickFiles(
+                                type: FileType.custom,
+                                allowedExtensions: [
+                                  'mp4',
+                                  'mov',
+                                  'avi',
+                                  'mkv',
+                                  'webm',
+                                  'm4v',
+                                  '3gp',
+                                  'flv',
+                                  'wmv',
+                                  'ts',
+                                ],
+                                withData: true,
+                              );
 
-                          if (result == null) return;
+                              if (result == null) return;
 
-                          final file = result.files.first;
+                              final file = result.files.first;
 
-                          final uploadFile = UploadVideoFile(
-                            bytes: file.bytes!,
-                            filename: file.name,
-                            mimeType: lookupMimeType(file.name) ?? 'video/mp4',
-                          );
+                              final uploadFile = UploadVideoFile(
+                                bytes: file.bytes!,
+                                filename: file.name,
+                                mimeType: lookupMimeType(file.name) ?? 'video/mp4',
+                              );
 
-                          await controller.uploadVideo(_index, uploadFile);
+                              await controller.uploadVideo(effectiveIndex, uploadFile);
 
-                          // After upload, prompt anchor selection
-                          final updatedState = ref.read(uploadSeperatelyControllerProvider);
-                          final thumbnailUrl = updatedState.thumbnail;
-                          if (mounted && thumbnailUrl != null) {
-                            final anchor = await showAnchorPointDialog(
-                              context: context,
-                              thumbnailUrl: thumbnailUrl,
-                              cameraIndex: _index,
-                              initialAnchor: ref
-                                  .read(uploadSeperatelyControllerProvider)
-                                  .anchorResult,
-                            );
-                            ref.read(uploadSeperatelyControllerProvider.notifier).setAnchor(anchor);
-                          }
-                        },
-                  child: SizedBox(
-                    width: itemWidth,
-                    height: itemHeight,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: state.isUploading
-                          ? const LoadingIcon()
-                          : state.thumbnail != null
-                          ? Stack(
-                              fit: StackFit.expand,
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(12),
-                                  child: Container(
-                                    clipBehavior: Clip.antiAlias,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(16),
+                              // After upload, prompt anchor selection
+                              final updatedState = ref.read(uploadSeperatelyControllerProvider);
+                              final thumbnailUrl = updatedState.thumbnail;
+                              if (mounted && thumbnailUrl != null) {
+                                final anchor = await showAnchorPointDialog(
+                                  context: context,
+                                  thumbnailUrl: thumbnailUrl,
+                                  cameraIndex: effectiveIndex,
+                                  initialAnchor: ref
+                                      .read(uploadSeperatelyControllerProvider)
+                                      .anchorResult,
+                                );
+                                ref
+                                    .read(uploadSeperatelyControllerProvider.notifier)
+                                    .setAnchor(anchor);
+                              }
+                            },
+                      child: SizedBox(
+                        width: itemWidth,
+                        height: itemHeight,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).primaryColor,
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: state.isUploading
+                              ? const LoadingIcon()
+                              : state.thumbnail != null
+                              ? Stack(
+                                  fit: StackFit.expand,
+                                  children: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(12),
+                                      child: Container(
+                                        clipBehavior: Clip.antiAlias,
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(16),
+                                        ),
+                                        child: Image.network(state.thumbnail!, fit: BoxFit.cover),
+                                      ),
                                     ),
-                                    child: Image.network(state.thumbnail!, fit: BoxFit.cover),
+                                    // Anchor status badge
+                                    Positioned(
+                                      top: 6,
+                                      right: 6,
+                                      child: GestureDetector(
+                                        onTap: () async {
+                                          final anchor = await showAnchorPointDialog(
+                                            context: context,
+                                            thumbnailUrl: state.thumbnail!,
+                                            cameraIndex: effectiveIndex,
+                                            initialAnchor: state.anchorResult,
+                                          );
+                                          ref
+                                              .read(uploadSeperatelyControllerProvider.notifier)
+                                              .setAnchor(anchor);
+                                        },
+                                        child: _AnchorBadge(isSet: state.anchorResult != null),
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              : Center(
+                                  child: Text(
+                                    '${l10n.camera} ${effectiveIndex + 1}\n${l10n.clickToUpload}',
+                                    textAlign: TextAlign.center,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
-                                // Anchor status badge
-                                Positioned(
-                                  top: 6,
-                                  right: 6,
-                                  child: GestureDetector(
-                                    onTap: () async {
-                                      final anchor = await showAnchorPointDialog(
-                                        context: context,
-                                        thumbnailUrl: state.thumbnail!,
-                                        cameraIndex: _index,
-                                        initialAnchor: state.anchorResult,
-                                      );
-                                      ref
-                                          .read(uploadSeperatelyControllerProvider.notifier)
-                                          .setAnchor(anchor);
-                                    },
-                                    child: _AnchorBadge(isSet: state.anchorResult != null),
-                                  ),
-                                ),
-                              ],
-                            )
-                          : Center(
-                              child: Text(
-                                '${l10n.camera} ${_index + 1}\n${l10n.clickToUpload}',
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                              ),
-                            ),
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
+              ),
             );
           },
         ),
+
         ElevatedButton(
           key: GuideKeys.uploadSepSubmitKey,
           style: ElevatedButton.styleFrom(
             foregroundColor: Colors.black,
             backgroundColor: Theme.of(context).primaryColor,
+            disabledForegroundColor: Colors.black26,
+            disabledBackgroundColor: Theme.of(context).primaryColor.withValues(alpha: 0.25),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
             textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             padding: const EdgeInsets.symmetric(horizontal: 48),
           ),
-          onPressed: () async {
-            if (runnerId == null) {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    title: const Text('Notice'),
-                    content: Text(l10n.pleaseSelectRunnerFirst),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.of(context).pop(),
-                        child: Text(l10n.confirm),
-                      ),
-                    ],
-                  );
-                },
-              );
-              return;
-            }
-            if (state.thumbnail == null) {
-              showDialog(
-                context: context,
-                builder: (context) {
-                  return AlertDialog(
-                    title: const Text('Error'),
-                    content: Text(l10n.selectVideoFirst),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                        child: Text(l10n.confirm),
-                      ),
-                    ],
-                  );
-                },
-              );
-              return;
-            }
-            UploadSeperatelyStatus? status;
-            if (selectedRunnerSource == SperatedType.newOne) {
-              status = await ref
-                  .read(uploadControllerProvider.notifier)
-                  .uploadSeperatelyNew(
-                    runnerId,
-                    formData.selectedDate,
-                    formData.selectedTime,
-                    _selectedCameraCount,
-                    formData.fps,
-                    formData.note,
-                    _index,
-                    state.tempVideoId!,
-                    state.anchorResult,
-                  );
-            }
-            if (selectedRunnerSource == SperatedType.selectOne) {
-              if (selectedVideoId == null) return;
-              status = await ref
-                  .read(uploadControllerProvider.notifier)
-                  .uploadSeperatelySelect(
-                    runnerId,
-                    selectedVideoId,
-                    _index,
-                    state.tempVideoId!,
-                    state.anchorResult,
-                  );
-            }
-            if (mounted && status != null) {
-              // 無論是否上傳完成，都更新未分析紀錄列表，確保「選擇紀錄」能看到最新狀態
-              ref.invalidate(runnerUnanalyzedHistoryProvider(runnerId));
+          onPressed: !isRecordSelected
+              ? null
+              : () async {
+                  final effectiveRunnerId = runnerId ?? externalSession?.runnerId;
 
-              if (status.isAllUploaded == true) {
-                // Invalidate history to ensure we fetch the latest list
-                ref.invalidate(runnerHistoryProvider(runnerId));
-
-                if (mounted) {
-                  context.goNamed(
-                    AppRoute.playback.name,
-                    queryParameters: {'runnerId': runnerId, 'videoId': status.runSessionId},
-                  );
-                }
-              } else {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: const Text('Notice'),
-                      content: Text(
-                        '${l10n.pleaseUploadAllVideos}: ${status!.unuploadedCameraIndexes.map((e) => "${l10n.camera} ${e + 1}").join(', ')}',
-                      ),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            // 上傳部分成功後，重置縮圖以便上傳下一個
-                            ref.read(uploadSeperatelyControllerProvider.notifier).resetState();
-                            Navigator.of(context).pop();
-                          },
-                          child: Text(l10n.confirm),
-                        ),
-                      ],
+                  if (selectedRunnerSource == SperatedType.newOne && effectiveRunnerId == null) {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: const Text('Notice'),
+                          content: Text(l10n.pleaseSelectRunnerFirst),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              child: Text(l10n.confirm),
+                            ),
+                          ],
+                        );
+                      },
                     );
-                  },
-                );
-              }
-            }
-          },
+                    return;
+                  }
+                  if (selectedRunnerSource == SperatedType.selectOne &&
+                      (selectedVideoId == null || effectiveRunnerId == null)) {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: const Text('Notice'),
+                          content: Text(l10n.pleaseSelectRecordToUpload),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              child: Text(l10n.confirm),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                    return;
+                  }
+                  if (state.thumbnail == null) {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: const Text('Error'),
+                          content: Text(l10n.selectVideoFirst),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              child: Text(l10n.confirm),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                    return;
+                  }
+                  UploadSeperatelyStatus? status;
+                  if (selectedRunnerSource == SperatedType.newOne) {
+                    status = await ref
+                        .read(uploadControllerProvider.notifier)
+                        .uploadSeperatelyNew(
+                          effectiveRunnerId!,
+                          formData.selectedDate,
+                          formData.selectedTime,
+                          _selectedCameraCount,
+                          formData.fps,
+                          formData.note,
+                          effectiveIndex,
+                          state.tempVideoId!,
+                          state.anchorResult,
+                        );
+                  }
+                  if (selectedRunnerSource == SperatedType.selectOne) {
+                    status = await ref
+                        .read(uploadControllerProvider.notifier)
+                        .uploadSeperatelySelect(
+                          effectiveRunnerId!,
+                          selectedVideoId!,
+                          effectiveIndex,
+                          state.tempVideoId!,
+                          state.anchorResult,
+                        );
+                  }
+                  if (mounted && status != null) {
+                    final runners = ref.read(uploadRunnerListProvider).value;
+                    final isOwner =
+                        runners != null && runners.any((r) => r.id == effectiveRunnerId);
+
+                    if (runnerId != null) {
+                      ref.invalidate(runnerUnanalyzedHistoryProvider(runnerId));
+                    }
+
+                    if (status.isAllUploaded == true) {
+                      if (isOwner && effectiveRunnerId != null) {
+                        ref.invalidate(runnerHistoryProvider(effectiveRunnerId));
+                        if (mounted) {
+                          context.goNamed(
+                            AppRoute.playback.name,
+                            queryParameters: {
+                              'runnerId': effectiveRunnerId,
+                              'videoId': status.runSessionId,
+                            },
+                          );
+                        }
+                      } else {
+                        // External session completed
+                        ref.read(uploadExternalSessionInfoProvider.notifier).state = null;
+                        ref.read(uploadSelectedRunSessionIdProvider.notifier).state = null;
+                        ref.read(uploadSeperatelyControllerProvider.notifier).resetState();
+                        if (mounted) {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: Text(l10n.uploadSuccessNotice),
+                                content: Text(l10n.allCamerasUploadedExternalNotice),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.of(context).pop(),
+                                    child: Text(l10n.confirm),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }
+                      }
+                    } else {
+                      setState(() {
+                        unuploadedCameraIndexes = status!.unuploadedCameraIndexes;
+                        if (unuploadedCameraIndexes.isNotEmpty) {
+                          _index = unuploadedCameraIndexes.first;
+                        }
+                      });
+                      final currentExternal = ref.read(uploadExternalSessionInfoProvider);
+                      if (currentExternal != null &&
+                          currentExternal.runSessionId == status.runSessionId) {
+                        ref.read(uploadExternalSessionInfoProvider.notifier).state = currentExternal
+                            .copyWith(unuploadedCameraIndexes: status.unuploadedCameraIndexes);
+                      }
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: const Text('Notice'),
+                            content: Text(
+                              '${l10n.pleaseUploadAllVideos}: ${status!.unuploadedCameraIndexes.map((e) => "${l10n.camera} ${e + 1}").join(', ')}',
+                            ),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  ref
+                                      .read(uploadSeperatelyControllerProvider.notifier)
+                                      .resetState();
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text(l10n.confirm),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
+                  }
+                },
           child: Text(l10n.upload),
         ),
       ],
@@ -502,242 +615,6 @@ class _AnchorBadge extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-/// Realistic unanalyzed history placeholder shown when no runner is currently selected
-class _UnanalyzedHistoryPlaceholder extends StatelessWidget {
-  const _UnanalyzedHistoryPlaceholder();
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final sampleItems = [
-      (
-        date: "2026-09-02 10:30",
-        cameraCount: 3,
-        missing: "2, 3",
-        note: "100m 衝刺測驗",
-        isSelected: true,
-      ),
-      (
-        date: "2026-09-01 16:15",
-        cameraCount: 5,
-        missing: "4, 5",
-        note: "起跑出發練習",
-        isSelected: false,
-      ),
-    ];
-
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final cardWidth = constraints.maxWidth < 600 ? constraints.maxWidth : 500.0;
-        return Container(
-          width: cardWidth,
-          decoration: BoxDecoration(
-            color: Theme.of(context).primaryColor.withValues(alpha: 0.10),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: Theme.of(context).primaryColor.withValues(alpha: 0.3),
-              width: 1.5,
-            ),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.pending_actions_rounded,
-                      size: 16,
-                      color: Theme.of(context).primaryColorDark,
-                    ),
-                    const SizedBox(width: 7),
-                    Expanded(
-                      child: Text(
-                        l10n.uncompletedRecordsPlaceholder,
-                        style: const TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Divider(height: 1, color: Theme.of(context).primaryColor.withValues(alpha: 0.2)),
-              ScrollConfiguration(
-                behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false),
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  itemCount: sampleItems.length,
-                  itemBuilder: (context, index) {
-                    final item = sampleItems[index];
-                    final isSelected = item.isSelected;
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3.5),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: isSelected ? Theme.of(context).primaryColorDark : Colors.white,
-                          borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: isSelected
-                                ? Theme.of(context).primaryColorDark
-                                : Theme.of(context).primaryColor.withValues(alpha: 0.35),
-                            width: isSelected ? 1.5 : 1,
-                          ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.02),
-                              blurRadius: 3,
-                              offset: const Offset(0, 1),
-                            ),
-                          ],
-                        ),
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-                        child: Row(
-                          children: [
-                            Container(
-                              padding: const EdgeInsets.all(6),
-                              decoration: BoxDecoration(
-                                color: isSelected
-                                    ? Colors.white.withValues(alpha: 0.15)
-                                    : Theme.of(context).primaryColor.withValues(alpha: 0.15),
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                Icons.directions_run,
-                                color: isSelected
-                                    ? Colors.white
-                                    : Theme.of(context).primaryColorDark,
-                                size: 17,
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Wrap(
-                                    crossAxisAlignment: WrapCrossAlignment.center,
-                                    spacing: 6,
-                                    runSpacing: 2,
-                                    children: [
-                                      Text(
-                                        item.date,
-                                        style: TextStyle(
-                                          fontSize: 13,
-                                          fontWeight: isSelected
-                                              ? FontWeight.bold
-                                              : FontWeight.w600,
-                                          color: isSelected ? Colors.white : Colors.black87,
-                                        ),
-                                      ),
-                                      Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Icon(
-                                            Icons.videocam_outlined,
-                                            size: 13,
-                                            color: isSelected
-                                                ? Colors.white.withValues(alpha: 0.8)
-                                                : Colors.grey.shade600,
-                                          ),
-                                          const SizedBox(width: 3),
-                                          Text(
-                                            "${item.cameraCount} ${l10n.cameras}",
-                                            style: TextStyle(
-                                              fontSize: 11,
-                                              color: isSelected
-                                                  ? Colors.white.withValues(alpha: 0.8)
-                                                  : Colors.grey.shade600,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 5,
-                                          vertical: 1.5,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: isSelected
-                                              ? Colors.white.withValues(alpha: 0.2)
-                                              : Colors.orange.shade50,
-                                          borderRadius: BorderRadius.circular(4),
-                                          border: Border.all(
-                                            color: isSelected
-                                                ? Colors.white30
-                                                : Colors.orange.shade200,
-                                            width: 0.8,
-                                          ),
-                                        ),
-                                        child: Text(
-                                          "缺相機 ${item.missing}",
-                                          style: TextStyle(
-                                            fontSize: 10.5,
-                                            fontWeight: FontWeight.w600,
-                                            color: isSelected
-                                                ? Colors.white
-                                                : Colors.orange.shade800,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  if (item.note.isNotEmpty) ...[
-                                    const SizedBox(height: 2),
-                                    Text(
-                                      item.note,
-                                      style: TextStyle(
-                                        fontSize: 10.5,
-                                        fontStyle: FontStyle.italic,
-                                        color: isSelected
-                                            ? Colors.white.withValues(alpha: 0.7)
-                                            : Colors.grey.shade500,
-                                      ),
-                                    ),
-                                  ],
-                                ],
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-                              decoration: BoxDecoration(
-                                color: isSelected
-                                    ? Colors.white.withValues(alpha: 0.25)
-                                    : Colors.amber.shade50,
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              child: Text(
-                                "待補傳",
-                                style: TextStyle(
-                                  fontSize: 10.5,
-                                  fontWeight: FontWeight.bold,
-                                  color: isSelected ? Colors.white : Colors.amber.shade800,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-        );
-      },
     );
   }
 }
