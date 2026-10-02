@@ -684,4 +684,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get legendRight => 'Right';
+
+  @override
+  String get longJumpMode => 'Long-jump mode';
+
+  @override
+  String get longJumpModeDescription =>
+      'Detect takeoff, the longest flight, and landing using anchor geometry and pre-takeoff footsteps; anchors must cover the runway and sand pit';
 }

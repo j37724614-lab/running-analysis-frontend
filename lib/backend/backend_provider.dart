@@ -7,6 +7,7 @@ import 'package:frontend/entities/graph_data.dart';
 import 'package:frontend/entities/runner_info.dart';
 import 'package:frontend/entities/unanalyzed_run_session_info.dart';
 import 'package:frontend/entities/run_session_info.dart';
+import 'package:frontend/utils/api_retry.dart';
 import 'package:frontend/utils/config.dart';
 
 final backendProvider = Provider<BackendInterface>((ref) {
@@ -17,13 +18,13 @@ final backendProvider = Provider<BackendInterface>((ref) {
 final runnerProvider = FutureProvider.autoDispose<List<RunnerInfo>>((ref) {
   final backend = ref.watch(backendProvider);
   return backend.getRunners();
-});
+}, retry: apiRetry);
 
 final graphDataProvider = FutureProvider.autoDispose
     .family<List<GraphData>, String>((ref, runSessionId) {
       final backend = ref.watch(backendProvider);
       return backend.getGraphData(runSessionId);
-    });
+    }, retry: apiRetry);
 
 final videoInfoProvider = FutureProvider.autoDispose
     .family<RunSessionInfo, String>((ref, runSessionId) async {
@@ -39,7 +40,7 @@ final videoInfoProvider = FutureProvider.autoDispose
       }
 
       return info;
-    });
+    }, retry: apiRetry);
 
 final runnerHistoryProvider = FutureProvider.autoDispose
     .family<List<RunSessionInfo>, String>((ref, runnerId) async {
@@ -55,10 +56,10 @@ final runnerHistoryProvider = FutureProvider.autoDispose
       }
 
       return history;
-    });
+    }, retry: apiRetry);
 
 final runnerUnanalyzedHistoryProvider = FutureProvider.autoDispose
     .family<List<UnanalyzedRunSessionInfo>, String>((ref, runnerId) {
       final backend = ref.watch(backendProvider);
       return backend.getRunnerUnanalyzedHistory(runnerId);
-    });
+    }, retry: apiRetry);

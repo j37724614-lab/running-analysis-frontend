@@ -20,6 +20,7 @@ class UploadController extends StateNotifier<AsyncValue<void>> {
     int cameraCount,
     int fps,
     String note,
+    bool isLongJump,
     int cameraIndex,
     String tempVideoId,
     AnchorResult? anchors,
@@ -32,6 +33,7 @@ class UploadController extends StateNotifier<AsyncValue<void>> {
         cameraCount,
         fps,
         note,
+        isLongJump,
         cameraIndex,
         tempVideoId,
         anchors,
@@ -75,6 +77,7 @@ class UploadController extends StateNotifier<AsyncValue<void>> {
     int cameraCount,
     int fps,
     String note,
+    bool isLongJump,
     List<Map<String, dynamic>> videos,
   ) async {
     try {
@@ -85,6 +88,7 @@ class UploadController extends StateNotifier<AsyncValue<void>> {
         cameraCount,
         fps,
         note,
+        isLongJump,
         videos,
       );
       state = const AsyncValue.data(null);

@@ -24,6 +24,7 @@ abstract class BackendInterface {
     int cameraCount,
     int fps,
     String note,
+    bool isLongJump,
     List<Map<String, dynamic>> videos,
   );
   Future<UploadSeperatelyStatus> uploadSeperatelyNew(
@@ -32,6 +33,7 @@ abstract class BackendInterface {
     int cameraCount,
     int fps,
     String note,
+    bool isLongJump,
     int cameraIndex,
     String tempVideoId,
     AnchorResult? anchors,

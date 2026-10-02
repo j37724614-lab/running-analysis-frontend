@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/utils/api.dart';
+import 'package:frontend/utils/api_retry.dart';
 import 'package:video_player/video_player.dart';
 
 import 'package:frontend/feature/auth/auth_provider.dart';
@@ -8,9 +9,7 @@ class VideoControllerManager {
   late final VideoPlayerController controller;
 
   VideoControllerManager(String videoUrl) {
-    controller = VideoPlayerController.networkUrl(
-      Uri.parse(videoUrl),
-    );
+    controller = VideoPlayerController.networkUrl(Uri.parse(videoUrl));
   }
 
   Future<void> initializeAll() async {
@@ -46,6 +45,12 @@ final videoManagerProvider =
       }
 
       final manager = VideoControllerManager(urls);
-      await manager.initializeAll();
-      return manager;
-    });
+      try {
+        await manager.initializeAll();
+        ref.onDispose(manager.dispose);
+        return manager;
+      } catch (_) {
+        manager.dispose();
+        rethrow;
+      }
+    }, retry: apiRetry);

@@ -262,5 +262,7 @@
   "chartPelvisTorsoAngle": "骨盆軀幹角度",
   "angleUnit": "角度 (度)",
   "legendLeft": "左側",
-  "legendRight": "右側"
+  "legendRight": "右側",
+  "longJumpMode": "跳遠模式",
+  "longJumpModeDescription": "使用錨點幾何與起跳前腳步校正偵測起跳、最長騰空及落地；錨點範圍須涵蓋跑道與沙坑"
 }

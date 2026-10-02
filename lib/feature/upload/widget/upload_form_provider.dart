@@ -7,12 +7,14 @@ class UploadFormData {
   final TimeOfDay selectedTime;
   final int fps;
   final String note;
+  final bool isLongJump;
 
   UploadFormData({
     required this.selectedDate,
     required this.selectedTime,
     required this.fps,
     required this.note,
+    required this.isLongJump,
   });
 
   UploadFormData copyWith({
@@ -20,12 +22,14 @@ class UploadFormData {
     TimeOfDay? selectedTime,
     int? fps,
     String? note,
+    bool? isLongJump,
   }) {
     return UploadFormData(
       selectedDate: selectedDate ?? this.selectedDate,
       selectedTime: selectedTime ?? this.selectedTime,
       fps: fps ?? this.fps,
       note: note ?? this.note,
+      isLongJump: isLongJump ?? this.isLongJump,
     );
   }
 
@@ -34,6 +38,7 @@ class UploadFormData {
     selectedTime: TimeOfDay.now(),
     fps: 60,
     note: '',
+    isLongJump: false,
   );
 }
 

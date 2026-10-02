@@ -15,6 +15,8 @@ class DateTimeSelectionWidget extends StatelessWidget {
     required this.selectedFps,
     required this.note,
     required this.onNoteSelected,
+    required this.isLongJump,
+    required this.onLongJumpChanged,
   });
 
   final Function(DateTime) onDateSelected;
@@ -27,6 +29,8 @@ class DateTimeSelectionWidget extends StatelessWidget {
   final int selectedFps;
   final String note;
   final Function(String) onNoteSelected;
+  final bool isLongJump;
+  final ValueChanged<bool> onLongJumpChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +47,10 @@ class DateTimeSelectionWidget extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: Theme.of(context).primaryColor,
                     borderRadius: BorderRadius.circular(25),
@@ -102,7 +109,10 @@ class DateTimeSelectionWidget extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: Theme.of(context).primaryColor,
                     borderRadius: BorderRadius.circular(25),
@@ -160,7 +170,10 @@ class DateTimeSelectionWidget extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: Theme.of(context).primaryColor,
                     borderRadius: BorderRadius.circular(25),
@@ -246,7 +259,10 @@ class DateTimeSelectionWidget extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: Theme.of(context).primaryColor,
                     borderRadius: BorderRadius.circular(25),
@@ -329,6 +345,19 @@ class DateTimeSelectionWidget extends StatelessWidget {
             ),
           ],
         ),
+        Padding(
+          padding: const EdgeInsets.only(top: 8),
+          child: SwitchListTile.adaptive(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+            title: Text(
+              l10n.longJumpMode,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+            ),
+            subtitle: Text(l10n.longJumpModeDescription),
+            value: isLongJump,
+            onChanged: onLongJumpChanged,
+          ),
+        ),
         LayoutBuilder(
           builder: (context, constraints) {
             return Row(
@@ -336,7 +365,10 @@ class DateTimeSelectionWidget extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 8,
+                  ),
                   decoration: BoxDecoration(
                     color: Theme.of(context).primaryColor,
                     borderRadius: BorderRadius.circular(25),

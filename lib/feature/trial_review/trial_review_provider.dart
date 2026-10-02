@@ -5,6 +5,7 @@ import 'package:frontend/backend/backend_provider.dart';
 import 'package:frontend/entities/step_data.dart';
 import 'package:frontend/entities/toe_path_data.dart';
 import 'package:frontend/feature/trial_review/widget/trial_video_controller.dart';
+import 'package:frontend/utils/api_retry.dart';
 
 final trialReviewSelectedRunnerIdProvider = StateProvider<String?>(
   (ref) => null,
@@ -25,7 +26,7 @@ final trialReviewComparisonIdsProvider = StateProvider<Set<String>>(
 /// display order when all are enabled.
 enum MetricsChartType {
   stepLengthFrequency('①步幅＋步頻'),
-  stepLateralPath('②腳步俯視路徑'),
+  stepLateralPath('②同步腳步俯視路徑'),
   multiTrialStepLength('③多次試跳步幅比較');
 
   const MetricsChartType(this.label);
@@ -43,19 +44,19 @@ final trialReviewStepsProvider = FutureProvider.autoDispose
     .family<StepsData, String>((ref, runSessionId) {
       final backend = ref.watch(backendProvider);
       return backend.getRunSessionSteps(runSessionId);
-    });
+    }, retry: apiRetry);
 
 final trialReviewToePathProvider = FutureProvider.autoDispose
     .family<ToePathData, String>((ref, runSessionId) {
       final backend = ref.watch(backendProvider);
       return backend.getRunSessionToePath(runSessionId);
-    });
+    }, retry: apiRetry);
 
 final topdownReviewCameraIndicesProvider = FutureProvider.autoDispose
     .family<List<int>, String>((ref, runSessionId) {
       final backend = ref.watch(backendProvider);
       return backend.getTopdownReviewCameraIndices(runSessionId);
-    });
+    }, retry: apiRetry);
 
 final trialVideoControllerProvider = FutureProvider.autoDispose
     .family<TrialVideoPlaybackController, String>((ref, runSessionId) async {
@@ -67,7 +68,7 @@ final trialVideoControllerProvider = FutureProvider.autoDispose
       );
       ref.onDispose(controller.dispose);
       return controller;
-    });
+    }, retry: apiRetry);
 
 /// `stepIndex` is now numbered globally across the whole trial (pipeline
 /// side, see ankle_step_stride.py's step_index assignment), so it no longer
@@ -90,6 +91,22 @@ List<StepSample> chronologicalSteps(StepsData data) {
       return camCompare != 0 ? camCompare : a.stepIndex.compareTo(b.stepIndex);
     });
   return steps;
+}
+
+/// Returns the cumulative footsteps that should be visible at the current
+/// camera playback position. Completed earlier cameras remain on the runway;
+/// the active camera reveals each landing when its video reaches [timeSec].
+List<StepSample> visibleStepsAtPlayback(
+  StepsData data, {
+  required int activeCameraIndex,
+  required Duration position,
+}) {
+  final positionSec = position.inMicroseconds / Duration.microsecondsPerSecond;
+  return chronologicalSteps(data).where((step) {
+    if (step.cam < activeCameraIndex) return true;
+    if (step.cam > activeCameraIndex) return false;
+    return step.timeSec <= positionSec;
+  }).toList();
 }
 
 int stepRank(List<StepSample> chronological, int stepIndex) {

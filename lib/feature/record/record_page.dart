@@ -230,7 +230,9 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                                   controller.createRoom(_createExpectedCount),
                               child: Text(
                                 l10n.createRecordingRoom,
-                                style: const TextStyle(fontWeight: FontWeight.bold),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ],
@@ -306,7 +308,9 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                               },
                               child: Text(
                                 l10n.joinRecordingRoom,
-                                style: const TextStyle(fontWeight: FontWeight.bold),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ],
@@ -420,10 +424,14 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                               },
                               title: Text(
                                 l10n.localRecording,
-                                style: const TextStyle(fontWeight: FontWeight.bold),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                               subtitle: state.isRecordingEnabled
-                                  ? Text('${l10n.camera} ${state.myCameraIndex! + 1}')
+                                  ? Text(
+                                      '${l10n.camera} ${state.myCameraIndex! + 1}',
+                                    )
                                   : Text(l10n.roleMaster),
                               trailing: Switch(
                                 value: state.isRecordingEnabled,
@@ -465,7 +473,9 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                                             state.expectedCameraCount,
                                             (i) {
                                               return ChoiceChip(
-                                                label: Text('${l10n.camera} ${i + 1}'),
+                                                label: Text(
+                                                  '${l10n.camera} ${i + 1}',
+                                                ),
                                                 selected:
                                                     state.myCameraIndex == i,
                                                 onSelected: (selected) {
@@ -599,7 +609,10 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const SpinKitDoubleBounce(color: Colors.red, size: 20),
+                              const SpinKitDoubleBounce(
+                                color: Colors.red,
+                                size: 20,
+                              ),
                               const SizedBox(width: 8),
                               Text(
                                 l10n.recordingInProgress,
@@ -689,7 +702,9 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  description: Text(l10n.orientationLandscapeRequired),
+                                  description: Text(
+                                    l10n.orientationLandscapeRequired,
+                                  ),
                                   alignment: Alignment.bottomCenter,
                                   type: ToastificationType.warning,
                                   style: ToastificationStyle.minimal,
@@ -745,8 +760,8 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                             state.isWaitingForControlApproval
                                 ? l10n.waitingForControlApproval
                                 : (state.members.any((m) => m.isMaster)
-                                    ? l10n.requestControl
-                                    : l10n.takeControl),
+                                      ? l10n.requestControl
+                                      : l10n.takeControl),
                             style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                         ),
@@ -859,7 +874,10 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            const Icon(Icons.arrow_forward_ios_outlined, size: 12),
+                            const Icon(
+                              Icons.arrow_forward_ios_outlined,
+                              size: 12,
+                            ),
                           ],
                         ),
                       ),
@@ -991,6 +1009,26 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                     ],
                   ),
                 ),
+            ],
+          ),
+          Row(
+            spacing: 16,
+            children: [
+              Expanded(
+                child: SwitchListTile.adaptive(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(
+                    l10n.longJumpMode,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  subtitle: Text(l10n.longJumpModeDescription),
+                  value: state.isLongJump,
+                  onChanged: controller.setLongJump,
+                ),
+              ),
             ],
           ),
           Row(

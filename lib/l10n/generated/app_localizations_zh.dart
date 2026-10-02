@@ -669,4 +669,11 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get legendRight => '右側';
+
+  @override
+  String get longJumpMode => '跳遠模式';
+
+  @override
+  String get longJumpModeDescription =>
+      '使用錨點幾何與起跳前腳步校正偵測起跳、最長騰空及落地；錨點範圍須涵蓋跑道與沙坑';
 }

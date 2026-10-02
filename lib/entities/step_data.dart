@@ -44,17 +44,31 @@ class StepsData {
   final double? avgStepLengthM;
   final double? avgCadenceSpm;
   final List<StepSample> steps;
+  // The operator's own runway-width measurement from 6-point calibration
+  // (AnchorResult.runwayWidthM on the calibration screen), keyed by camera
+  // index -- the exact number typed in, not an approximation of where feet
+  // happened to land.
+  final Map<int, double>? runwayWidthByCam;
 
-  StepsData({this.avgStepLengthM, this.avgCadenceSpm, required this.steps});
+  StepsData({
+    this.avgStepLengthM,
+    this.avgCadenceSpm,
+    required this.steps,
+    this.runwayWidthByCam,
+  });
 
   factory StepsData.fromJson(Map<String, dynamic> json) {
     double? asDouble(dynamic v) => v == null ? null : (v as num).toDouble();
+    final rawWidths = json['runwayWidthByCam'] as Map<String, dynamic>?;
     return StepsData(
       avgStepLengthM: asDouble(json['avgStepLengthM']),
       avgCadenceSpm: asDouble(json['avgCadenceSpm']),
       steps: (json['steps'] as List)
           .map((e) => StepSample.fromJson(e as Map<String, dynamic>))
           .toList(),
+      runwayWidthByCam: rawWidths?.map(
+        (key, value) => MapEntry(int.parse(key), (value as num).toDouble()),
+      ),
     );
   }
 }

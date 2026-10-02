@@ -43,8 +43,16 @@ class TrialVideoPlaybackController extends ChangeNotifier {
         url = '$url${separator}token=$token';
       }
       final manager = VideoControllerManager(url);
-      await manager.initializeAll();
-      managers.add(manager);
+      try {
+        await manager.initializeAll();
+        managers.add(manager);
+      } catch (_) {
+        manager.dispose();
+        for (final initializedManager in managers) {
+          initializedManager.dispose();
+        }
+        rethrow;
+      }
     }
     return TrialVideoPlaybackController(
       runSessionId: runSessionId,

@@ -7,6 +7,7 @@ import 'package:frontend/feature/trial_review/widget/chart_visibility_menu_butto
 import 'package:frontend/feature/trial_review/widget/step_length_frequency_chart.dart';
 import 'package:frontend/feature/trial_review/widget/step_lateral_path_chart.dart';
 import 'package:frontend/feature/trial_review/widget/trial_selector_view.dart';
+import 'package:frontend/feature/trial_review/widget/trial_review_error_view.dart';
 import 'package:frontend/widget/async_value_widget.dart';
 
 /// Right-side metrics panel: step length/frequency (①) and the top-down
@@ -29,6 +30,16 @@ class MetricsPanel extends ConsumerWidget {
     final runnerId = ref.watch(trialReviewSelectedRunnerIdProvider);
     final comparisonIds = ref.watch(trialReviewComparisonIdsProvider);
     final visibleCharts = ref.watch(trialReviewVisibleChartsProvider);
+    final playbackController = ref
+        .watch(trialVideoControllerProvider(runSessionId))
+        .value;
+
+    if (stepsAsync.hasError) {
+      return TrialReviewErrorView(
+        error: stepsAsync.error!,
+        onRetry: () => ref.invalidate(trialReviewStepsProvider(runSessionId)),
+      );
+    }
 
     final allTrialIds = [runSessionId, ...comparisonIds];
     final trialColors = assignTrialColors(allTrialIds);
@@ -67,7 +78,10 @@ class MetricsPanel extends ConsumerWidget {
           AsyncValueWidget(
             value: stepsAsync,
             loading: const _LoadingCard(),
-            data: (StepsData steps) => StepLateralPathChart(data: steps),
+            data: (StepsData steps) => StepLateralPathChart(
+              data: steps,
+              playbackController: playbackController,
+            ),
           ),
           const SizedBox(height: 12),
         ],

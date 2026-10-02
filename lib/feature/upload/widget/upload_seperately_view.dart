@@ -127,6 +127,7 @@ class _UploadSeperatelyViewState extends ConsumerState<UploadSeperatelyView> {
             selectedCameraCount: _selectedCameraCount,
             selectedFps: formData.fps,
             note: formData.note,
+            isLongJump: formData.isLongJump,
             onDateSelected: (date) {
               formNotifier.state = formData.copyWith(selectedDate: date);
             },
@@ -144,6 +145,9 @@ class _UploadSeperatelyViewState extends ConsumerState<UploadSeperatelyView> {
             onNoteSelected: (note) {
               formNotifier.state = formData.copyWith(note: note);
             },
+            onLongJumpChanged: (isLongJump) {
+              formNotifier.state = formData.copyWith(isLongJump: isLongJump);
+            },
           ),
         if (selectedRunnerSource == SperatedType.selectOne)
           AsyncValueWidget(
@@ -154,7 +158,10 @@ class _UploadSeperatelyViewState extends ConsumerState<UploadSeperatelyView> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
                       color: Theme.of(context).primaryColor,
                       borderRadius: BorderRadius.circular(25),
@@ -188,7 +195,10 @@ class _UploadSeperatelyViewState extends ConsumerState<UploadSeperatelyView> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   color: Theme.of(context).primaryColor,
                   borderRadius: BorderRadius.circular(25),
@@ -315,8 +325,9 @@ class _UploadSeperatelyViewState extends ConsumerState<UploadSeperatelyView> {
                           await controller.uploadVideo(_index, uploadFile);
 
                           // After upload, prompt anchor selection
-                          final updatedState =
-                              ref.read(uploadSeperatelyControllerProvider);
+                          final updatedState = ref.read(
+                            uploadSeperatelyControllerProvider,
+                          );
                           final thumbnailUrl = updatedState.thumbnail;
                           if (mounted && thumbnailUrl != null) {
                             final anchor = await showAnchorPointDialog(
@@ -369,11 +380,11 @@ class _UploadSeperatelyViewState extends ConsumerState<UploadSeperatelyView> {
                                     onTap: () async {
                                       final anchor =
                                           await showAnchorPointDialog(
-                                        context: context,
-                                        thumbnailUrl: state.thumbnail!,
-                                        cameraIndex: _index,
-                                        initialAnchor: state.anchorResult,
-                                      );
+                                            context: context,
+                                            thumbnailUrl: state.thumbnail!,
+                                            cameraIndex: _index,
+                                            initialAnchor: state.anchorResult,
+                                          );
                                       ref
                                           .read(
                                             uploadSeperatelyControllerProvider
@@ -447,6 +458,7 @@ class _UploadSeperatelyViewState extends ConsumerState<UploadSeperatelyView> {
                     _selectedCameraCount,
                     formData.fps,
                     formData.note,
+                    formData.isLongJump,
                     _index,
                     state.tempVideoId!,
                     state.anchorResult,

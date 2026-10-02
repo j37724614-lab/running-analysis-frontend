@@ -224,5 +224,7 @@
   "chartPelvisTorsoAngle": "Pelvis-Torso Angle",
   "angleUnit": "Angle (deg)",
   "legendLeft": "Left",
-  "legendRight": "Right"
+  "legendRight": "Right",
+  "longJumpMode": "Long-jump mode",
+  "longJumpModeDescription": "Detect takeoff, the longest flight, and landing using anchor geometry and pre-takeoff footsteps; anchors must cover the runway and sand pit"
 }

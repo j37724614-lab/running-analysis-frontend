@@ -116,6 +116,7 @@ class FakeBackendRepo implements BackendInterface {
     int cameraCount,
     int fps,
     String note,
+    bool isLongJump,
     List<Map<String, dynamic>> videos,
   ) async {
     final videoId = 'videoId${kVideos.length}';
@@ -177,6 +178,7 @@ class FakeBackendRepo implements BackendInterface {
     int cameraCount,
     int fps,
     String note,
+    bool isLongJump,
     int cameraIndex,
     String tempVideoId,
     AnchorResult? anchors,

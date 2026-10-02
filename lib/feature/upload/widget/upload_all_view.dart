@@ -55,11 +55,15 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
               onNoteSelected: (note) {
                 formNotifier.state = formData.copyWith(note: note);
               },
+              onLongJumpChanged: (isLongJump) {
+                formNotifier.state = formData.copyWith(isLongJump: isLongJump);
+              },
               selectedDate: formData.selectedDate,
               selectedTime: formData.selectedTime,
               selectedCameraCount: state.cameraCount,
               selectedFps: formData.fps,
               note: formData.note,
+              isLongJump: formData.isLongJump,
             ),
 
             LayoutBuilder(
@@ -109,8 +113,9 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
                                   .uploadVideo(index, uploadFile);
 
                               // After upload, prompt anchor selection
-                              final updatedState =
-                                  ref.read(uploadAllControllerProvider);
+                              final updatedState = ref.read(
+                                uploadAllControllerProvider,
+                              );
                               final thumbnailUrl = updatedState
                                   .tempVideoStates[index]
                                   .thumbnailUrl;
@@ -149,8 +154,9 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
                                       child: Container(
                                         clipBehavior: Clip.antiAlias,
                                         decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(16),
+                                          borderRadius: BorderRadius.circular(
+                                            16,
+                                          ),
                                         ),
                                         child: Image.network(
                                           state
@@ -171,13 +177,13 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
                                               .thumbnailUrl!;
                                           final anchor =
                                               await showAnchorPointDialog(
-                                            context: context,
-                                            thumbnailUrl: thumbnailUrl,
-                                            cameraIndex: index,
-                                            initialAnchor: state
-                                                .tempVideoStates[index]
-                                                .anchorResult,
-                                          );
+                                                context: context,
+                                                thumbnailUrl: thumbnailUrl,
+                                                cameraIndex: index,
+                                                initialAnchor: state
+                                                    .tempVideoStates[index]
+                                                    .anchorResult,
+                                              );
                                           ref
                                               .read(
                                                 uploadAllControllerProvider
@@ -186,9 +192,10 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
                                               .setAnchor(index, anchor);
                                         },
                                         child: _AnchorBadge(
-                                          isSet: state
-                                              .tempVideoStates[index]
-                                              .anchorResult !=
+                                          isSet:
+                                              state
+                                                  .tempVideoStates[index]
+                                                  .anchorResult !=
                                               null,
                                         ),
                                       ),
@@ -273,10 +280,15 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
                       state.cameraCount,
                       formData.fps,
                       formData.note,
-                      state.tempVideoStates.map((e) => {
-                        "tempVideoId": e.tempVideoId,
-                        "anchors": e.anchorResult?.toJson(),
-                      }).toList(),
+                      formData.isLongJump,
+                      state.tempVideoStates
+                          .map(
+                            (e) => {
+                              "tempVideoId": e.tempVideoId,
+                              "anchors": e.anchorResult?.toJson(),
+                            },
+                          )
+                          .toList(),
                     );
 
                 if (mounted && videoId != null) {

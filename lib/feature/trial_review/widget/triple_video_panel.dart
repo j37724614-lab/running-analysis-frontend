@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/feature/trial_review/trial_review_provider.dart';
 import 'package:frontend/feature/trial_review/widget/single_camera_panel.dart';
 import 'package:frontend/feature/trial_review/widget/trial_video_controller.dart';
+import 'package:frontend/feature/trial_review/widget/trial_review_error_view.dart';
 import 'package:frontend/widget/async_value_widget.dart';
 
 class TripleVideoPanel extends ConsumerWidget {
@@ -21,6 +22,11 @@ class TripleVideoPanel extends ConsumerWidget {
       loading: const Padding(
         padding: EdgeInsets.all(24),
         child: Center(child: CircularProgressIndicator()),
+      ),
+      error: (error, _) => TrialReviewErrorView(
+        error: error,
+        onRetry: () =>
+            ref.invalidate(trialVideoControllerProvider(runSessionId)),
       ),
       data: (controller) {
         return AnimatedBuilder(

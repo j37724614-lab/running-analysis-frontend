@@ -1399,6 +1399,18 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'右側'**
   String get legendRight;
+
+  /// No description provided for @longJumpMode.
+  ///
+  /// In zh, this message translates to:
+  /// **'跳遠模式'**
+  String get longJumpMode;
+
+  /// No description provided for @longJumpModeDescription.
+  ///
+  /// In zh, this message translates to:
+  /// **'使用錨點幾何與起跳前腳步校正偵測起跳、最長騰空及落地；錨點範圍須涵蓋跑道與沙坑'**
+  String get longJumpModeDescription;
 }
 
 class _AppLocalizationsDelegate

@@ -21,6 +21,7 @@ class RecordState {
   final String? runnerName; // For "Add New Runner" case
   final int fps;
   final String note;
+  final bool isLongJump;
 
   // Calibration
   final AnchorResult? anchorResult;
@@ -46,6 +47,7 @@ class RecordState {
     this.runnerName,
     this.fps = 60,
     this.note = '',
+    this.isLongJump = false,
     this.anchorResult,
     this.pendingControlRequestFrom,
     this.isWaitingForControlApproval = false,
@@ -70,6 +72,7 @@ class RecordState {
     String? runnerName,
     int? fps,
     String? note,
+    bool? isLongJump,
     AnchorResult? anchorResult,
     bool clearAnchor = false,
     bool clearSharedRunSessionId = false,
@@ -96,11 +99,13 @@ class RecordState {
       runnerName: runnerName ?? this.runnerName,
       fps: fps ?? this.fps,
       note: note ?? this.note,
+      isLongJump: isLongJump ?? this.isLongJump,
       anchorResult: clearAnchor ? null : (anchorResult ?? this.anchorResult),
       pendingControlRequestFrom: clearPendingControlRequest
           ? null
           : (pendingControlRequestFrom ?? this.pendingControlRequestFrom),
-      isWaitingForControlApproval: isWaitingForControlApproval ?? this.isWaitingForControlApproval,
+      isWaitingForControlApproval:
+          isWaitingForControlApproval ?? this.isWaitingForControlApproval,
     );
   }
 }

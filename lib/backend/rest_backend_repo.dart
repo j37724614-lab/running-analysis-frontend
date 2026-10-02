@@ -76,6 +76,7 @@ class RestBackendRepo implements BackendInterface {
     int cameraCount,
     int fps,
     String note,
+    bool isLongJump,
     List<Map<String, dynamic>> videos,
   ) async {
     final response = await NetUtils().reqeustData(
@@ -87,6 +88,7 @@ class RestBackendRepo implements BackendInterface {
         "cameraCount": cameraCount,
         "fps": fps,
         "note": note,
+        "isLongJump": isLongJump,
         "videos": videos,
       },
     );
@@ -113,6 +115,7 @@ class RestBackendRepo implements BackendInterface {
     int cameraCount,
     int fps,
     String note,
+    bool isLongJump,
     int cameraIndex,
     String tempVideoId,
     AnchorResult? anchors,
@@ -126,6 +129,7 @@ class RestBackendRepo implements BackendInterface {
         "cameraCount": cameraCount,
         "fps": fps,
         "note": note,
+        "isLongJump": isLongJump,
         "cameraIndex": cameraIndex,
         "tempVideoId": tempVideoId,
         "anchors": anchors?.toJson(),

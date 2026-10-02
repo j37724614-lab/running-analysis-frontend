@@ -58,6 +58,7 @@ class RecordController extends StateNotifier<RecordState> {
           runnerName: msg.data['runnerName'],
           fps: msg.data['fps'] ?? 60,
           note: msg.data['note'] ?? '',
+          isLongJump: msg.data['isLongJump'] ?? false,
           clearSharedRunSessionId: true,
         );
         break;
@@ -165,10 +166,7 @@ class RecordController extends StateNotifier<RecordState> {
 
   /// Sets the anchor calibration result and re-evaluates ready status.
   void setAnchor(AnchorResult? anchor) {
-    state = state.copyWith(
-      anchorResult: anchor,
-      clearAnchor: anchor == null,
-    );
+    state = state.copyWith(anchorResult: anchor, clearAnchor: anchor == null);
     // Re-send ready status if we now have (or lost) the anchor
     if (state.myCameraIndex != null) {
       updateReadyStatus(state.isPhysicallyReady && state.anchorIsSet);
@@ -213,7 +211,9 @@ class RecordController extends StateNotifier<RecordState> {
   }
 
   Future<String> addRunner(String name) async {
-    final runnerInfo = await _ref.read(uploadRunnerListProvider.notifier).addRunner(name);
+    final runnerInfo = await _ref
+        .read(uploadRunnerListProvider.notifier)
+        .addRunner(name);
     state = state.copyWith(
       runnerId: runnerInfo.id,
       runnerName: name,
@@ -230,6 +230,10 @@ class RecordController extends StateNotifier<RecordState> {
     state = state.copyWith(note: note);
   }
 
+  void setLongJump(bool isLongJump) {
+    state = state.copyWith(isLongJump: isLongJump);
+  }
+
   void startRecording() {
     if (state.role != RecordRole.master) return;
     final msg = RecordMessage(
@@ -239,6 +243,7 @@ class RecordController extends StateNotifier<RecordState> {
         'runnerName': state.runnerName,
         'fps': state.fps,
         'note': state.note,
+        'isLongJump': state.isLongJump,
       },
     );
     _channel?.sink.add(jsonEncode(msg.toJson()));
@@ -278,10 +283,7 @@ class RecordController extends StateNotifier<RecordState> {
 
   void requestControl() {
     state = state.copyWith(isWaitingForControlApproval: true);
-    final msg = RecordMessage(
-      type: RecordMessageType.requestControl,
-      data: {},
-    );
+    final msg = RecordMessage(type: RecordMessageType.requestControl, data: {});
     _channel?.sink.add(jsonEncode(msg.toJson()));
   }
 

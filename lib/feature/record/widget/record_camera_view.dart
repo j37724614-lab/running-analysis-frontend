@@ -327,6 +327,7 @@ class _RecordCameraViewState extends ConsumerState<RecordCameraView>
           state.expectedCameraCount,
           state.fps,
           state.note,
+          state.isLongJump,
           state.myCameraIndex!,
           tempVideoId,
           state.anchorResult,
