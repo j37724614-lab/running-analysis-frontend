@@ -72,8 +72,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get logoutConfirmTitle => 'Confirm Logout';
 
   @override
-  String get logoutConfirmMessage =>
-      'Are you sure you want to log out of the system?';
+  String get logoutConfirmMessage => 'Are you sure you want to log out of the system?';
 
   @override
   String get login => 'Login';
@@ -275,19 +274,16 @@ class AppLocalizationsEn extends AppLocalizations {
       'Enter the two longitudinal runway distances and runway width for metric calibration:';
 
   @override
-  String get distanceLeftToCenter =>
-      'Left (1-4) to Center (5-6) Longitudinal Distance (m)';
+  String get distanceLeftToCenter => 'Left (1-4) to Center (5-6) Longitudinal Distance (m)';
 
   @override
-  String get distanceCenterToRight =>
-      'Center (5-6) to Right (2-3) Longitudinal Distance (m)';
+  String get distanceCenterToRight => 'Center (5-6) to Right (2-3) Longitudinal Distance (m)';
 
   @override
   String get runwayWidth => 'Runway Width (m)';
 
   @override
-  String get distanceInvalidPrompt =>
-      'Please enter a valid number greater than 0';
+  String get distanceInvalidPrompt => 'Please enter a valid number greater than 0';
 
   @override
   String get applyAndSave => 'Confirm & Apply';
@@ -320,8 +316,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cameraNotAssigned => 'Camera not assigned';
 
   @override
-  String get orientationLandscapeRequired =>
-      'Please rotate device to landscape to record';
+  String get orientationLandscapeRequired => 'Please rotate device to landscape to record';
 
   @override
   String get connectedStatus => 'Connection Status';
@@ -374,8 +369,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get anchorNotSet => 'Anchors Not Set';
 
   @override
-  String get mustSetAnchorsForAllCameras =>
-      'Please set anchor points for all cameras first';
+  String get mustSetAnchorsForAllCameras => 'Please set anchor points for all cameras first';
 
   @override
   String get selectVideoFirst => 'Please upload a video first';
@@ -442,8 +436,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get startAnalysis => 'Start Analysis';
 
   @override
-  String get deleteUnanalyzedConfirm =>
-      'Are you sure you want to delete this unanalyzed session?';
+  String get deleteUnanalyzedConfirm => 'Are you sure you want to delete this unanalyzed session?';
 
   @override
   String get progressTranscode => 'Video Transcoding Completed';
@@ -615,8 +608,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get switchLens => 'Switch Lens';
 
   @override
-  String get pleaseSelectRunnerToRecord =>
-      'Please select a runner before recording';
+  String get pleaseSelectRunnerToRecord => 'Please select a runner before recording';
 
   @override
   String camerasNotAllConnected(int current, int total) {
@@ -624,15 +616,13 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get camerasNotAllReady =>
-      'Some cameras are not oriented horizontally (Not ready)';
+  String get camerasNotAllReady => 'Some cameras are not oriented horizontally (Not ready)';
 
   @override
   String get autoUploading => 'Auto uploading...';
 
   @override
-  String get pleaseHoldDeviceHorizontally =>
-      'Please hold device horizontally to record';
+  String get pleaseHoldDeviceHorizontally => 'Please hold device horizontally to record';
 
   @override
   String get pleaseSetAnchorFullscreen => 'Tap to set anchors in fullscreen';
@@ -842,8 +832,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Live camera preview with lens switching and zoom controls. Tap the top-right fullscreen button to enter fullscreen.';
 
   @override
-  String get tourRecordAnchorToggleTitle =>
-      'Fullscreen Camera & Start Calibration';
+  String get tourRecordAnchorToggleTitle => 'Fullscreen Camera & Start Calibration';
 
   @override
   String get tourRecordAnchorToggleDesc =>
@@ -868,8 +857,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Enter the actual physical distances in meters for the track (Left-to-Center and Center-to-Right), then tap \'Apply & Save\'.';
 
   @override
-  String get tourRecordFullscreenRecordTitle =>
-      'Master: Fullscreen Synchronized Recording';
+  String get tourRecordFullscreenRecordTitle => 'Master: Fullscreen Synchronized Recording';
 
   @override
   String get tourRecordFullscreenRecordDesc =>
@@ -1143,8 +1131,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loadSession => 'Load';
 
   @override
-  String get loadSessionFailed =>
-      'Unanalyzed session not found or already completed';
+  String get loadSessionFailed => 'Unanalyzed session not found or already completed';
 
   @override
   String get loadSessionSuccess => 'Unanalyzed session loaded successfully!';

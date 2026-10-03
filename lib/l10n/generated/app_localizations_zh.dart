@@ -420,8 +420,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get guide => '標註指引';
 
   @override
-  String get guideDescription =>
-      '依序點擊畫面標記跑道四角點（左上、右上、右下、左下），中線點將自動計算產生，完成後可直接拖曳微調。';
+  String get guideDescription => '依序點擊畫面標記跑道四角點（左上、右上、右下、左下），中線點將自動計算產生，完成後可直接拖曳微調。';
 
   @override
   String get guideDescriptionMobile =>
@@ -678,8 +677,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get longJumpMode => '跳遠模式';
 
   @override
-  String get longJumpModeDescription =>
-      '使用錨點幾何與起跳前腳步校正偵測起跳、最長騰空及落地；錨點範圍須涵蓋跑道與沙坑';
+  String get longJumpModeDescription => '使用錨點幾何與起跳前腳步校正偵測起跳、最長騰空及落地；錨點範圍須涵蓋跑道與沙坑';
 
   @override
   String get viewUploadedVideo => '查看影片';
@@ -735,8 +733,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get tourPlaybackSidebarToggleTitle => '側邊欄收摺與展開';
 
   @override
-  String get tourPlaybackSidebarToggleDesc =>
-      '點擊此圖示按鈕可快速收摺或展開左側的歷史分析紀錄面板，釋放更多空間以檢視影像與圖表。';
+  String get tourPlaybackSidebarToggleDesc => '點擊此圖示按鈕可快速收摺或展開左側的歷史分析紀錄面板，釋放更多空間以檢視影像與圖表。';
 
   @override
   String get tourPlaybackHistoryTitle => '歷史紀錄列表';
@@ -754,8 +751,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get tourPlaybackPlayerTitle => '連續跑步影像播放器';
 
   @override
-  String get tourPlaybackPlayerDesc =>
-      '依序串接各相機機位的連續跑步動態影像，拖曳時間軸可與運動學圖表即時連動同步分析。';
+  String get tourPlaybackPlayerDesc => '依序串接各相機機位的連續跑步動態影像，拖曳時間軸可與運動學圖表即時連動同步分析。';
 
   @override
   String get tourPlaybackInfoTitle => '動作與統計資訊';
@@ -767,29 +763,25 @@ class AppLocalizationsZh extends AppLocalizations {
   String get tourPlaybackChartsTitle => '運動學指標與關節角度圖表';
 
   @override
-  String get tourPlaybackChartsDesc =>
-      '包含距離、速度、加速度與各關節（膝/髖/手肘/軀幹）隨時間變化的波形曲線，支援點擊展開收摺與懸浮數值查看。';
+  String get tourPlaybackChartsDesc => '包含距離、速度、加速度與各關節（膝/髖/手肘/軀幹）隨時間變化的波形曲線，支援點擊展開收摺與懸浮數值查看。';
 
   @override
   String get tourPlaybackActionsTitle => '操作功能與報表匯出';
 
   @override
-  String get tourPlaybackActionsDesc =>
-      '提供下載 PDF 跑步分析綜合報告、匯出 CSV 關節運動學原始數據，以及刪除此筆分析場次的功能。';
+  String get tourPlaybackActionsDesc => '提供下載 PDF 跑步分析綜合報告、匯出 CSV 關節運動學原始數據，以及刪除此筆分析場次的功能。';
 
   @override
   String get tourRecordMasterTitle => '主控端：建立房間';
 
   @override
-  String get tourRecordMasterDesc =>
-      '欲作為總控制端的裝置，在此設定預期參與的相機總數 (1~5 台)，點擊「建立錄影房間」生成專屬房號。';
+  String get tourRecordMasterDesc => '欲作為總控制端的裝置，在此設定預期參與的相機總數 (1~5 台)，點擊「建立錄影房間」生成專屬房號。';
 
   @override
   String get tourRecordSlaveTitle => '從機端：加入房間與機位';
 
   @override
-  String get tourRecordSlaveDesc =>
-      '作為各視角相機的從機裝置，在此輸入主控端生成的房號並選擇負責的相機機位（如相機 2）後加入房間。';
+  String get tourRecordSlaveDesc => '作為各視角相機的從機裝置，在此輸入主控端生成的房號並選擇負責的相機機位（如相機 2）後加入房間。';
 
   @override
   String get tourRecordConfigTitle => '主控端：參數配置與跑者設定';
@@ -801,29 +793,25 @@ class AppLocalizationsZh extends AppLocalizations {
   String get tourRecordLocalTitle => '主控端：本機鏡頭錄影';
 
   @override
-  String get tourRecordLocalDesc =>
-      '主控端亦可作為其中一台相機機位參與錄影，開啟開關後可指派主控端鏡頭所負責的相機機位編號。';
+  String get tourRecordLocalDesc => '主控端亦可作為其中一台相機機位參與錄影，開啟開關後可指派主控端鏡頭所負責的相機機位編號。';
 
   @override
   String get tourRecordDevicesTitle => '連線設備清單與機位就緒';
 
   @override
-  String get tourRecordDevicesDesc =>
-      '即時監控主控端與所有從機連線狀態。各相機裝置將手機水平橫放並完成跑道校正後，即會亮起綠燈代表已就緒。';
+  String get tourRecordDevicesDesc => '即時監控主控端與所有從機連線狀態。各相機裝置將手機水平橫放並完成跑道校正後，即會亮起綠燈代表已就緒。';
 
   @override
   String get tourRecordCameraTitle => '相機即時預覽與進入全螢幕';
 
   @override
-  String get tourRecordCameraDesc =>
-      '呈現即時相機畫面，支援鏡頭切換與變焦拉桿。點擊右上角全螢幕按鈕即可放大進入全螢幕畫面。';
+  String get tourRecordCameraDesc => '呈現即時相機畫面，支援鏡頭切換與變焦拉桿。點擊右上角全螢幕按鈕即可放大進入全螢幕畫面。';
 
   @override
   String get tourRecordAnchorToggleTitle => '全螢幕相機與啟動錨點設定';
 
   @override
-  String get tourRecordAnchorToggleDesc =>
-      '進入全螢幕相機後，點擊左上角「設定錨點」按鈕，系統將自動擷取即時畫面並進入跑道空間校正模式。';
+  String get tourRecordAnchorToggleDesc => '進入全螢幕相機後，點擊左上角「設定錨點」按鈕，系統將自動擷取即時畫面並進入跑道空間校正模式。';
 
   @override
   String get tourRecordAnchorPointsTitle => '跑道六點空間校正';
@@ -840,29 +828,25 @@ class AppLocalizationsZh extends AppLocalizations {
   String get tourRecordDistanceDialogTitle => '設定跑道實際物理長度';
 
   @override
-  String get tourRecordDistanceDialogDesc =>
-      '在此對話框中輸入跑道頂部（左至中）與底部（中至右）的真實公尺距離，點擊「套用並儲存」建立精確空間坐標系。';
+  String get tourRecordDistanceDialogDesc => '在此對話框中輸入跑道頂部（左至中）與底部（中至右）的真實公尺距離，點擊「套用並儲存」建立精確空間坐標系。';
 
   @override
   String get tourRecordFullscreenRecordTitle => '主控端：全螢幕同步錄影';
 
   @override
-  String get tourRecordFullscreenRecordDesc =>
-      '主控端在全螢幕相機畫面下，亦可直接點擊右下角的紅色錄影按鈕啟動所有相機同步錄影，無需返回房間主畫面。';
+  String get tourRecordFullscreenRecordDesc => '主控端在全螢幕相機畫面下，亦可直接點擊右下角的紅色錄影按鈕啟動所有相機同步錄影，無需返回房間主畫面。';
 
   @override
   String get tourRecordAnchorDoneTitle => '校正完成與返回房間';
 
   @override
-  String get tourRecordAnchorDoneDesc =>
-      '儲存後畫面回復即時相機預覽，左上角顯示綠色「錨點已設定」標籤。點擊右上角按鈕即可離開全螢幕返回房間。';
+  String get tourRecordAnchorDoneDesc => '儲存後畫面回復即時相機預覽，左上角顯示綠色「錨點已設定」標籤。點擊右上角按鈕即可離開全螢幕返回房間。';
 
   @override
   String get tourRecordButtonTitle => '從機控制權與一鍵同步錄影';
 
   @override
-  String get tourRecordButtonDesc =>
-      '從機可隨時點擊「請求控制權」升級為主控端。全員就緒後由主控端一鍵發送同步錄影指令，錄影結束後所有相機並行自動上傳！';
+  String get tourRecordButtonDesc => '從機可隨時點擊「請求控制權」升級為主控端。全員就緒後由主控端一鍵發送同步錄影指令，錄影結束後所有相機並行自動上傳！';
 
   @override
   String get tourRecordMasterButtonTitle => '主控端：一鍵同步錄影與並行上傳';
@@ -875,8 +859,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get tourRecordSlaveButtonTitle => '從機端：等待指令與請求控制權';
 
   @override
-  String get tourRecordSlaveButtonDesc =>
-      '從機端將等待主控端發送同步錄影指令；若現場有需求，從機亦可點擊「請求控制權」升級為主控端接管全場控制！';
+  String get tourRecordSlaveButtonDesc => '從機端將等待主控端發送同步錄影指令；若現場有需求，從機亦可點擊「請求控制權」升級為主控端接管全場控制！';
 
   @override
   String get tourRecordSlaveCameraPosTitle => '從機端：更改相機機位';
@@ -896,8 +879,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get tourRecordLeaveRoomTitle => '離開房間';
 
   @override
-  String get tourRecordLeaveRoomDesc =>
-      '點擊此按鈕可中斷目前房間連線並返回錄影首頁。若為主控端離開將會結束該房間連線，從機端離開則僅退出本機連線。';
+  String get tourRecordLeaveRoomDesc => '點擊此按鈕可中斷目前房間連線並返回錄影首頁。若為主控端離開將會結束該房間連線，從機端離開則僅退出本機連線。';
 
   @override
   String get tourRecordChoicePrompt => '請選擇欲說明的流程：';
@@ -919,12 +901,10 @@ class AppLocalizationsZh extends AppLocalizations {
       '進入房間後，頂部清楚標示當前專屬「房間號碼」（提供其他相機裝置輸入加入）以及本機在此房間中的「目前身分」（主控端或從機端）。';
 
   @override
-  String get tourRecordMasterRoomInfoDesc =>
-      '建立房間後生成專屬「房間號碼」，並標記為「主控端」身分。其他相機裝置輸入此房號即可加入此連線房間。';
+  String get tourRecordMasterRoomInfoDesc => '建立房間後生成專屬「房間號碼」，並標記為「主控端」身分。其他相機裝置輸入此房號即可加入此連線房間。';
 
   @override
-  String get tourRecordSlaveRoomInfoDesc =>
-      '成功加入房間後，頂部顯示當前連線之「房間號碼」與「從機端」身分標籤，確認已正確連入主控端所建立之錄影房間。';
+  String get tourRecordSlaveRoomInfoDesc => '成功加入房間後，頂部顯示當前連線之「房間號碼」與「從機端」身分標籤，確認已正確連入主控端所建立之錄影房間。';
 
   @override
   String get tourRecordShareTitle => '邀請相機加入（QR Code 與連結）';
@@ -937,8 +917,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get tourRecordInquiryTitle => '請選擇欲導覽的錄影流程';
 
   @override
-  String get tourRecordInquirySubtitle =>
-      '主控端與從機端 (Slave) 的初始操作流程不同，請選擇您欲了解的角色模式：';
+  String get tourRecordInquirySubtitle => '主控端與從機端 (Slave) 的初始操作流程不同，請選擇您欲了解的角色模式：';
 
   @override
   String get tourRecordInquiryBothTitle => '兩者皆看 (完整流程)';
@@ -953,8 +932,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get tourRecordInquiryMasterTitle => '主控端流程 (Master)';
 
   @override
-  String get tourRecordInquiryMasterDesc =>
-      '建立房間、全域參數配置、監控各機位狀態、跑道空間校正與一鍵同步錄影。';
+  String get tourRecordInquiryMasterDesc => '建立房間、全域參數配置、監控各機位狀態、跑道空間校正與一鍵同步錄影。';
 
   @override
   String get tourRecordInquiryMasterSteps => '共 14 步驟';
@@ -975,29 +953,25 @@ class AppLocalizationsZh extends AppLocalizations {
   String get tourUploadTabsTitle => '上傳模式選擇';
 
   @override
-  String get tourUploadTabsDesc =>
-      '提供「一次上傳所有視角」（單人多機同步上傳）與「分批上傳」（各相機分別上傳或接續未完成紀錄）兩種工作模式。';
+  String get tourUploadTabsDesc => '提供「一次上傳所有視角」（單人多機同步上傳）與「分批上傳」（各相機分別上傳或接續未完成紀錄）兩種工作模式。';
 
   @override
   String get tourUploadRunnerTitle => '跑者身分選取';
 
   @override
-  String get tourUploadRunnerDesc =>
-      '可切換「選擇現有跑者」從下拉清單快速選取，或切換「新增跑者」直接輸入跑者姓名建立新檔案。';
+  String get tourUploadRunnerDesc => '可切換「選擇現有跑者」從下拉清單快速選取，或切換「新增跑者」直接輸入跑者姓名建立新檔案。';
 
   @override
   String get tourUploadConfigTitle => '拍攝參數與錄影配置';
 
   @override
-  String get tourUploadConfigDesc =>
-      '設定影片拍攝日期與時間、預期機位總數 (1~5 台)、相機幀率 (FPS) 及相關備註資訊。';
+  String get tourUploadConfigDesc => '設定影片拍攝日期與時間、預期機位總數 (1~5 台)、相機幀率 (FPS) 及相關備註資訊。';
 
   @override
   String get tourUploadVideoTitle => '影片檔案選取與預覽';
 
   @override
-  String get tourUploadVideoDesc =>
-      '選取各機位所拍攝的影片檔案，支援 MP4、MOV、AVI、MKV、WebM、M4V 等多種主流格式並即時產生預覽縮圖。';
+  String get tourUploadVideoDesc => '選取各機位所拍攝的影片檔案，支援 MP4、MOV、AVI、MKV、WebM、M4V 等多種主流格式並即時產生預覽縮圖。';
 
   @override
   String get tourUploadAnchorTitle => '跑道空間錨點校正';
@@ -1027,15 +1001,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get tourUploadSepNewTitle => '新增紀錄（拍攝參數設定）';
 
   @override
-  String get tourUploadSepNewDesc =>
-      '設定全新場次的錄製日期與時間、預期相機總數 (1~5 台)、FPS 與備註，從第 1 台相機開始依序上傳。';
+  String get tourUploadSepNewDesc => '設定全新場次的錄製日期與時間、預期相機總數 (1~5 台)、FPS 與備註，從第 1 台相機開始依序上傳。';
 
   @override
   String get tourUploadSepSelectTitle => '選擇紀錄（接續未完成場次）';
 
   @override
-  String get tourUploadSepSelectDesc =>
-      '列出該跑者先前尚未上傳齊全的歷史場次（如已傳機位 1、尚缺機位 2 與 3），選取後即可接續補傳剩餘機位。';
+  String get tourUploadSepSelectDesc => '列出該跑者先前尚未上傳齊全的歷史場次（如已傳機位 1、尚缺機位 2 與 3），選取後即可接續補傳剩餘機位。';
 
   @override
   String get tourUploadSepCameraTitle => '當前相機機位選取';
@@ -1047,15 +1019,13 @@ class AppLocalizationsZh extends AppLocalizations {
   String get tourUploadSepVideoTitle => '單機位影片檔案選取';
 
   @override
-  String get tourUploadSepVideoDesc =>
-      '點擊選取或拖曳該機位所對應的影片檔案，支援 MP4、MOV、AVI 等主流格式並預覽首幀縮圖。';
+  String get tourUploadSepVideoDesc => '點擊選取或拖曳該機位所對應的影片檔案，支援 MP4、MOV、AVI 等主流格式並預覽首幀縮圖。';
 
   @override
   String get tourUploadSepSubmitTitle => '分批提交與分析啟動';
 
   @override
-  String get tourUploadSepSubmitDesc =>
-      '點擊上傳目前機位影片；待所有機位影片皆上傳完畢後，系統將自動合併並啟動 AI 運動學分析。';
+  String get tourUploadSepSubmitDesc => '點擊上傳目前機位影片；待所有機位影片皆上傳完畢後，系統將自動合併並啟動 AI 運動學分析。';
 
   @override
   String get tourUploadSepChoicePrompt => '請選擇欲說明的流程：';
@@ -1100,8 +1070,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get autoFilledRoomNumber => '已自動帶入房間號碼';
 
   @override
-  String get deepLinkAppFallbackHint =>
-      '若裝置已安裝 App 將優先自動開啟 App，若未安裝則由瀏覽器開啟網頁版。';
+  String get deepLinkAppFallbackHint => '若裝置已安裝 App 將優先自動開啟 App，若未安裝則由瀏覽器開啟網頁版。';
 
   @override
   String get enterSessionCodeOrLink => '輸入補傳代碼或貼上連結';
@@ -1134,8 +1103,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get sharedSessionBadge => '外部協同補傳';
 
   @override
-  String get allCamerasUploadedExternalNotice =>
-      '所有相機影片已全數上傳完畢！系統已自動為房主啟動 AI 運動學分析。';
+  String get allCamerasUploadedExternalNotice => '所有相機影片已全數上傳完畢！系統已自動為房主啟動 AI 運動學分析。';
 
   @override
   String get uploadSuccessNotice => '上傳完成通知';
