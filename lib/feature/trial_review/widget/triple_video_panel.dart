@@ -13,9 +13,7 @@ class TripleVideoPanel extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final controllerAsync = ref.watch(
-      trialVideoControllerProvider(runSessionId),
-    );
+    final controllerAsync = ref.watch(trialVideoControllerProvider(runSessionId));
 
     return AsyncValueWidget(
       value: controllerAsync,
@@ -25,8 +23,7 @@ class TripleVideoPanel extends ConsumerWidget {
       ),
       error: (error, _) => TrialReviewErrorView(
         error: error,
-        onRetry: () =>
-            ref.invalidate(trialVideoControllerProvider(runSessionId)),
+        onRetry: () => ref.invalidate(trialVideoControllerProvider(runSessionId)),
       ),
       data: (controller) {
         return AnimatedBuilder(
@@ -66,17 +63,14 @@ class TripleVideoPanel extends ConsumerWidget {
                 Row(
                   children: List.generate(controller.managers.length, (i) {
                     final isCurrentSegment =
-                        controller.mode == PlaybackMode.sequential &&
-                        i == controller.activeIndex;
+                        controller.mode == PlaybackMode.sequential && i == controller.activeIndex;
                     return Expanded(
                       child: Container(
                         margin: const EdgeInsets.symmetric(horizontal: 2),
                         height: 4,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(4),
-                          color: isCurrentSegment
-                              ? Theme.of(context).primaryColor
-                              : Colors.black12,
+                          color: isCurrentSegment ? Theme.of(context).primaryColor : Colors.black12,
                         ),
                       ),
                     );
@@ -126,13 +120,8 @@ class TripleVideoPanel extends ConsumerWidget {
                               manager: controller.managers[i],
                               isActive:
                                   i == controller.activeIndex &&
-                                  controller
-                                      .managers[i]
-                                      .controller
-                                      .value
-                                      .isPlaying,
-                              onTogglePlayback: () =>
-                                  controller.toggleSingle(i),
+                                  controller.managers[i].controller.value.isPlaying,
+                              onTogglePlayback: () => controller.toggleSingle(i),
                             ),
                           ),
                         );

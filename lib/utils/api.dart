@@ -72,10 +72,7 @@ class API {
     "$baseUrl/run_session/$runSessionId",
   ];
 
-  static List deleteRunner(String runnerId) => [
-    DioMethod.delete,
-    "$baseUrl/runner/$runnerId",
-  ];
+  static List deleteRunner(String runnerId) => [DioMethod.delete, "$baseUrl/runner/$runnerId"];
 
   // -- Trial review (long-jump 賽事回顧 page) --
 
@@ -83,10 +80,8 @@ class API {
   /// VideoPlayerController.networkUrl, same as getRunSessionCameraVideo
   /// above needs its own auth token appended manually (see
   /// video_player_controller.dart's videoManagerProvider).
-  static String getRunSessionCameraVideo(
-    String runSessionId,
-    int cameraIndex,
-  ) => "$baseUrl/run_session/$runSessionId/video/$cameraIndex";
+  static String getRunSessionCameraVideo(String runSessionId, int cameraIndex) =>
+      "$baseUrl/run_session/$runSessionId/video/$cameraIndex";
 
   static List getRunSessionSteps(String runSessionId) => [
     DioMethod.get,

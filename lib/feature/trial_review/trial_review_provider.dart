@@ -7,19 +7,13 @@ import 'package:frontend/entities/toe_path_data.dart';
 import 'package:frontend/feature/trial_review/widget/trial_video_controller.dart';
 import 'package:frontend/utils/api_retry.dart';
 
-final trialReviewSelectedRunnerIdProvider = StateProvider<String?>(
-  (ref) => null,
-);
+final trialReviewSelectedRunnerIdProvider = StateProvider<String?>((ref) => null);
 
-final trialReviewSelectedRunSessionIdProvider = StateProvider<String?>(
-  (ref) => null,
-);
+final trialReviewSelectedRunSessionIdProvider = StateProvider<String?>((ref) => null);
 
 /// Run session ids selected for multi-trial comparison (in addition to the
 /// currently open trial above).
-final trialReviewComparisonIdsProvider = StateProvider<Set<String>>(
-  (ref) => {},
-);
+final trialReviewComparisonIdsProvider = StateProvider<Set<String>>((ref) => {});
 
 /// The metrics-panel chart cards a user can individually show/hide (see
 /// `MetricsPanel` and `ChartVisibilityMenuButton`). Order here is also the
@@ -40,23 +34,29 @@ final trialReviewVisibleChartsProvider = StateProvider<Set<MetricsChartType>>(
   (ref) => MetricsChartType.values.toSet(),
 );
 
-final trialReviewStepsProvider = FutureProvider.autoDispose
-    .family<StepsData, String>((ref, runSessionId) {
-      final backend = ref.watch(backendProvider);
-      return backend.getRunSessionSteps(runSessionId);
-    }, retry: apiRetry);
+final trialReviewStepsProvider = FutureProvider.autoDispose.family<StepsData, String>((
+  ref,
+  runSessionId,
+) {
+  final backend = ref.watch(backendProvider);
+  return backend.getRunSessionSteps(runSessionId);
+}, retry: apiRetry);
 
-final trialReviewToePathProvider = FutureProvider.autoDispose
-    .family<ToePathData, String>((ref, runSessionId) {
-      final backend = ref.watch(backendProvider);
-      return backend.getRunSessionToePath(runSessionId);
-    }, retry: apiRetry);
+final trialReviewToePathProvider = FutureProvider.autoDispose.family<ToePathData, String>((
+  ref,
+  runSessionId,
+) {
+  final backend = ref.watch(backendProvider);
+  return backend.getRunSessionToePath(runSessionId);
+}, retry: apiRetry);
 
-final topdownReviewCameraIndicesProvider = FutureProvider.autoDispose
-    .family<List<int>, String>((ref, runSessionId) {
-      final backend = ref.watch(backendProvider);
-      return backend.getTopdownReviewCameraIndices(runSessionId);
-    }, retry: apiRetry);
+final topdownReviewCameraIndicesProvider = FutureProvider.autoDispose.family<List<int>, String>((
+  ref,
+  runSessionId,
+) {
+  final backend = ref.watch(backendProvider);
+  return backend.getTopdownReviewCameraIndices(runSessionId);
+}, retry: apiRetry);
 
 final trialVideoControllerProvider = FutureProvider.autoDispose
     .family<TrialVideoPlaybackController, String>((ref, runSessionId) async {

@@ -104,10 +104,7 @@ class _HomePageState extends ConsumerState<HomePage> with SingleTickerProviderSt
                 onPressed: () {
                   context.goNamed(
                     AppRoute.playback.name,
-                    queryParameters: {
-                      'runnerId': next.runnerId,
-                      'videoId': next.runSessionId,
-                    },
+                    queryParameters: {'runnerId': next.runnerId, 'videoId': next.runSessionId},
                   );
                 },
               ),

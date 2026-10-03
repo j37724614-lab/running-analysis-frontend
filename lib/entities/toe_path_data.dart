@@ -5,13 +5,7 @@ class ToePoint {
   final double? worldYM;
   final double score;
 
-  ToePoint({
-    required this.x,
-    required this.y,
-    this.worldXM,
-    this.worldYM,
-    required this.score,
-  });
+  ToePoint({required this.x, required this.y, this.worldXM, this.worldYM, required this.score});
 
   factory ToePoint.fromJson(Map<String, dynamic> json) {
     double? asDouble(dynamic v) => v == null ? null : (v as num).toDouble();
@@ -44,8 +38,7 @@ class ToePathFrame {
       origFrame: json['origFrame'] as int,
       timeSec: (json['timeSec'] as num).toDouble(),
       points: (json['points'] as Map<String, dynamic>).map(
-        (key, value) =>
-            MapEntry(key, ToePoint.fromJson(value as Map<String, dynamic>)),
+        (key, value) => MapEntry(key, ToePoint.fromJson(value as Map<String, dynamic>)),
       ),
     );
   }
@@ -56,17 +49,11 @@ class ToePathData {
   final bool hasWorldCoords;
   final List<ToePathFrame> frames;
 
-  ToePathData({
-    required this.keypointNames,
-    required this.hasWorldCoords,
-    required this.frames,
-  });
+  ToePathData({required this.keypointNames, required this.hasWorldCoords, required this.frames});
 
   factory ToePathData.fromJson(Map<String, dynamic> json) {
     return ToePathData(
-      keypointNames: (json['keypointNames'] as List)
-          .map((e) => e as String)
-          .toList(),
+      keypointNames: (json['keypointNames'] as List).map((e) => e as String).toList(),
       hasWorldCoords: json['hasWorldCoords'] as bool? ?? false,
       frames: (json['frames'] as List)
           .map((e) => ToePathFrame.fromJson(e as Map<String, dynamic>))

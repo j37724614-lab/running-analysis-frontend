@@ -126,12 +126,8 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
                               if (!context.mounted) return;
 
                               // After upload, prompt anchor selection
-                              final updatedState = ref.read(
-                                uploadAllControllerProvider,
-                              );
-                              final thumbnailUrl = updatedState
-                                  .tempVideoStates[index]
-                                  .thumbnailUrl;
+                              final updatedState = ref.read(uploadAllControllerProvider);
+                              final thumbnailUrl = updatedState.tempVideoStates[index].thumbnailUrl;
                               if (thumbnailUrl != null) {
                                 final anchor = await showAnchorPointDialog(
                                   context: context,
@@ -167,9 +163,7 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
                                       child: Container(
                                         clipBehavior: Clip.antiAlias,
                                         decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(
-                                            16,
-                                          ),
+                                          borderRadius: BorderRadius.circular(16),
                                         ),
                                         child: Image.network(
                                           state.tempVideoStates[index].thumbnailUrl!,
@@ -183,18 +177,15 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
                                       right: 6,
                                       child: GestureDetector(
                                         onTap: () async {
-                                          final thumbnailUrl = state
-                                              .tempVideoStates[index]
-                                              .thumbnailUrl!;
-                                          final anchor =
-                                              await showAnchorPointDialog(
-                                                context: context,
-                                                thumbnailUrl: thumbnailUrl,
-                                                cameraIndex: index,
-                                                initialAnchor: state
-                                                    .tempVideoStates[index]
-                                                    .anchorResult,
-                                              );
+                                          final thumbnailUrl =
+                                              state.tempVideoStates[index].thumbnailUrl!;
+                                          final anchor = await showAnchorPointDialog(
+                                            context: context,
+                                            thumbnailUrl: thumbnailUrl,
+                                            cameraIndex: index,
+                                            initialAnchor:
+                                                state.tempVideoStates[index].anchorResult,
+                                          );
                                           if (!context.mounted) return;
                                           ref
                                               .read(uploadAllControllerProvider.notifier)

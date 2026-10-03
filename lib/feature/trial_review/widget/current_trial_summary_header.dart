@@ -42,17 +42,13 @@ class CurrentTrialSummaryHeader extends ConsumerWidget {
             _stat('平均步幅', '${info.avgStepLength!.toStringAsFixed(2)} m'),
           if (steps?.avgCadenceSpm != null)
             _stat('平均步頻', '${steps!.avgCadenceSpm!.toStringAsFixed(0)} spm'),
-          if (distance != null)
-            _stat('跳遠距離', '${distance.toStringAsFixed(2)} m'),
+          if (distance != null) _stat('跳遠距離', '${distance.toStringAsFixed(2)} m'),
         ],
       ),
     );
   }
 
   Widget _stat(String label, String value) {
-    return Text(
-      '$label：$value',
-      style: const TextStyle(fontSize: 13, color: Colors.black87),
-    );
+    return Text('$label：$value', style: const TextStyle(fontSize: 13, color: Colors.black87));
   }
 }

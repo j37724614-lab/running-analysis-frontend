@@ -110,17 +110,16 @@ class UploadController extends StateNotifier<AsyncValue<void>> {
   }
 }
 
-final uploadControllerProvider =
-    StateNotifierProvider<UploadController, AsyncValue<void>>((ref) {
-      return UploadController(
-        backend: ref.watch(backendProvider),
-        onUploadCompleted: (runnerId, runSessionId) {
-          ref
-              .read(uploadCompletionProvider.notifier)
-              .publish(runnerId: runnerId, runSessionId: runSessionId);
-        },
-      );
-    });
+final uploadControllerProvider = StateNotifierProvider<UploadController, AsyncValue<void>>((ref) {
+  return UploadController(
+    backend: ref.watch(backendProvider),
+    onUploadCompleted: (runnerId, runSessionId) {
+      ref
+          .read(uploadCompletionProvider.notifier)
+          .publish(runnerId: runnerId, runSessionId: runSessionId);
+    },
+  );
+});
 
 class UploadRunnerListNotifier extends StateNotifier<AsyncValue<List<RunnerInfo>>> {
   final BackendInterface backend;

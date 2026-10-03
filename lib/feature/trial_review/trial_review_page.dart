@@ -27,13 +27,10 @@ class _TrialReviewPageState extends ConsumerState<TrialReviewPage> {
   bool _isSidebarExpanded = true;
 
   void _retryTrialReview() {
-    final selectedRunSessionId = ref.read(
-      trialReviewSelectedRunSessionIdProvider,
-    );
+    final selectedRunSessionId = ref.read(trialReviewSelectedRunSessionIdProvider);
     final comparisonIds = ref.read(trialReviewComparisonIdsProvider);
     final runSessionIds = <String>{
-      if (selectedRunSessionId != null && selectedRunSessionId.isNotEmpty)
-        selectedRunSessionId,
+      if (selectedRunSessionId != null && selectedRunSessionId.isNotEmpty) selectedRunSessionId,
       ...comparisonIds,
     };
 
@@ -55,10 +52,8 @@ class _TrialReviewPageState extends ConsumerState<TrialReviewPage> {
     super.initState();
     Future.microtask(() {
       if (widget.runnerId != null && widget.videoId != null) {
-        ref.read(trialReviewSelectedRunSessionIdProvider.notifier).state =
-            widget.videoId;
-        ref.read(trialReviewSelectedRunnerIdProvider.notifier).state =
-            widget.runnerId;
+        ref.read(trialReviewSelectedRunSessionIdProvider.notifier).state = widget.videoId;
+        ref.read(trialReviewSelectedRunnerIdProvider.notifier).state = widget.runnerId;
       }
     });
   }
@@ -68,9 +63,7 @@ class _TrialReviewPageState extends ConsumerState<TrialReviewPage> {
     final l10n = context.l10n;
     final runners = ref.watch(runnerProvider);
     final selectedRunnerId = ref.watch(trialReviewSelectedRunnerIdProvider);
-    final selectedRunSessionId = ref.watch(
-      trialReviewSelectedRunSessionIdProvider,
-    );
+    final selectedRunSessionId = ref.watch(trialReviewSelectedRunSessionIdProvider);
     final runnerSelector = AsyncValueWidget(
       value: runners,
       loading: const SizedBox(
@@ -84,19 +77,14 @@ class _TrialReviewPageState extends ConsumerState<TrialReviewPage> {
             isExpanded: false,
             hint: const Text('選擇選手'),
             items: items
-                .map(
-                  (item) => DropdownMenuItem<String>(
-                    value: item.id,
-                    child: Text(item.name),
-                  ),
-                )
+                .map((item) => DropdownMenuItem<String>(value: item.id, child: Text(item.name)))
                 .toList(),
             value: selectedRunnerId,
             onChanged: (value) {
-              ref.read(trialReviewSelectedRunnerIdProvider.notifier).state =
-                  value;
-              ref.read(trialReviewSelectedRunSessionIdProvider.notifier).state =
-                  items.firstWhere((item) => item.id == value).lastVideoId;
+              ref.read(trialReviewSelectedRunnerIdProvider.notifier).state = value;
+              ref.read(trialReviewSelectedRunSessionIdProvider.notifier).state = items
+                  .firstWhere((item) => item.id == value)
+                  .lastVideoId;
             },
             buttonStyleData: ButtonStyleData(
               height: 50,
@@ -168,9 +156,7 @@ class _TrialReviewPageState extends ConsumerState<TrialReviewPage> {
                         runSessionId: selectedRunSessionId,
                       ),
                       Expanded(
-                        child: Scrollbar(
-                          child: SingleChildScrollView(child: metricsPanel),
-                        ),
+                        child: Scrollbar(child: SingleChildScrollView(child: metricsPanel)),
                       ),
                     ],
                   );
@@ -215,8 +201,7 @@ class _TrialReviewPageState extends ConsumerState<TrialReviewPage> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final isWide = constraints.maxWidth >= 900;
-        final summary =
-            selectedRunSessionId == null || selectedRunSessionId.isEmpty
+        final summary = selectedRunSessionId == null || selectedRunSessionId.isEmpty
             ? null
             : CurrentTrialSummaryHeader(
                 key: ValueKey('summary-$selectedRunSessionId'),
@@ -244,10 +229,7 @@ class _TrialReviewPageState extends ConsumerState<TrialReviewPage> {
                     const SizedBox(width: 4),
                     Expanded(flex: 4, child: Center(child: runnerControls)),
                     const SizedBox(width: 16),
-                    Expanded(
-                      flex: 5,
-                      child: summary ?? const SizedBox.shrink(),
-                    ),
+                    Expanded(flex: 5, child: summary ?? const SizedBox.shrink()),
                   ],
                 )
               : Column(
@@ -256,10 +238,7 @@ class _TrialReviewPageState extends ConsumerState<TrialReviewPage> {
                     runnerControls,
                     const SizedBox(height: 8),
                     _buildMobileHistoryTrigger(context, l10n),
-                    if (summary != null) ...[
-                      const SizedBox(height: 8),
-                      summary,
-                    ],
+                    if (summary != null) ...[const SizedBox(height: 8), summary],
                   ],
                 ),
         );
@@ -286,15 +265,11 @@ class _TrialReviewPageState extends ConsumerState<TrialReviewPage> {
                     ),
                     clipBehavior: Clip.antiAlias,
                     decoration: BoxDecoration(
-                      color: Theme.of(
-                        context,
-                      ).primaryColor.withValues(alpha: 0.12),
+                      color: Theme.of(context).primaryColor.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(12),
                       border: _isSidebarExpanded
                           ? Border.all(
-                              color: Theme.of(
-                                context,
-                              ).primaryColor.withValues(alpha: 0.3),
+                              color: Theme.of(context).primaryColor.withValues(alpha: 0.3),
                               width: 1.5,
                             )
                           : null,
@@ -305,11 +280,7 @@ class _TrialReviewPageState extends ConsumerState<TrialReviewPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Padding(
-                            padding: const EdgeInsets.only(
-                              left: 16,
-                              top: 16,
-                              bottom: 8,
-                            ),
+                            padding: const EdgeInsets.only(left: 16, top: 16, bottom: 8),
                             child: Text(
                               l10n.analysisHistory,
                               style: const TextStyle(
@@ -334,10 +305,7 @@ class _TrialReviewPageState extends ConsumerState<TrialReviewPage> {
     );
   }
 
-  Widget _buildMobileHistoryTrigger(
-    BuildContext context,
-    AppLocalizations l10n,
-  ) {
+  Widget _buildMobileHistoryTrigger(BuildContext context, AppLocalizations l10n) {
     return Card(
       elevation: 1,
       shape: RoundedRectangleBorder(
@@ -359,23 +327,15 @@ class _TrialReviewPageState extends ConsumerState<TrialReviewPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     child: Text(
                       l10n.analysisHistory,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
                   ),
                   const Divider(),
                   Expanded(
-                    child: TrialHistoryView(
-                      onSessionSelected: () => Navigator.of(context).pop(),
-                    ),
+                    child: TrialHistoryView(onSessionSelected: () => Navigator.of(context).pop()),
                   ),
                 ],
               ),
@@ -392,20 +352,13 @@ class _TrialReviewPageState extends ConsumerState<TrialReviewPage> {
                   color: Theme.of(context).primaryColor.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
-                  Icons.history,
-                  size: 18,
-                  color: Theme.of(context).primaryColor,
-                ),
+                child: Icon(Icons.history, size: 18, color: Theme.of(context).primaryColor),
               ),
               const SizedBox(width: 12),
               Expanded(
                 child: Text(
                   l10n.analysisHistory,
-                  style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                 ),
               ),
               Icon(

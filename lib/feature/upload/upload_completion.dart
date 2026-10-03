@@ -1,11 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class UploadCompletion {
-  const UploadCompletion({
-    required this.id,
-    required this.runnerId,
-    required this.runSessionId,
-  });
+  const UploadCompletion({required this.id, required this.runnerId, required this.runSessionId});
 
   final int id;
   final String runnerId;
@@ -19,11 +15,7 @@ class UploadCompletionNotifier extends Notifier<UploadCompletion?> {
   UploadCompletion? build() => null;
 
   void publish({required String runnerId, required String runSessionId}) {
-    state = UploadCompletion(
-      id: _nextId++,
-      runnerId: runnerId,
-      runSessionId: runSessionId,
-    );
+    state = UploadCompletion(id: _nextId++, runnerId: runnerId, runSessionId: runSessionId);
   }
 
   void consume(int id) {
@@ -31,7 +23,6 @@ class UploadCompletionNotifier extends Notifier<UploadCompletion?> {
   }
 }
 
-final uploadCompletionProvider =
-    NotifierProvider<UploadCompletionNotifier, UploadCompletion?>(
-      UploadCompletionNotifier.new,
-    );
+final uploadCompletionProvider = NotifierProvider<UploadCompletionNotifier, UploadCompletion?>(
+  UploadCompletionNotifier.new,
+);

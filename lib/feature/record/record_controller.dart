@@ -64,12 +64,9 @@ class RecordController extends StateNotifier<RecordState> {
       case RecordMessageType.roomStatus:
         final roomId = msg.data['roomId'];
         final membersJson = msg.data['members'] as List;
-        final members = membersJson
-            .map((e) => RecordMember.fromJson(e))
-            .toList();
+        final members = membersJson.map((e) => RecordMember.fromJson(e)).toList();
         final newStatus =
-            state.status == RecordStatus.idle ||
-                state.status == RecordStatus.connecting
+            state.status == RecordStatus.idle || state.status == RecordStatus.connecting
             ? RecordStatus.ready
             : state.status;
         state = state.copyWith(
@@ -92,10 +89,7 @@ class RecordController extends StateNotifier<RecordState> {
         );
         break;
       case RecordMessageType.stopRecording:
-        state = state.copyWith(
-          status: RecordStatus.uploading,
-          isAllUploaded: false,
-        );
+        state = state.copyWith(status: RecordStatus.uploading, isAllUploaded: false);
         break;
       case RecordMessageType.uploadComplete:
         final isAllUploaded = msg.data['isAllUploaded'] == true;
@@ -220,9 +214,7 @@ class RecordController extends StateNotifier<RecordState> {
   }
 
   Future<String> addRunner(String name) async {
-    final runnerInfo = await _ref
-        .read(uploadRunnerListProvider.notifier)
-        .addRunner(name);
+    final runnerInfo = await _ref.read(uploadRunnerListProvider.notifier).addRunner(name);
     state = state.copyWith(
       runnerId: runnerInfo.id,
       runnerName: name,
@@ -264,11 +256,7 @@ class RecordController extends StateNotifier<RecordState> {
     _send(msg);
   }
 
-  void notifyUploadComplete(
-    String runSessionId, {
-    String? runnerId,
-    bool isAllUploaded = false,
-  }) {
+  void notifyUploadComplete(String runSessionId, {String? runnerId, bool isAllUploaded = false}) {
     final msg = RecordMessage(
       type: RecordMessageType.uploadComplete,
       data: {

@@ -261,21 +261,14 @@ class FakeBackendRepo implements BackendInterface {
 
   @override
   Future<StepsData> getRunSessionSteps(String runSessionId) {
-    return Future.delayed(
-      const Duration(seconds: 1),
-      () => StepsData(steps: const []),
-    );
+    return Future.delayed(const Duration(seconds: 1), () => StepsData(steps: const []));
   }
 
   @override
   Future<ToePathData> getRunSessionToePath(String runSessionId) {
     return Future.delayed(
       const Duration(seconds: 1),
-      () => ToePathData(
-        keypointNames: const [],
-        hasWorldCoords: false,
-        frames: const [],
-      ),
+      () => ToePathData(keypointNames: const [], hasWorldCoords: false, frames: const []),
     );
   }
 

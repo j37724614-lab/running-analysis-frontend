@@ -145,10 +145,7 @@ class _RecordCameraViewState extends ConsumerState<RecordCameraView> with Change
   }
 
   void _listenToRecordingStatus() {
-    ref.listen(recordControllerProvider.select((s) => s.status), (
-      prev,
-      next,
-    ) async {
+    ref.listen(recordControllerProvider.select((s) => s.status), (prev, next) async {
       if (next == RecordStatus.recording) {
         if (mounted) {
           setState(() {
@@ -209,9 +206,7 @@ class _RecordCameraViewState extends ConsumerState<RecordCameraView> with Change
 
       String filename = _recordedFile!.name;
       String mimeType =
-          lookupMimeType(filename) ??
-          _recordedFile!.mimeType ??
-          'video/webm'; // Fallback
+          lookupMimeType(filename) ?? _recordedFile!.mimeType ?? 'video/webm'; // Fallback
 
       // 若檔名沒有副檔名，根據 mimeType 自動補上正確的副檔名
       if (!filename.contains('.')) {
@@ -228,28 +223,17 @@ class _RecordCameraViewState extends ConsumerState<RecordCameraView> with Change
         }
       }
 
-      final uploadFile = UploadVideoFile(
-        bytes: bytes,
-        filename: filename,
-        mimeType: mimeType,
-      );
+      final uploadFile = UploadVideoFile(bytes: bytes, filename: filename, mimeType: mimeType);
 
       // 所有設備先平行上傳影片檔，取得各自的 tempVideoId。
-      final tempVideoId = await backend.uploadVideo(
-        initialState.myCameraIndex ?? 0,
-        uploadFile,
-      );
+      final tempVideoId = await backend.uploadVideo(initialState.myCameraIndex ?? 0, uploadFile);
 
       // temp upload 完成後再判斷由哪一台相機建立 run session。
       final currentState = ref.read(recordControllerProvider);
       final recordingMembers =
-          currentState.members
-              .where((member) => member.cameraIndex != null)
-              .toList()
+          currentState.members.where((member) => member.cameraIndex != null).toList()
             ..sort((a, b) => a.cameraIndex!.compareTo(b.cameraIndex!));
-      final minCameraIndex = recordingMembers.isNotEmpty
-          ? recordingMembers.first.cameraIndex
-          : 0;
+      final minCameraIndex = recordingMembers.isNotEmpty ? recordingMembers.first.cameraIndex : 0;
       final isLeader = currentState.myCameraIndex == minCameraIndex;
 
       if (isLeader) {
@@ -281,16 +265,12 @@ class _RecordCameraViewState extends ConsumerState<RecordCameraView> with Change
         );
       } else {
         // Slave 已完成 temp upload，只等待 Leader 建立 session（最多 30 秒）。
-        String? runSessionId = ref
-            .read(recordControllerProvider)
-            .sharedRunSessionId;
+        String? runSessionId = ref.read(recordControllerProvider).sharedRunSessionId;
         if (runSessionId == null) {
           for (var i = 0; i < 60; i++) {
             if (!mounted) return;
             await Future.delayed(const Duration(milliseconds: 500));
-            runSessionId = ref
-                .read(recordControllerProvider)
-                .sharedRunSessionId;
+            runSessionId = ref.read(recordControllerProvider).sharedRunSessionId;
             if (runSessionId != null) break;
           }
         }
@@ -331,9 +311,7 @@ class _RecordCameraViewState extends ConsumerState<RecordCameraView> with Change
       }
 
       final finalState = ref.read(recordControllerProvider);
-      controller.updateReadyStatus(
-        finalState.isPhysicallyReady && finalState.anchorIsSet,
-      );
+      controller.updateReadyStatus(finalState.isPhysicallyReady && finalState.anchorIsSet);
 
       if (mounted) {
         setState(() {
@@ -350,10 +328,7 @@ class _RecordCameraViewState extends ConsumerState<RecordCameraView> with Change
         });
         toastification.show(
           context: context,
-          title: const Text(
-            'Error',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
+          title: const Text('Error', style: TextStyle(fontWeight: FontWeight.bold)),
           description: Text('上傳失敗: $e'),
           type: ToastificationType.error,
           style: ToastificationStyle.minimal,
@@ -384,9 +359,7 @@ class _RecordCameraViewState extends ConsumerState<RecordCameraView> with Change
     //   _previewTimer?.cancel();
     // }
 
-    if (!_isInitialized ||
-        _controller == null ||
-        !_controller!.value.isInitialized) {
+    if (!_isInitialized || _controller == null || !_controller!.value.isInitialized) {
       return const _CameraLoadingShimmer();
     }
 
@@ -559,10 +532,7 @@ class _RecordCameraViewState extends ConsumerState<RecordCameraView> with Change
                     children: [
                       Text(
                         context.l10n.switchLens,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                        ),
+                        style: const TextStyle(color: Colors.white, fontSize: 16),
                       ),
                       const SizedBox(width: 4),
                       const Icon(Icons.flip_camera_ios, color: Colors.white, size: 16),
@@ -612,13 +582,8 @@ class _RecordCameraViewState extends ConsumerState<RecordCameraView> with Change
                   if (state.runnerId == null) {
                     toastification.show(
                       context: context,
-                      title: const Text(
-                        'Error',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      description: Text(
-                        context.l10n.pleaseSelectRunnerToRecord,
-                      ),
+                      title: const Text('Error', style: TextStyle(fontWeight: FontWeight.bold)),
+                      description: Text(context.l10n.pleaseSelectRunnerToRecord),
                       type: ToastificationType.error,
                       style: ToastificationStyle.minimal,
                       alignment: Alignment.bottomCenter,
@@ -682,9 +647,7 @@ class _RecordCameraViewState extends ConsumerState<RecordCameraView> with Change
             child: Container(
               decoration: BoxDecoration(
                 color: Colors.black54,
-                borderRadius: isFullscreen
-                    ? BorderRadius.zero
-                    : BorderRadius.circular(16),
+                borderRadius: isFullscreen ? BorderRadius.zero : BorderRadius.circular(16),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -702,18 +665,12 @@ class _RecordCameraViewState extends ConsumerState<RecordCameraView> with Change
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.black.withValues(alpha: 0.3),
-                  borderRadius: isFullscreen
-                      ? BorderRadius.zero
-                      : BorderRadius.circular(16),
+                  borderRadius: isFullscreen ? BorderRadius.zero : BorderRadius.circular(16),
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(
-                      Icons.screen_rotation,
-                      color: Colors.white,
-                      size: 48,
-                    ),
+                    const Icon(Icons.screen_rotation, color: Colors.white, size: 48),
                     const SizedBox(height: 8),
                     Text(
                       context.l10n.pleaseHoldDeviceHorizontally,
@@ -863,9 +820,7 @@ class _FullScreenCameraDialogState extends ConsumerState<_FullScreenCameraDialog
         final AB5 = B5 - A5;
         final AP5 = P5 - A5;
         final lenSq5 = AB5.dx * AB5.dx + AB5.dy * AB5.dy;
-        _t5 = lenSq5 > 0
-            ? ((AP5.dx * AB5.dx + AP5.dy * AB5.dy) / lenSq5).clamp(0.0, 1.0)
-            : 0.5;
+        _t5 = lenSq5 > 0 ? ((AP5.dx * AB5.dx + AP5.dy * AB5.dy) / lenSq5).clamp(0.0, 1.0) : 0.5;
 
         final A6 = _pts[3];
         final B6 = _pts[2];
@@ -873,18 +828,10 @@ class _FullScreenCameraDialogState extends ConsumerState<_FullScreenCameraDialog
         final AB6 = B6 - A6;
         final AP6 = P6 - A6;
         final lenSq6 = AB6.dx * AB6.dx + AB6.dy * AB6.dy;
-        _t6 = lenSq6 > 0
-            ? ((AP6.dx * AB6.dx + AP6.dy * AB6.dy) / lenSq6).clamp(0.0, 1.0)
-            : 0.5;
+        _t6 = lenSq6 > 0 ? ((AP6.dx * AB6.dx + AP6.dy * AB6.dy) / lenSq6).clamp(0.0, 1.0) : 0.5;
       } else if (_pts.length == 4) {
-        final tm = Offset(
-          (_pts[0].dx + _pts[1].dx) / 2,
-          (_pts[0].dy + _pts[1].dy) / 2,
-        );
-        final bm = Offset(
-          (_pts[2].dx + _pts[3].dx) / 2,
-          (_pts[2].dy + _pts[3].dy) / 2,
-        );
+        final tm = Offset((_pts[0].dx + _pts[1].dx) / 2, (_pts[0].dy + _pts[1].dy) / 2);
+        final bm = Offset((_pts[2].dx + _pts[3].dx) / 2, (_pts[2].dy + _pts[3].dy) / 2);
         _pts.add(tm);
         _pts.add(bm);
         _t5 = 0.5;
@@ -936,14 +883,8 @@ class _FullScreenCameraDialogState extends ConsumerState<_FullScreenCameraDialog
         _pts.add(norm);
       }
       if (_pts.length == 4) {
-        final tm = Offset(
-          (_pts[0].dx + _pts[1].dx) / 2,
-          (_pts[0].dy + _pts[1].dy) / 2,
-        );
-        final bm = Offset(
-          (_pts[2].dx + _pts[3].dx) / 2,
-          (_pts[2].dy + _pts[3].dy) / 2,
-        );
+        final tm = Offset((_pts[0].dx + _pts[1].dx) / 2, (_pts[0].dy + _pts[1].dy) / 2);
+        final bm = Offset((_pts[2].dx + _pts[3].dx) / 2, (_pts[2].dy + _pts[3].dy) / 2);
         _pts.add(tm);
         _pts.add(bm);
         _t5 = 0.5;
@@ -1048,12 +989,8 @@ class _FullScreenCameraDialogState extends ConsumerState<_FullScreenCameraDialog
                   // Left-to-Mid
                   TextFormField(
                     controller: topTextCtrl,
-                    keyboardType: const TextInputType.numberWithOptions(
-                      decimal: true,
-                    ),
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
-                    ],
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))],
                     style: const TextStyle(color: Colors.white, fontSize: 14),
                     decoration: InputDecoration(
                       labelText: l10n.distanceLeftToCenter,
@@ -1078,8 +1015,7 @@ class _FullScreenCameraDialogState extends ConsumerState<_FullScreenCameraDialog
                     ),
                     validator: (val) {
                       final n = double.tryParse(val?.trim() ?? '');
-                      if (n == null || n <= 0)
-                        return l10n.distanceInvalidPrompt;
+                      if (n == null || n <= 0) return l10n.distanceInvalidPrompt;
                       return null;
                     },
                   ),
@@ -1087,12 +1023,8 @@ class _FullScreenCameraDialogState extends ConsumerState<_FullScreenCameraDialog
                   // Mid-to-Right
                   TextFormField(
                     controller: botTextCtrl,
-                    keyboardType: const TextInputType.numberWithOptions(
-                      decimal: true,
-                    ),
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
-                    ],
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))],
                     style: const TextStyle(color: Colors.white, fontSize: 14),
                     decoration: InputDecoration(
                       labelText: l10n.distanceCenterToRight,
@@ -1117,27 +1049,19 @@ class _FullScreenCameraDialogState extends ConsumerState<_FullScreenCameraDialog
                     ),
                     validator: (val) {
                       final n = double.tryParse(val?.trim() ?? '');
-                      if (n == null || n <= 0)
-                        return l10n.distanceInvalidPrompt;
+                      if (n == null || n <= 0) return l10n.distanceInvalidPrompt;
                       return null;
                     },
                   ),
                   const SizedBox(height: 14),
                   TextFormField(
                     controller: widthTextCtrl,
-                    keyboardType: const TextInputType.numberWithOptions(
-                      decimal: true,
-                    ),
-                    inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
-                    ],
+                    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                    inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))],
                     style: const TextStyle(color: Colors.white, fontSize: 14),
                     decoration: InputDecoration(
                       labelText: l10n.runwayWidth,
-                      labelStyle: const TextStyle(
-                        color: Colors.white70,
-                        fontSize: 12,
-                      ),
+                      labelStyle: const TextStyle(color: Colors.white70, fontSize: 12),
                       suffixText: 'm',
                       suffixStyle: const TextStyle(color: Colors.white60),
                       prefixIcon: const Icon(
@@ -1317,14 +1241,8 @@ class _FullScreenCameraDialogState extends ConsumerState<_FullScreenCameraDialog
       setState(() {
         _pts.add(pos);
         if (_pts.length == 4) {
-          final tm = Offset(
-            (_pts[0].dx + _pts[1].dx) / 2,
-            (_pts[0].dy + _pts[1].dy) / 2,
-          );
-          final bm = Offset(
-            (_pts[2].dx + _pts[3].dx) / 2,
-            (_pts[2].dy + _pts[3].dy) / 2,
-          );
+          final tm = Offset((_pts[0].dx + _pts[1].dx) / 2, (_pts[0].dy + _pts[1].dy) / 2);
+          final bm = Offset((_pts[2].dx + _pts[3].dx) / 2, (_pts[2].dy + _pts[3].dy) / 2);
           _pts.add(tm);
           _pts.add(bm);
           _t5 = 0.5;
@@ -1369,10 +1287,7 @@ class _FullScreenCameraDialogState extends ConsumerState<_FullScreenCameraDialog
   }
 
   void _onPanUpdate(DragUpdateDetails d) {
-    if (_draggingIdx == null ||
-        _panStartTouchNorm == null ||
-        _panStartAnchorPos == null)
-      return;
+    if (_draggingIdx == null || _panStartTouchNorm == null || _panStartAnchorPos == null) return;
     final currentTouch = _norm(d.localPosition);
     final delta = currentTouch - _panStartTouchNorm!;
     final newPos = Offset(
@@ -1525,8 +1440,7 @@ class _FullScreenCameraDialogState extends ConsumerState<_FullScreenCameraDialog
                     final i = e.key;
                     final pt = e.value;
                     final isDragging = i == _draggingIdx;
-                    final isActive =
-                        _isMobile(context) && i == _selectedActivePointIdx;
+                    final isActive = _isMobile(context) && i == _selectedActivePointIdx;
                     return Positioned(
                       left: pt.dx * _imgW,
                       top: pt.dy * _imgH,
@@ -2033,8 +1947,7 @@ class _AnchorQuadPainter extends CustomPainter {
 
     if (pts.length == 6) {
       final drawLine = (int pA, int pB, Color color) {
-        final isDragEdge =
-            draggingIdx != null && (draggingIdx == pA || draggingIdx == pB);
+        final isDragEdge = draggingIdx != null && (draggingIdx == pA || draggingIdx == pB);
         paint
           ..color = color.withValues(alpha: isDragEdge ? 1.0 : 0.8)
           ..strokeWidth = isDragEdge ? 2.8 : 2.2;
@@ -2067,8 +1980,7 @@ class _AnchorQuadPainter extends CustomPainter {
     } else {
       // Legacy / intermediate drawing (less than 6 points)
       for (int i = 0; i < pts.length - 1; i++) {
-        final isDragEdge =
-            draggingIdx != null && (i == draggingIdx || i + 1 == draggingIdx);
+        final isDragEdge = draggingIdx != null && (i == draggingIdx || i + 1 == draggingIdx);
         paint
           ..color = _kAnchorColors[i].withValues(alpha: isDragEdge ? 1.0 : 0.8)
           ..strokeWidth = isDragEdge ? 2.8 : 2.2;
@@ -2076,8 +1988,7 @@ class _AnchorQuadPainter extends CustomPainter {
       }
 
       if (pts.length == 4) {
-        final isDragEdge =
-            draggingIdx != null && (draggingIdx == 3 || draggingIdx == 0);
+        final isDragEdge = draggingIdx != null && (draggingIdx == 3 || draggingIdx == 0);
         paint
           ..color = _kAnchorColors[3].withValues(alpha: isDragEdge ? 1.0 : 0.8)
           ..strokeWidth = isDragEdge ? 2.8 : 2.2;

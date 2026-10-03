@@ -39,10 +39,7 @@ void main() {
       ];
 
       for (var retryCount = 0; retryCount < expected.length; retryCount++) {
-        expect(
-          apiRetry(retryCount, 'Connection refused'),
-          expected[retryCount],
-        );
+        expect(apiRetry(retryCount, 'Connection refused'), expected[retryCount]);
       }
     });
 

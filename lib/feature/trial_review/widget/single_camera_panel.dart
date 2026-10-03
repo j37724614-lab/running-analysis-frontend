@@ -78,13 +78,9 @@ class _SingleCameraPanelState extends State<SingleCameraPanel> {
     final nativeWidth = manager.controller.value.size.width;
     final nativeHeight = manager.controller.value.size.height;
     final cropTop = nativeHeight > 0 ? nativeHeight * _kCropTopFraction : 0.0;
-    final cropBottom = nativeHeight > 0
-        ? nativeHeight * _kCropBottomFraction
-        : 0.0;
+    final cropBottom = nativeHeight > 0 ? nativeHeight * _kCropBottomFraction : 0.0;
     final cropHeight = cropBottom - cropTop;
-    final aspectRatio = nativeWidth <= 0 || cropHeight <= 0
-        ? 16 / 9
-        : nativeWidth / cropHeight;
+    final aspectRatio = nativeWidth <= 0 || cropHeight <= 0 ? 16 / 9 : nativeWidth / cropHeight;
 
     final videoBox = ColoredBox(
       color: Colors.black,
@@ -172,9 +168,7 @@ class _SingleCameraPanelState extends State<SingleCameraPanel> {
                       : '播放 Cam ${cameraIndex + 1}',
                   onPressed: onTogglePlayback,
                   icon: Icon(
-                    value.isPlaying
-                        ? Icons.pause_circle_outline
-                        : Icons.play_circle_outline,
+                    value.isPlaying ? Icons.pause_circle_outline : Icons.play_circle_outline,
                   ),
                 );
               },
@@ -265,10 +259,7 @@ class _VideoSeekSliderState extends State<_VideoSeekSlider> {
         final duration = value.duration.inMilliseconds.toDouble();
         final max = duration > 0 ? duration : 1.0;
         final playbackPosition = value.position.inMilliseconds.toDouble();
-        final position = (_isDragging ? _dragPosition : playbackPosition).clamp(
-          0.0,
-          max,
-        );
+        final position = (_isDragging ? _dragPosition : playbackPosition).clamp(0.0, max);
 
         return SizedBox(
           height: 26,
@@ -303,9 +294,7 @@ class _VideoSeekSliderState extends State<_VideoSeekSlider> {
                 onChangeEnd: duration <= 0
                     ? null
                     : (position) {
-                        widget.manager.controller.seekTo(
-                          Duration(milliseconds: position.round()),
-                        );
+                        widget.manager.controller.seekTo(Duration(milliseconds: position.round()));
                         setState(() {
                           _isDragging = false;
                           _dragPosition = position;

@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 
 class TrialReviewErrorView extends StatelessWidget {
-  const TrialReviewErrorView({
-    super.key,
-    required this.error,
-    required this.onRetry,
-  });
+  const TrialReviewErrorView({super.key, required this.error, required this.onRetry});
 
   final Object error;
   final VoidCallback onRetry;
@@ -18,11 +14,7 @@ class TrialReviewErrorView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              Icons.cloud_off_outlined,
-              size: 36,
-              color: Theme.of(context).colorScheme.error,
-            ),
+            Icon(Icons.cloud_off_outlined, size: 36, color: Theme.of(context).colorScheme.error),
             const SizedBox(height: 8),
             const Text(
               '暫時無法載入賽事資料，系統會自動重試',

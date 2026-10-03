@@ -10,13 +10,7 @@ class ChartCard extends StatelessWidget {
   final double? height;
   final Widget child;
 
-  const ChartCard({
-    super.key,
-    required this.title,
-    this.legend,
-    this.height,
-    required this.child,
-  });
+  const ChartCard({super.key, required this.title, this.legend, this.height, required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -29,10 +23,7 @@ class ChartCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            title,
-            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-          ),
+          Text(title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
           if (legend != null) ...[const SizedBox(height: 6), legend!],
           const SizedBox(height: 8),
           if (height != null) SizedBox(height: height, child: child) else child,

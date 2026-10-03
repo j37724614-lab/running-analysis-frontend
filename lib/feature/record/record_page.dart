@@ -130,10 +130,7 @@ class _RecordPageState extends ConsumerState<RecordPage> {
       }
     });
 
-    ref.listen(recordControllerProvider.select((s) => s.isAllUploaded), (
-      prev,
-      next,
-    ) {
+    ref.listen(recordControllerProvider.select((s) => s.isAllUploaded), (prev, next) {
       if (next && prev != true) {
         toastification.show(
           context: context,
@@ -297,9 +294,7 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                               onPressed: () => controller.createRoom(_createExpectedCount),
                               child: Text(
                                 l10n.createRecordingRoom,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                style: const TextStyle(fontWeight: FontWeight.bold),
                               ),
                             ),
                           ],
@@ -390,9 +385,7 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                               },
                               child: Text(
                                 l10n.joinRecordingRoom,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                style: const TextStyle(fontWeight: FontWeight.bold),
                               ),
                             ),
                           ],
@@ -567,14 +560,10 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                               },
                               title: Text(
                                 l10n.localRecording,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                ),
+                                style: const TextStyle(fontWeight: FontWeight.bold),
                               ),
                               subtitle: state.isRecordingEnabled
-                                  ? Text(
-                                      '${l10n.camera} ${state.myCameraIndex! + 1}',
-                                    )
+                                  ? Text('${l10n.camera} ${state.myCameraIndex! + 1}')
                                   : Text(l10n.roleMaster),
                               trailing: Switch(
                                 value: state.isRecordingEnabled,
@@ -606,27 +595,17 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                                         scrollDirection: Axis.horizontal,
                                         child: Row(
                                           spacing: 8,
-                                          children: List.generate(
-                                            state.expectedCameraCount,
-                                            (i) {
-                                              return ChoiceChip(
-                                                label: Text(
-                                                  '${l10n.camera} ${i + 1}',
-                                                ),
-                                                selected:
-                                                    state.myCameraIndex == i,
-                                                onSelected: (selected) {
-                                                  if (selected) {
-                                                    controller
-                                                        .toggleMasterRecording(
-                                                          true,
-                                                          i,
-                                                        );
-                                                  }
-                                                },
-                                              );
-                                            },
-                                          ),
+                                          children: List.generate(state.expectedCameraCount, (i) {
+                                            return ChoiceChip(
+                                              label: Text('${l10n.camera} ${i + 1}'),
+                                              selected: state.myCameraIndex == i,
+                                              onSelected: (selected) {
+                                                if (selected) {
+                                                  controller.toggleMasterRecording(true, i);
+                                                }
+                                              },
+                                            );
+                                          }),
                                         ),
                                       ),
                                     ],
@@ -743,10 +722,7 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const SpinKitDoubleBounce(
-                                color: Colors.red,
-                                size: 20,
-                              ),
+                              const SpinKitDoubleBounce(color: Colors.red, size: 20),
                               const SizedBox(width: 8),
                               Text(
                                 l10n.recordingInProgress,
@@ -778,10 +754,7 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const SpinKitDoubleBounce(
-                                color: Color(0xFF79A9EA),
-                                size: 20,
-                              ),
+                              const SpinKitDoubleBounce(color: Color(0xFF79A9EA), size: 20),
                               const SizedBox(width: 8),
                               Text(
                                 l10n.autoUploading,
@@ -798,10 +771,7 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.grey[400],
                               foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 64,
-                                vertical: 16,
-                              ),
+                              padding: const EdgeInsets.symmetric(horizontal: 64, vertical: 16),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(30),
                               ),
@@ -819,10 +789,7 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                                   ),
                                 ),
                                 const SizedBox(width: 12),
-                                Text(
-                                  l10n.autoUploading,
-                                  style: const TextStyle(fontSize: 20),
-                                ),
+                                Text(l10n.autoUploading, style: const TextStyle(fontSize: 20)),
                               ],
                             ),
                           ),
@@ -878,9 +845,7 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                                     'Warning',
                                     style: TextStyle(fontWeight: FontWeight.bold),
                                   ),
-                                  description: Text(
-                                    l10n.orientationLandscapeRequired,
-                                  ),
+                                  description: Text(l10n.orientationLandscapeRequired),
                                   alignment: Alignment.bottomCenter,
                                   type: ToastificationType.warning,
                                   style: ToastificationStyle.minimal,
@@ -1042,10 +1007,7 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                               l10n.selectRunner,
                               style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
                             ),
-                            const Icon(
-                              Icons.arrow_forward_ios_outlined,
-                              size: 12,
-                            ),
+                            const Icon(Icons.arrow_forward_ios_outlined, size: 12),
                           ],
                         ),
                       ),
@@ -1170,10 +1132,7 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                   contentPadding: EdgeInsets.zero,
                   title: Text(
                     l10n.longJumpMode,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                   subtitle: Text(l10n.longJumpModeDescription),
                   value: state.isLongJump,

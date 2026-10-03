@@ -34,11 +34,7 @@ class StepLateralPathChart extends StatelessWidget {
   final StepsData data;
   final TrialVideoPlaybackController? playbackController;
 
-  const StepLateralPathChart({
-    super.key,
-    required this.data,
-    this.playbackController,
-  });
+  const StepLateralPathChart({super.key, required this.data, this.playbackController});
 
   @override
   Widget build(BuildContext context) {
@@ -64,10 +60,7 @@ class StepLateralPathChart extends StatelessWidget {
     return AnimatedBuilder(
       animation: controller,
       builder: (context, _) {
-        final activeIndex = controller.activeIndex.clamp(
-          0,
-          controller.managers.length - 1,
-        );
+        final activeIndex = controller.activeIndex.clamp(0, controller.managers.length - 1);
         final videoController = controller.managers[activeIndex].controller;
         return AnimatedBuilder(
           animation: videoController,
@@ -83,25 +76,18 @@ class StepLateralPathChart extends StatelessWidget {
             // squeeze this camera's segment to match the others. Fall back
             // to the combined overview if this camera has no steps of its
             // own to frame on.
-            final cameraPoints = allPoints
-                .where((p) => p.cam == activeIndex)
-                .toList();
-            final scalePoints = cameraPoints.isEmpty
-                ? allPoints
-                : cameraPoints;
+            final cameraPoints = allPoints.where((p) => p.cam == activeIndex).toList();
+            final scalePoints = cameraPoints.isEmpty ? allPoints : cameraPoints;
             final visiblePoints = cameraPoints.isEmpty
                 ? _buildPoints(visibleSteps)
-                : _buildPoints(
-                    visibleSteps.where((s) => s.cam == activeIndex),
-                  );
+                : _buildPoints(visibleSteps.where((s) => s.cam == activeIndex));
             return _buildChart(
               allPoints: scalePoints,
               visiblePoints: visiblePoints,
               syncLabel:
                   'Cam ${activeIndex + 1} · ${_formatDuration(videoController.value.position)}',
               runwayWidthM:
-                  data.runwayWidthByCam?[activeIndex] ??
-                  _anyRunwayWidthM(data.runwayWidthByCam),
+                  data.runwayWidthByCam?[activeIndex] ?? _anyRunwayWidthM(data.runwayWidthByCam),
             );
           },
         );
@@ -238,11 +224,7 @@ class _FootprintTrailPainter extends CustomPainter {
   final List<_LandingPoint> visiblePoints;
   final double? runwayWidthM;
 
-  _FootprintTrailPainter({
-    required this.allPoints,
-    required this.visiblePoints,
-    this.runwayWidthM,
-  });
+  _FootprintTrailPainter({required this.allPoints, required this.visiblePoints, this.runwayWidthM});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -283,14 +265,8 @@ class _FootprintTrailPainter extends CustomPainter {
     const bottomGutter = 34.0;
     const topPadding = 28.0;
     const rightPadding = 12.0;
-    final availWidth = (size.width - leftGutter - rightPadding).clamp(
-      1.0,
-      double.infinity,
-    );
-    final availHeight = (size.height - topPadding - bottomGutter).clamp(
-      1.0,
-      double.infinity,
-    );
+    final availWidth = (size.width - leftGutter - rightPadding).clamp(1.0, double.infinity);
+    final availHeight = (size.height - topPadding - bottomGutter).clamp(1.0, double.infinity);
 
     // Equal scale on both axes -- like the reference video, the runway is
     // never stretched. Whichever axis is the tighter fit sets the scale;
@@ -335,14 +311,8 @@ class _FootprintTrailPainter extends CustomPainter {
     }
 
     // Runway backdrop.
-    canvas.drawRect(
-      Rect.fromLTWH(0, 0, size.width, size.height),
-      Paint()..color = _kCanvasBg,
-    );
-    final runwayRect = Rect.fromPoints(
-      toCanvas(minX, minY),
-      toCanvas(maxX, maxY),
-    );
+    canvas.drawRect(Rect.fromLTWH(0, 0, size.width, size.height), Paint()..color = _kCanvasBg);
+    final runwayRect = Rect.fromPoints(toCanvas(minX, minY), toCanvas(maxX, maxY));
     canvas.drawRect(runwayRect, Paint()..color = _kRunwayFill);
     canvas.drawRect(
       runwayRect,
@@ -401,11 +371,7 @@ class _FootprintTrailPainter extends CustomPainter {
       // width dimension's line and label live, just left of the runway's
       // own left edge -- otherwise the two overlap and neither reads.
       if (x - runwayRect.left >= 18 || i > majorStart) {
-        drawText(
-          _formatMeters(worldX),
-          Offset(x, runwayRect.top - 16),
-          align: TextAlign.center,
-        );
+        drawText(_formatMeters(worldX), Offset(x, runwayRect.top - 16), align: TextAlign.center);
       }
     }
 
@@ -418,17 +384,9 @@ class _FootprintTrailPainter extends CustomPainter {
       final dimPaint = Paint()
         ..color = _kTick
         ..strokeWidth = 1.2;
-      canvas.drawLine(
-        Offset(dimX, runwayRect.top),
-        Offset(dimX, runwayRect.bottom),
-        dimPaint,
-      );
+      canvas.drawLine(Offset(dimX, runwayRect.top), Offset(dimX, runwayRect.bottom), dimPaint);
       for (final capY in [runwayRect.top, runwayRect.bottom]) {
-        canvas.drawLine(
-          Offset(dimX - 3, capY),
-          Offset(dimX + 3, capY),
-          dimPaint,
-        );
+        canvas.drawLine(Offset(dimX - 3, capY), Offset(dimX + 3, capY), dimPaint);
       }
       final label = TextPainter(
         text: TextSpan(
@@ -469,10 +427,7 @@ class _FootprintTrailPainter extends CustomPainter {
     if (visiblePoints.length >= 2) {
       final path = Path();
       for (var i = 0; i < visiblePoints.length; i++) {
-        final offset = toCanvas(
-          visiblePoints[i].worldXM,
-          visiblePoints[i].worldYM,
-        );
+        final offset = toCanvas(visiblePoints[i].worldXM, visiblePoints[i].worldYM);
         if (i == 0) {
           path.moveTo(offset.dx, offset.dy);
         } else {
@@ -495,10 +450,7 @@ class _FootprintTrailPainter extends CustomPainter {
     for (var i = 1; i < visiblePoints.length; i++) {
       final length = visiblePoints[i].stepLengthM;
       if (length == null) continue;
-      final from = toCanvas(
-        visiblePoints[i - 1].worldXM,
-        visiblePoints[i - 1].worldYM,
-      );
+      final from = toCanvas(visiblePoints[i - 1].worldXM, visiblePoints[i - 1].worldYM);
       final to = toCanvas(visiblePoints[i].worldXM, visiblePoints[i].worldYM);
       drawText(
         '${length.toStringAsFixed(2)}m',
@@ -526,10 +478,7 @@ class _FootprintTrailPainter extends CustomPainter {
     // overlap on screen.
     final offsetY = isLeft ? -4.0 : 4.0;
     final sole = center.translate(0, offsetY);
-    canvas.drawOval(
-      Rect.fromCenter(center: sole, width: 20, height: 10),
-      paint,
-    );
+    canvas.drawOval(Rect.fromCenter(center: sole, width: 20, height: 10), paint);
     // Toe dot, offset toward the direction of travel (+X).
     canvas.drawCircle(sole.translate(9, 0), 3, paint);
   }

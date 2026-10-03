@@ -31,9 +31,7 @@ class PlaybackCursor extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final controller = ref
-        .watch(trialVideoControllerProvider(runSessionId))
-        .value;
+    final controller = ref.watch(trialVideoControllerProvider(runSessionId)).value;
     if (controller == null || controller.managers.isEmpty) {
       return builder(context, null);
     }

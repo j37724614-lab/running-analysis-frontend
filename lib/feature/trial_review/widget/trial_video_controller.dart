@@ -16,10 +16,7 @@ class TrialVideoPlaybackController extends ChangeNotifier {
   PlaybackMode mode = PlaybackMode.single;
   int activeIndex = 0;
 
-  TrialVideoPlaybackController({
-    required this.runSessionId,
-    required this.managers,
-  }) {
+  TrialVideoPlaybackController({required this.runSessionId, required this.managers}) {
     for (var i = 0; i < managers.length; i++) {
       managers[i].controller.addListener(() => _onTick(i));
     }
@@ -54,18 +51,13 @@ class TrialVideoPlaybackController extends ChangeNotifier {
         rethrow;
       }
     }
-    return TrialVideoPlaybackController(
-      runSessionId: runSessionId,
-      managers: managers,
-    );
+    return TrialVideoPlaybackController(runSessionId: runSessionId, managers: managers);
   }
 
   void _onTick(int index) {
     if (mode != PlaybackMode.sequential || index != activeIndex) return;
     final value = managers[index].controller.value;
-    if (!value.isPlaying &&
-        value.position >= value.duration &&
-        value.duration > Duration.zero) {
+    if (!value.isPlaying && value.position >= value.duration && value.duration > Duration.zero) {
       _advanceSequential();
     }
   }
@@ -121,8 +113,7 @@ class TrialVideoPlaybackController extends ChangeNotifier {
     if (wasPlaying) {
       manager.pause();
     } else {
-      if (manager.controller.value.position >=
-          manager.controller.value.duration) {
+      if (manager.controller.value.position >= manager.controller.value.duration) {
         manager.seek(Duration.zero);
       }
       manager.play();

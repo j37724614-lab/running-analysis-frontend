@@ -19,9 +19,7 @@ class TopdownReviewPanel extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final indicesAsync = ref.watch(
-      topdownReviewCameraIndicesProvider(runSessionId),
-    );
+    final indicesAsync = ref.watch(topdownReviewCameraIndicesProvider(runSessionId));
     final indices = indicesAsync.value ?? const <int>[];
     if (indices.isEmpty) return const SizedBox.shrink();
 
@@ -32,10 +30,8 @@ class TopdownReviewPanel extends ConsumerWidget {
         label: const Text('查看動態俯視回放'),
         onPressed: () => showDialog(
           context: context,
-          builder: (context) => _TopdownReviewDialog(
-            runSessionId: runSessionId,
-            cameraIndices: indices,
-          ),
+          builder: (context) =>
+              _TopdownReviewDialog(runSessionId: runSessionId, cameraIndices: indices),
         ),
       ),
     );
@@ -46,10 +42,7 @@ class _TopdownReviewDialog extends StatefulWidget {
   final String runSessionId;
   final List<int> cameraIndices;
 
-  const _TopdownReviewDialog({
-    required this.runSessionId,
-    required this.cameraIndices,
-  });
+  const _TopdownReviewDialog({required this.runSessionId, required this.cameraIndices});
 
   @override
   State<_TopdownReviewDialog> createState() => _TopdownReviewDialogState();
@@ -66,10 +59,7 @@ class _TopdownReviewDialogState extends State<_TopdownReviewDialog> {
   @override
   void initState() {
     super.initState();
-    final url = API.getTopdownReviewVideo(
-      widget.runSessionId,
-      widget.cameraIndices.first,
-    );
+    final url = API.getTopdownReviewVideo(widget.runSessionId, widget.cameraIndices.first);
     _controller = VideoPlayerController.networkUrl(Uri.parse(url));
     _controller.addListener(_handleVideoUpdate);
     _initializeAndPlay();
@@ -153,10 +143,7 @@ class _TopdownReviewDialogState extends State<_TopdownReviewDialog> {
                 children: [
                   Icon(Icons.play_circle_outline),
                   SizedBox(width: 8),
-                  Text(
-                    '動態俯視回放',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
+                  Text('動態俯視回放', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 ],
               ),
               const SizedBox(height: 12),
@@ -165,9 +152,7 @@ class _TopdownReviewDialogState extends State<_TopdownReviewDialog> {
                 // 16:5 is a reasonable placeholder while the real video
                 // hasn't reported its own size yet.
                 aspectRatio: _controller.value.isInitialized
-                    ? (_controller.value.aspectRatio == 0
-                          ? 16 / 5
-                          : _controller.value.aspectRatio)
+                    ? (_controller.value.aspectRatio == 0 ? 16 / 5 : _controller.value.aspectRatio)
                     : 16 / 5,
                 child: _buildVideoArea(),
               ),
@@ -215,10 +200,7 @@ class _TopdownReviewDialogState extends State<_TopdownReviewDialog> {
     return Stack(
       fit: StackFit.expand,
       children: [
-        GestureDetector(
-          onTap: _togglePlayback,
-          child: VideoPlayer(_controller),
-        ),
+        GestureDetector(onTap: _togglePlayback, child: VideoPlayer(_controller)),
         if (_isCompleted)
           ColoredBox(
             color: Colors.black54,
@@ -232,10 +214,7 @@ class _TopdownReviewDialogState extends State<_TopdownReviewDialog> {
                     label: const Text('重新播放'),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
-                    '1.5 秒後自動重播',
-                    style: TextStyle(color: Colors.white),
-                  ),
+                  const Text('1.5 秒後自動重播', style: TextStyle(color: Colors.white)),
                 ],
               ),
             ),
@@ -256,11 +235,7 @@ class _TopdownReviewDialogState extends State<_TopdownReviewDialog> {
           tooltip: value.isPlaying ? '暫停' : '播放',
           icon: Icon(value.isPlaying ? Icons.pause : Icons.play_arrow),
         ),
-        IconButton(
-          onPressed: _replay,
-          tooltip: '從頭播放',
-          icon: const Icon(Icons.replay),
-        ),
+        IconButton(onPressed: _replay, tooltip: '從頭播放', icon: const Icon(Icons.replay)),
         Expanded(
           child: Slider(
             min: 0,

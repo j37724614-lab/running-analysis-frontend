@@ -50,12 +50,7 @@ class StepsData {
   // happened to land.
   final Map<int, double>? runwayWidthByCam;
 
-  StepsData({
-    this.avgStepLengthM,
-    this.avgCadenceSpm,
-    required this.steps,
-    this.runwayWidthByCam,
-  });
+  StepsData({this.avgStepLengthM, this.avgCadenceSpm, required this.steps, this.runwayWidthByCam});
 
   factory StepsData.fromJson(Map<String, dynamic> json) {
     double? asDouble(dynamic v) => v == null ? null : (v as num).toDouble();

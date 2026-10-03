@@ -30,9 +30,7 @@ class MetricsPanel extends ConsumerWidget {
     final runnerId = ref.watch(trialReviewSelectedRunnerIdProvider);
     final comparisonIds = ref.watch(trialReviewComparisonIdsProvider);
     final visibleCharts = ref.watch(trialReviewVisibleChartsProvider);
-    final playbackController = ref
-        .watch(trialVideoControllerProvider(runSessionId))
-        .value;
+    final playbackController = ref.watch(trialVideoControllerProvider(runSessionId)).value;
 
     if (stepsAsync.hasError) {
       return TrialReviewErrorView(
@@ -44,8 +42,7 @@ class MetricsPanel extends ConsumerWidget {
     final allTrialIds = [runSessionId, ...comparisonIds];
     final trialColors = assignTrialColors(allTrialIds);
     final trialLabels = {
-      for (final id in allTrialIds)
-        id: id == runSessionId ? '目前試跳' : id.substring(0, 8),
+      for (final id in allTrialIds) id: id == runSessionId ? '目前試跳' : id.substring(0, 8),
     };
 
     // Watch steps for every selected trial; charts render with whichever
@@ -67,10 +64,8 @@ class MetricsPanel extends ConsumerWidget {
           AsyncValueWidget(
             value: stepsAsync,
             loading: const _LoadingCard(),
-            data: (StepsData steps) => StepLengthFrequencyChart(
-              runSessionId: runSessionId,
-              data: steps,
-            ),
+            data: (StepsData steps) =>
+                StepLengthFrequencyChart(runSessionId: runSessionId, data: steps),
           ),
           const SizedBox(height: 12),
         ],
@@ -78,10 +73,8 @@ class MetricsPanel extends ConsumerWidget {
           AsyncValueWidget(
             value: stepsAsync,
             loading: const _LoadingCard(),
-            data: (StepsData steps) => StepLateralPathChart(
-              data: steps,
-              playbackController: playbackController,
-            ),
+            data: (StepsData steps) =>
+                StepLateralPathChart(data: steps, playbackController: playbackController),
           ),
           const SizedBox(height: 12),
         ],
@@ -95,10 +88,7 @@ class MetricsPanel extends ConsumerWidget {
           const SizedBox(height: 12),
         ],
         if (runnerId != null)
-          TrialSelectorView(
-            runnerId: runnerId,
-            currentRunSessionId: runSessionId,
-          ),
+          TrialSelectorView(runnerId: runnerId, currentRunSessionId: runSessionId),
       ],
     );
   }

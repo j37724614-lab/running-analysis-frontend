@@ -179,9 +179,7 @@ class _AnchorPointDialogState extends State<_AnchorPointDialog>
         final AB5 = B5 - A5;
         final AP5 = P5 - A5;
         final lenSq5 = AB5.dx * AB5.dx + AB5.dy * AB5.dy;
-        _t5 = lenSq5 > 0
-            ? ((AP5.dx * AB5.dx + AP5.dy * AB5.dy) / lenSq5).clamp(0.0, 1.0)
-            : 0.5;
+        _t5 = lenSq5 > 0 ? ((AP5.dx * AB5.dx + AP5.dy * AB5.dy) / lenSq5).clamp(0.0, 1.0) : 0.5;
 
         // Calculate _t6 (BM along BL-BR)
         final A6 = _pts[3];
@@ -190,19 +188,11 @@ class _AnchorPointDialogState extends State<_AnchorPointDialog>
         final AB6 = B6 - A6;
         final AP6 = P6 - A6;
         final lenSq6 = AB6.dx * AB6.dx + AB6.dy * AB6.dy;
-        _t6 = lenSq6 > 0
-            ? ((AP6.dx * AB6.dx + AP6.dy * AB6.dy) / lenSq6).clamp(0.0, 1.0)
-            : 0.5;
+        _t6 = lenSq6 > 0 ? ((AP6.dx * AB6.dx + AP6.dy * AB6.dy) / lenSq6).clamp(0.0, 1.0) : 0.5;
       } else if (_pts.length == 4) {
         // Dynamic upgrade of legacy 4 points to 6 points
-        final tm = Offset(
-          (_pts[0].dx + _pts[1].dx) / 2,
-          (_pts[0].dy + _pts[1].dy) / 2,
-        );
-        final bm = Offset(
-          (_pts[2].dx + _pts[3].dx) / 2,
-          (_pts[2].dy + _pts[3].dy) / 2,
-        );
+        final tm = Offset((_pts[0].dx + _pts[1].dx) / 2, (_pts[0].dy + _pts[1].dy) / 2);
+        final bm = Offset((_pts[2].dx + _pts[3].dx) / 2, (_pts[2].dy + _pts[3].dy) / 2);
         _pts.add(tm);
         _pts.add(bm);
         _t5 = 0.5;
@@ -263,14 +253,8 @@ class _AnchorPointDialogState extends State<_AnchorPointDialog>
         _pts.add(norm);
       }
       if (_pts.length == 4) {
-        final tm = Offset(
-          (_pts[0].dx + _pts[1].dx) / 2,
-          (_pts[0].dy + _pts[1].dy) / 2,
-        );
-        final bm = Offset(
-          (_pts[2].dx + _pts[3].dx) / 2,
-          (_pts[2].dy + _pts[3].dy) / 2,
-        );
+        final tm = Offset((_pts[0].dx + _pts[1].dx) / 2, (_pts[0].dy + _pts[1].dy) / 2);
+        final bm = Offset((_pts[2].dx + _pts[3].dx) / 2, (_pts[2].dy + _pts[3].dy) / 2);
         _pts.add(tm);
         _pts.add(bm);
         _t5 = 0.5;
@@ -333,14 +317,8 @@ class _AnchorPointDialogState extends State<_AnchorPointDialog>
       setState(() {
         _pts.add(pos);
         if (_pts.length == 4) {
-          final tm = Offset(
-            (_pts[0].dx + _pts[1].dx) / 2,
-            (_pts[0].dy + _pts[1].dy) / 2,
-          );
-          final bm = Offset(
-            (_pts[2].dx + _pts[3].dx) / 2,
-            (_pts[2].dy + _pts[3].dy) / 2,
-          );
+          final tm = Offset((_pts[0].dx + _pts[1].dx) / 2, (_pts[0].dy + _pts[1].dy) / 2);
+          final bm = Offset((_pts[2].dx + _pts[3].dx) / 2, (_pts[2].dy + _pts[3].dy) / 2);
           _pts.add(tm);
           _pts.add(bm);
           _t5 = 0.5;
@@ -385,10 +363,7 @@ class _AnchorPointDialogState extends State<_AnchorPointDialog>
   }
 
   void _onPanUpdate(DragUpdateDetails d) {
-    if (_draggingIdx == null ||
-        _panStartTouchNorm == null ||
-        _panStartAnchorPos == null)
-      return;
+    if (_draggingIdx == null || _panStartTouchNorm == null || _panStartAnchorPos == null) return;
     final currentTouch = _norm(d.localPosition);
     final delta = currentTouch - _panStartTouchNorm!;
     final newPos = Offset(
@@ -617,8 +592,7 @@ class _AnchorPointDialogState extends State<_AnchorPointDialog>
                     final i = e.key;
                     final pt = e.value;
                     final isDragging = i == _draggingIdx;
-                    final isActive =
-                        _isMobile(context) && i == _selectedActivePointIdx;
+                    final isActive = _isMobile(context) && i == _selectedActivePointIdx;
                     return Positioned(
                       left: pt.dx * _imgW,
                       top: pt.dy * _imgH,
@@ -785,13 +759,7 @@ class _AnchorPointDialogState extends State<_AnchorPointDialog>
     if (isMobile) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          field1,
-          const SizedBox(height: 12),
-          field2,
-          const SizedBox(height: 12),
-          field3,
-        ],
+        children: [field1, const SizedBox(height: 12), field2, const SizedBox(height: 12), field3],
       );
     }
 
@@ -815,10 +783,7 @@ class _AnchorPointDialogState extends State<_AnchorPointDialog>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: const TextStyle(color: Colors.white70, fontSize: 12),
-        ),
+        Text(label, style: const TextStyle(color: Colors.white70, fontSize: 12)),
         const SizedBox(height: 8),
         TextField(
           controller: controller,
@@ -865,22 +830,14 @@ class _AnchorPointDialogState extends State<_AnchorPointDialog>
           decoration: BoxDecoration(
             color: isActive
                 ? color.withValues(alpha: 0.25)
-                : (isSet
-                      ? color.withValues(alpha: 0.08)
-                      : Colors.white.withValues(alpha: 0.03)),
+                : (isSet ? color.withValues(alpha: 0.08) : Colors.white.withValues(alpha: 0.03)),
             borderRadius: BorderRadius.circular(10),
             border: Border.all(
               color: isActive ? color : (isSet ? color.withValues(alpha: 0.4) : Colors.white12),
               width: isActive ? 2 : 1.5,
             ),
             boxShadow: isActive
-                ? [
-                    BoxShadow(
-                      color: color.withValues(alpha: 0.3),
-                      blurRadius: 8,
-                      spreadRadius: 1,
-                    ),
-                  ]
+                ? [BoxShadow(color: color.withValues(alpha: 0.3), blurRadius: 8, spreadRadius: 1)]
                 : null,
           ),
           child: Row(
@@ -1237,8 +1194,7 @@ class _QuadPainter extends CustomPainter {
     if (pts.length == 6) {
       // Draw lines for 6-point layout
       final drawLine = (int pA, int pB, Color color) {
-        final isDragEdge =
-            draggingIdx != null && (draggingIdx == pA || draggingIdx == pB);
+        final isDragEdge = draggingIdx != null && (draggingIdx == pA || draggingIdx == pB);
         linePaint
           ..color = color.withValues(alpha: isDragEdge ? 1.0 : 0.75)
           ..strokeWidth = isDragEdge ? 2.5 : 2.0;
@@ -1271,8 +1227,7 @@ class _QuadPainter extends CustomPainter {
     } else {
       // Legacy / intermediate drawing (less than 6 points)
       for (int i = 0; i < pts.length - 1; i++) {
-        final isDragEdge =
-            draggingIdx != null && (i == draggingIdx || i + 1 == draggingIdx);
+        final isDragEdge = draggingIdx != null && (i == draggingIdx || i + 1 == draggingIdx);
         linePaint
           ..color = _colors[i].withValues(alpha: isDragEdge ? 1.0 : 0.75)
           ..strokeWidth = isDragEdge ? 2.5 : 2.0;
@@ -1280,8 +1235,7 @@ class _QuadPainter extends CustomPainter {
       }
 
       if (pts.length == 4) {
-        final isDragEdge =
-            draggingIdx != null && (draggingIdx == 3 || draggingIdx == 0);
+        final isDragEdge = draggingIdx != null && (draggingIdx == 3 || draggingIdx == 0);
         linePaint
           ..color = _colors[3].withValues(alpha: isDragEdge ? 1.0 : 0.75)
           ..strokeWidth = isDragEdge ? 2.5 : 2.0;

@@ -44,11 +44,7 @@ class TrialHistoryView extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
-                    Icons.history_toggle_off_outlined,
-                    size: 32,
-                    color: Colors.grey,
-                  ),
+                  const Icon(Icons.history_toggle_off_outlined, size: 32, color: Colors.grey),
                   const SizedBox(height: 8),
                   Text(
                     l10n.noHistoryFound,
@@ -103,9 +99,7 @@ class TrialHistoryView extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               child: Container(
                 decoration: BoxDecoration(
-                  color: isSelected
-                      ? Theme.of(context).primaryColorDark
-                      : Colors.white,
+                  color: isSelected ? Theme.of(context).primaryColorDark : Colors.white,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: isSelected
@@ -140,20 +134,13 @@ class TrialHistoryView extends ConsumerWidget {
                           autoCloseDuration: const Duration(seconds: 4),
                         );
                       }
-                      ref
-                          .read(
-                            trialReviewSelectedRunSessionIdProvider.notifier,
-                          )
-                          .state = session
-                          .runSessionId;
+                      ref.read(trialReviewSelectedRunSessionIdProvider.notifier).state =
+                          session.runSessionId;
 
                       onSessionSelected?.call();
                     },
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 12,
-                      ),
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                       child: Row(
                         children: [
                           Container(
@@ -161,16 +148,12 @@ class TrialHistoryView extends ConsumerWidget {
                             decoration: BoxDecoration(
                               color: isSelected
                                   ? Colors.white.withValues(alpha: 0.15)
-                                  : Theme.of(
-                                      context,
-                                    ).primaryColor.withValues(alpha: 0.15),
+                                  : Theme.of(context).primaryColor.withValues(alpha: 0.15),
                               shape: BoxShape.circle,
                             ),
                             child: Icon(
                               Icons.directions_run,
-                              color: isSelected
-                                  ? Colors.white
-                                  : Theme.of(context).primaryColorDark,
+                              color: isSelected ? Colors.white : Theme.of(context).primaryColorDark,
                               size: 20,
                             ),
                           ),
@@ -180,17 +163,11 @@ class TrialHistoryView extends ConsumerWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  DateFormat(
-                                    'yyyy-MM-dd HH:mm',
-                                  ).format(session.date),
+                                  DateFormat('yyyy-MM-dd HH:mm').format(session.date),
                                   style: TextStyle(
                                     fontSize: 14,
-                                    fontWeight: isSelected
-                                        ? FontWeight.bold
-                                        : FontWeight.w600,
-                                    color: isSelected
-                                        ? Colors.white
-                                        : Colors.black87,
+                                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
+                                    color: isSelected ? Colors.white : Colors.black87,
                                   ),
                                 ),
                                 const SizedBox(height: 4),
@@ -209,9 +186,7 @@ class TrialHistoryView extends ConsumerWidget {
                                       style: TextStyle(
                                         fontSize: 12,
                                         color: isSelected
-                                            ? Colors.white.withValues(
-                                                alpha: 0.8,
-                                              )
+                                            ? Colors.white.withValues(alpha: 0.8)
                                             : Colors.grey.shade600,
                                       ),
                                     ),
@@ -222,12 +197,9 @@ class TrialHistoryView extends ConsumerWidget {
                                         height: 12,
                                         child: CircularProgressIndicator(
                                           strokeWidth: 2,
-                                          valueColor:
-                                              AlwaysStoppedAnimation<Color>(
-                                                isSelected
-                                                    ? Colors.white
-                                                    : Colors.orange.shade700,
-                                              ),
+                                          valueColor: AlwaysStoppedAnimation<Color>(
+                                            isSelected ? Colors.white : Colors.orange.shade700,
+                                          ),
                                         ),
                                       ),
                                       const SizedBox(width: 4),
@@ -236,9 +208,7 @@ class TrialHistoryView extends ConsumerWidget {
                                         style: TextStyle(
                                           fontSize: 11,
                                           color: isSelected
-                                              ? Colors.white.withValues(
-                                                  alpha: 0.9,
-                                                )
+                                              ? Colors.white.withValues(alpha: 0.9)
                                               : Colors.orange.shade700,
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -266,10 +236,7 @@ class TrialHistoryView extends ConsumerWidget {
                           ),
                           const SizedBox(width: 8),
                           Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
-                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
                               color: isSelected
                                   ? Colors.white.withValues(alpha: 0.25)
@@ -281,9 +248,7 @@ class TrialHistoryView extends ConsumerWidget {
                               style: TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.bold,
-                                color: isSelected
-                                    ? Colors.white
-                                    : badgeTextColor,
+                                color: isSelected ? Colors.white : badgeTextColor,
                               ),
                             ),
                           ),

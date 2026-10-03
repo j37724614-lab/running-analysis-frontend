@@ -325,13 +325,18 @@ class _UploadPageState extends ConsumerState<UploadPage> {
                                   .addRunner(name);
 
                               sourceNotifier.state = RunnerSource.select;
-                              ref.read(uploadSelectedRunnerIdProvider.notifier).state = newRunner.id;
+                              ref.read(uploadSelectedRunnerIdProvider.notifier).state =
+                                  newRunner.id;
                             },
                             label: Text(
                               l10n.save,
                               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                             ),
-                            icon: const Icon(Icons.add_circle_rounded, color: Colors.white, size: 24),
+                            icon: const Icon(
+                              Icons.add_circle_rounded,
+                              color: Colors.white,
+                              size: 24,
+                            ),
                           ),
                         ],
                       ),

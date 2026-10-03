@@ -43,13 +43,13 @@ final videoManagerProvider = FutureProvider.family<VideoControllerManager, Strin
     urls = '$urls${separator}token=$token';
   }
 
-      final manager = VideoControllerManager(urls);
-      try {
-        await manager.initializeAll();
-        ref.onDispose(manager.dispose);
-        return manager;
-      } catch (_) {
-        manager.dispose();
-        rethrow;
-      }
-    }, retry: apiRetry);
+  final manager = VideoControllerManager(urls);
+  try {
+    await manager.initializeAll();
+    ref.onDispose(manager.dispose);
+    return manager;
+  } catch (_) {
+    manager.dispose();
+    rethrow;
+  }
+}, retry: apiRetry);

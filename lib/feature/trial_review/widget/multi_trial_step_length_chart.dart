@@ -74,10 +74,7 @@ class MultiTrialStepLengthChart extends StatelessWidget {
               children: [
                 legendDot(trialColors[id] ?? Colors.grey),
                 const SizedBox(width: 4),
-                Text(
-                  trialLabels[id] ?? id,
-                  style: const TextStyle(fontSize: 12),
-                ),
+                Text(trialLabels[id] ?? id, style: const TextStyle(fontSize: 12)),
               ],
             ),
         ],
@@ -103,29 +100,20 @@ class MultiTrialStepLengthChart extends StatelessWidget {
             ),
             lineBarsData: barsData,
             titlesData: FlTitlesData(
-              topTitles: const AxisTitles(
-                sideTitles: SideTitles(showTitles: false),
-              ),
+              topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
               bottomTitles: AxisTitles(
                 sideTitles: SideTitles(
                   showTitles: true,
                   interval: 1,
-                  getTitlesWidget: (value, meta) => Text(
-                    value.toInt().toString(),
-                    style: const TextStyle(fontSize: 11),
-                  ),
+                  getTitlesWidget: (value, meta) =>
+                      Text(value.toInt().toString(), style: const TextStyle(fontSize: 11)),
                 ),
               ),
               leftTitles: AxisTitles(
-                axisNameWidget: const Text(
-                  '步幅 (m)',
-                  style: TextStyle(fontSize: 11),
-                ),
+                axisNameWidget: const Text('步幅 (m)', style: TextStyle(fontSize: 11)),
                 sideTitles: SideTitles(showTitles: true, reservedSize: 36),
               ),
-              rightTitles: const AxisTitles(
-                sideTitles: SideTitles(showTitles: false),
-              ),
+              rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
             ),
             borderData: FlBorderData(show: true),
           ),

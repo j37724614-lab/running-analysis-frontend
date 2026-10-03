@@ -110,8 +110,7 @@ class RecordState {
       pendingControlRequestFrom: clearPendingControlRequest
           ? null
           : (pendingControlRequestFrom ?? this.pendingControlRequestFrom),
-      isWaitingForControlApproval:
-          isWaitingForControlApproval ?? this.isWaitingForControlApproval,
+      isWaitingForControlApproval: isWaitingForControlApproval ?? this.isWaitingForControlApproval,
     );
   }
 }

@@ -13,11 +13,7 @@ class TrialSelectorView extends ConsumerWidget {
   final String runnerId;
   final String currentRunSessionId;
 
-  const TrialSelectorView({
-    super.key,
-    required this.runnerId,
-    required this.currentRunSessionId,
-  });
+  const TrialSelectorView({super.key, required this.runnerId, required this.currentRunSessionId});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -34,21 +30,13 @@ class TrialSelectorView extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            '比較其他試跳',
-            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-          ),
+          const Text('比較其他試跳', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
           AsyncValueWidget(
             value: historyAsync,
-            loading: const SizedBox(
-              height: 40,
-              child: Center(child: CircularProgressIndicator()),
-            ),
+            loading: const SizedBox(height: 40, child: Center(child: CircularProgressIndicator())),
             data: (List<RunSessionInfo> history) {
-              final others = history
-                  .where((s) => s.runSessionId != currentRunSessionId)
-                  .toList();
+              final others = history.where((s) => s.runSessionId != currentRunSessionId).toList();
               if (others.isEmpty) {
                 return const Text(
                   '沒有其他可比較的試跳',
@@ -61,9 +49,7 @@ class TrialSelectorView extends ConsumerWidget {
                 children: [
                   for (final session in others)
                     FilterChip(
-                      label: Text(
-                        DateFormat('MM/dd HH:mm').format(session.date),
-                      ),
+                      label: Text(DateFormat('MM/dd HH:mm').format(session.date)),
                       selected: comparisonIds.contains(session.runSessionId),
                       onSelected: (selected) {
                         final next = Set<String>.from(comparisonIds);
@@ -72,10 +58,7 @@ class TrialSelectorView extends ConsumerWidget {
                         } else {
                           next.remove(session.runSessionId);
                         }
-                        ref
-                                .read(trialReviewComparisonIdsProvider.notifier)
-                                .state =
-                            next;
+                        ref.read(trialReviewComparisonIdsProvider.notifier).state = next;
                       },
                     ),
                 ],

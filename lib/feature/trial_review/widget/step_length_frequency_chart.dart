@@ -15,21 +15,13 @@ class StepLengthFrequencyChart extends StatelessWidget {
   final String runSessionId;
   final StepsData data;
 
-  const StepLengthFrequencyChart({
-    super.key,
-    required this.runSessionId,
-    required this.data,
-  });
+  const StepLengthFrequencyChart({super.key, required this.runSessionId, required this.data});
 
   @override
   Widget build(BuildContext context) {
     final chronological = chronologicalSteps(data);
-    final lengthSteps = chronological
-        .where((step) => step.stepLengthM != null)
-        .toList();
-    final cadenceSteps = chronological
-        .where((step) => step.cadenceSpm != null)
-        .toList();
+    final lengthSteps = chronological.where((step) => step.stepLengthM != null).toList();
+    final cadenceSteps = chronological.where((step) => step.cadenceSpm != null).toList();
     if (lengthSteps.isEmpty && cadenceSteps.isEmpty) {
       return const ChartCard(
         title: '步幅 + 步頻',
@@ -39,18 +31,10 @@ class StepLengthFrequencyChart extends StatelessWidget {
 
     final lengths = lengthSteps.map((step) => step.stepLengthM!).toList();
     final cadences = cadenceSteps.map((step) => step.cadenceSpm!).toList();
-    final lenMin = lengths.isEmpty
-        ? 0.0
-        : lengths.reduce((a, b) => a < b ? a : b);
-    final lenMax = lengths.isEmpty
-        ? 1.0
-        : lengths.reduce((a, b) => a > b ? a : b);
-    final cadMin = cadences.isEmpty
-        ? 0.0
-        : cadences.reduce((a, b) => a < b ? a : b);
-    final cadMax = cadences.isEmpty
-        ? 1.0
-        : cadences.reduce((a, b) => a > b ? a : b);
+    final lenMin = lengths.isEmpty ? 0.0 : lengths.reduce((a, b) => a < b ? a : b);
+    final lenMax = lengths.isEmpty ? 1.0 : lengths.reduce((a, b) => a > b ? a : b);
+    final cadMin = cadences.isEmpty ? 0.0 : cadences.reduce((a, b) => a < b ? a : b);
+    final cadMax = cadences.isEmpty ? 1.0 : cadences.reduce((a, b) => a > b ? a : b);
     final lenSpan = (lenMax - lenMin).abs() < 1e-6 ? 1.0 : lenMax - lenMin;
     final cadSpan = (cadMax - cadMin).abs() < 1e-6 ? 1.0 : cadMax - cadMin;
 
@@ -62,8 +46,7 @@ class StepLengthFrequencyChart extends StatelessWidget {
     // plain 1..N loop index here would drift the plotted points off of
     // wherever the cursor lands.
     final byRank = {
-      for (final step in chronological)
-        stepRank(chronological, step.stepIndex): step,
+      for (final step in chronological) stepRank(chronological, step.stepIndex): step,
     };
     final lengthSpots = <FlSpot>[];
     final cadenceSpots = <FlSpot>[];
@@ -92,8 +75,7 @@ class StepLengthFrequencyChart extends StatelessWidget {
             const SizedBox(width: 4),
             const Text('步幅 (m)', style: TextStyle(fontSize: 12)),
           ],
-          if (lengthSpots.isNotEmpty && cadenceSpots.isNotEmpty)
-            const SizedBox(width: 16),
+          if (lengthSpots.isNotEmpty && cadenceSpots.isNotEmpty) const SizedBox(width: 16),
           if (cadenceSpots.isNotEmpty) ...[
             legendDot(cadenceColor),
             const SizedBox(width: 4),
@@ -131,10 +113,7 @@ class StepLengthFrequencyChart extends StatelessWidget {
                   if (value == null) return null;
                   return LineTooltipItem(
                     '${isLength ? "步幅" : "步頻"}: ${value.toStringAsFixed(2)}',
-                    TextStyle(
-                      color: isLength ? lengthColor : cadenceColor,
-                      fontSize: 13,
-                    ),
+                    TextStyle(color: isLength ? lengthColor : cadenceColor, fontSize: 13),
                   );
                 }).toList(),
               ),
@@ -154,17 +133,13 @@ class StepLengthFrequencyChart extends StatelessWidget {
               ),
             ],
             titlesData: FlTitlesData(
-              topTitles: const AxisTitles(
-                sideTitles: SideTitles(showTitles: false),
-              ),
+              topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
               bottomTitles: AxisTitles(
                 sideTitles: SideTitles(
                   showTitles: true,
                   interval: 1,
-                  getTitlesWidget: (value, meta) => Text(
-                    value.toInt().toString(),
-                    style: const TextStyle(fontSize: 11),
-                  ),
+                  getTitlesWidget: (value, meta) =>
+                      Text(value.toInt().toString(), style: const TextStyle(fontSize: 11)),
                 ),
               ),
               leftTitles: AxisTitles(

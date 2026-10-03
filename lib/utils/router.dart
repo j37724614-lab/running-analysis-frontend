@@ -82,8 +82,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
       final isRegistering = state.uri.path == '/register';
 
       // 載入期間或初始狀態不重導向
-      if (auth.status == AuthStatus.loading ||
-          auth.status == AuthStatus.initial) {
+      if (auth.status == AuthStatus.loading || auth.status == AuthStatus.initial) {
         return null;
       }
 
@@ -219,10 +218,7 @@ final goRouterProvider = Provider<GoRouter>((ref) {
             pageBuilder: (context, state) {
               final runnerId = state.uri.queryParameters['runnerId'];
               final videoId = state.uri.queryParameters['videoId'];
-              return _buildFadePage(
-                state,
-                TrialReviewPage(runnerId: runnerId, videoId: videoId),
-              );
+              return _buildFadePage(state, TrialReviewPage(runnerId: runnerId, videoId: videoId));
             },
           ),
         ],
