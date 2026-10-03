@@ -320,7 +320,7 @@ class _UploadSeperatelyViewState extends ConsumerState<UploadSeperatelyView> {
                               // After upload, prompt anchor selection
                               final updatedState = ref.read(uploadSeperatelyControllerProvider);
                               final thumbnailUrl = updatedState.thumbnail;
-                              if (mounted && thumbnailUrl != null) {
+                              if (context.mounted && thumbnailUrl != null) {
                                 final anchor = await showAnchorPointDialog(
                                   context: context,
                                   thumbnailUrl: thumbnailUrl,
@@ -329,6 +329,7 @@ class _UploadSeperatelyViewState extends ConsumerState<UploadSeperatelyView> {
                                       .read(uploadSeperatelyControllerProvider)
                                       .anchorResult,
                                 );
+                                if (!context.mounted) return;
                                 ref
                                     .read(uploadSeperatelyControllerProvider.notifier)
                                     .setAnchor(anchor);
@@ -500,7 +501,7 @@ class _UploadSeperatelyViewState extends ConsumerState<UploadSeperatelyView> {
                           state.anchorResult,
                         );
                   }
-                  if (mounted && status != null) {
+                  if (context.mounted && status != null) {
                     final runners = ref.read(uploadRunnerListProvider).value;
                     final isOwner =
                         runners != null && runners.any((r) => r.id == effectiveRunnerId);
@@ -512,7 +513,7 @@ class _UploadSeperatelyViewState extends ConsumerState<UploadSeperatelyView> {
                     if (status.isAllUploaded == true) {
                       if (isOwner && effectiveRunnerId != null) {
                         ref.invalidate(runnerHistoryProvider(effectiveRunnerId));
-                        if (mounted) {
+                        if (context.mounted) {
                           context.goNamed(
                             AppRoute.playback.name,
                             queryParameters: {
@@ -526,7 +527,7 @@ class _UploadSeperatelyViewState extends ConsumerState<UploadSeperatelyView> {
                         ref.read(uploadExternalSessionInfoProvider.notifier).state = null;
                         ref.read(uploadSelectedRunSessionIdProvider.notifier).state = null;
                         ref.read(uploadSeperatelyControllerProvider.notifier).resetState();
-                        if (mounted) {
+                        if (context.mounted) {
                           showDialog(
                             context: context,
                             builder: (context) {
