@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/feature/auth/auth_provider.dart';
 import 'package:frontend/feature/auth/auth_state.dart';
+import 'package:frontend/feature/upload/upload_completion.dart';
 import 'package:frontend/utils/locale_provider.dart';
 import 'package:frontend/utils/router.dart';
 import 'package:go_router/go_router.dart';
@@ -79,6 +80,36 @@ class _HomePageState extends ConsumerState<HomePage>
     final authState = ref.watch(authProvider);
     final currentLocale = ref.watch(localeProvider);
     final l10n = context.l10n;
+
+    ref.listen(uploadCompletionProvider, (previous, next) {
+      if (next == null || next.id == previous?.id) return;
+
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+
+        final messenger = ScaffoldMessenger.of(context);
+        messenger
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            SnackBar(
+              content: Text(l10n.uploadSuccess),
+              action: SnackBarAction(
+                label: l10n.viewUploadedVideo,
+                onPressed: () {
+                  context.goNamed(
+                    AppRoute.playback.name,
+                    queryParameters: {
+                      'runnerId': next.runnerId,
+                      'videoId': next.runSessionId,
+                    },
+                  );
+                },
+              ),
+            ),
+          );
+        ref.read(uploadCompletionProvider.notifier).consume(next.id);
+      });
+    });
 
     return Scaffold(
       appBar: AppBar(

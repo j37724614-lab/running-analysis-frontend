@@ -55,11 +55,11 @@ class _RecordPageState extends ConsumerState<RecordPage> {
       }
     });
 
-    ref.listen(recordControllerProvider.select((s) => s.sharedRunSessionId), (
+    ref.listen(recordControllerProvider.select((s) => s.isAllUploaded), (
       prev,
       next,
     ) {
-      if (next != null && next != prev) {
+      if (next && prev != true) {
         toastification.show(
           context: context,
           title: const Text(
@@ -394,7 +394,8 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                         ),
                       ),
                       if (state.role == RecordRole.master &&
-                          state.status != RecordStatus.recording) ...[
+                          state.status != RecordStatus.recording &&
+                          state.status != RecordStatus.uploading) ...[
                         _buildConfigSection(state, controller),
                         Container(
                           decoration: BoxDecoration(
@@ -501,7 +502,8 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                         ),
                       ],
                       if (state.role == RecordRole.slave &&
-                          state.status != RecordStatus.recording) ...[
+                          state.status != RecordStatus.recording &&
+                          state.status != RecordStatus.uploading) ...[
                         Text(
                           l10n.changeCameraPosition,
                           style: const TextStyle(fontWeight: FontWeight.bold),
@@ -642,6 +644,58 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                               style: const TextStyle(fontSize: 20),
                             ),
                           ),
+                        ] else if (state.status == RecordStatus.uploading) ...[
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const SpinKitDoubleBounce(
+                                color: Color(0xFF79A9EA),
+                                size: 20,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                l10n.autoUploading,
+                                style: const TextStyle(
+                                  color: Color(0xFF2A3E5C),
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.grey[400],
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 64,
+                                vertical: 16,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                            ),
+                            onPressed: null,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Text(
+                                  l10n.autoUploading,
+                                  style: const TextStyle(fontSize: 20),
+                                ),
+                              ],
+                            ),
+                          ),
                         ] else ...[
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
@@ -724,10 +778,6 @@ class _RecordPageState extends ConsumerState<RecordPage> {
                       if (state.role == RecordRole.slave ||
                           state.isRecordingEnabled) ...[
                         const RecordCameraView(),
-                        if (state.role != RecordRole.master) ...[
-                          const SizedBox(height: 16),
-                          Text(l10n.waitingForConnection),
-                        ],
                       ],
                       if (state.role == RecordRole.slave) ...[
                         const SizedBox(height: 16),

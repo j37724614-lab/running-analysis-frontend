@@ -7,11 +7,13 @@ import 'package:frontend/entities/runner_info.dart';
 import 'package:frontend/entities/upload_seperately_status.dart';
 import 'package:frontend/utils/combine_date_and_time.dart';
 import 'package:frontend/feature/upload/widget/anchor_point_dialog.dart';
+import 'package:frontend/feature/upload/upload_completion.dart';
 
 class UploadController extends StateNotifier<AsyncValue<void>> {
-  UploadController({required this.backend})
+  UploadController({required this.backend, required this.onUploadCompleted})
     : super(const AsyncValue.data(null));
   final BackendInterface backend;
+  final void Function(String runnerId, String runSessionId) onUploadCompleted;
 
   Future<UploadSeperatelyStatus?> uploadSeperatelyNew(
     String runnerId,
@@ -39,6 +41,9 @@ class UploadController extends StateNotifier<AsyncValue<void>> {
         anchors,
       );
       state = const AsyncValue.data(null);
+      if (status.isAllUploaded) {
+        onUploadCompleted(runnerId, status.runSessionId);
+      }
       return status;
     } catch (e) {
       state = AsyncValue.error(e, StackTrace.current);
@@ -63,6 +68,9 @@ class UploadController extends StateNotifier<AsyncValue<void>> {
         anchors,
       );
       state = const AsyncValue.data(null);
+      if (status.isAllUploaded) {
+        onUploadCompleted(runnerId, status.runSessionId);
+      }
       return status;
     } catch (e) {
       state = AsyncValue.error(e, StackTrace.current);
@@ -92,6 +100,7 @@ class UploadController extends StateNotifier<AsyncValue<void>> {
         videos,
       );
       state = const AsyncValue.data(null);
+      onUploadCompleted(runnerId, videoId);
       return videoId;
     } catch (e) {
       state = AsyncValue.error(e, StackTrace.current);
@@ -102,7 +111,14 @@ class UploadController extends StateNotifier<AsyncValue<void>> {
 
 final uploadControllerProvider =
     StateNotifierProvider<UploadController, AsyncValue<void>>((ref) {
-      return UploadController(backend: ref.watch(backendProvider));
+      return UploadController(
+        backend: ref.watch(backendProvider),
+        onUploadCompleted: (runnerId, runSessionId) {
+          ref
+              .read(uploadCompletionProvider.notifier)
+              .publish(runnerId: runnerId, runSessionId: runSessionId);
+        },
+      );
     });
 
 class UploadRunnerListNotifier

@@ -299,22 +299,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tapToMarkPoint => 'Tap or drag to mark point';
 
   @override
-  String get point1 => 'Pt 1 (L-Start)';
+  String get point1 => 'Pt 1 (Top-Left)';
 
   @override
-  String get point2 => 'Pt 2 (R-Start)';
+  String get point2 => 'Pt 2 (Top-Right)';
 
   @override
-  String get point3 => 'Pt 3 (R-End)';
+  String get point3 => 'Pt 3 (Bottom-Right)';
 
   @override
-  String get point4 => 'Pt 4 (L-End)';
+  String get point4 => 'Pt 4 (Bottom-Left)';
 
   @override
-  String get point5 => 'Pt 5 (C-Start)';
+  String get point5 => 'Pt 5 (Top-Middle)';
 
   @override
-  String get point6 => 'Pt 6 (C-End)';
+  String get point6 => 'Pt 6 (Bottom-Middle)';
 
   @override
   String get cameraNotAssigned => 'Camera not assigned';
@@ -398,22 +398,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get selectAnchorToMark => 'Select anchor point to mark:';
 
   @override
-  String get leftStart => 'Left Start';
+  String get leftStart => 'Top-Left';
 
   @override
-  String get rightStart => 'Right Start';
+  String get rightStart => 'Top-Right';
 
   @override
-  String get rightEnd => 'Right End';
+  String get rightEnd => 'Bottom-Right';
 
   @override
-  String get leftEnd => 'Left End';
+  String get leftEnd => 'Bottom-Left';
 
   @override
-  String get centerStart => 'Center Start';
+  String get centerStart => 'Top-Middle';
 
   @override
-  String get centerEnd => 'Center End';
+  String get centerEnd => 'Bottom-Middle';
 
   @override
   String get undo => 'Undo';
@@ -429,7 +429,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get guideDescription =>
-      'Please mark the 4 track corners in order. Center line start/end will be auto-calculated, and can be fine-tuned by tapping or dragging.';
+      'Please mark the 4 track corners in order (Top-Left, Top-Right, Bottom-Right, Bottom-Left). Center line will be auto-calculated, and can be fine-tuned by tapping or dragging.';
 
   @override
   String get noUnanalyzedSessions => 'No unanalyzed records';
@@ -691,4 +691,7 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get longJumpModeDescription =>
       'Detect takeoff, the longest flight, and landing using anchor geometry and pre-takeoff footsteps; anchors must cover the runway and sand pit';
+
+  @override
+  String get viewUploadedVideo => 'View video';
 }

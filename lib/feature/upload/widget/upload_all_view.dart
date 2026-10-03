@@ -112,6 +112,8 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
                                   .read(uploadAllControllerProvider.notifier)
                                   .uploadVideo(index, uploadFile);
 
+                              if (!context.mounted) return;
+
                               // After upload, prompt anchor selection
                               final updatedState = ref.read(
                                 uploadAllControllerProvider,
@@ -119,7 +121,7 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
                               final thumbnailUrl = updatedState
                                   .tempVideoStates[index]
                                   .thumbnailUrl;
-                              if (mounted && thumbnailUrl != null) {
+                              if (thumbnailUrl != null) {
                                 final anchor = await showAnchorPointDialog(
                                   context: context,
                                   thumbnailUrl: thumbnailUrl,
@@ -129,6 +131,7 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
                                       .tempVideoStates[index]
                                       .anchorResult,
                                 );
+                                if (!context.mounted) return;
                                 ref
                                     .read(uploadAllControllerProvider.notifier)
                                     .setAnchor(index, anchor);
@@ -184,6 +187,7 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
                                                     .tempVideoStates[index]
                                                     .anchorResult,
                                               );
+                                          if (!context.mounted) return;
                                           ref
                                               .read(
                                                 uploadAllControllerProvider
@@ -291,20 +295,14 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
                           .toList(),
                     );
 
-                if (mounted && videoId != null) {
-                  // Invalidate history to ensure we fetch the latest list
-                  ref.invalidate(runnerHistoryProvider(runnerId));
+                if (videoId == null || !context.mounted) return;
 
-                  if (mounted) {
-                    context.goNamed(
-                      AppRoute.playback.name,
-                      queryParameters: {
-                        'runnerId': runnerId,
-                        'videoId': videoId,
-                      },
-                    );
-                  }
-                }
+                // Invalidate history to ensure we fetch the latest list
+                ref.invalidate(runnerHistoryProvider(runnerId));
+                context.goNamed(
+                  AppRoute.playback.name,
+                  queryParameters: {'runnerId': runnerId, 'videoId': videoId},
+                );
               },
               child: Text(l10n.upload),
             ),

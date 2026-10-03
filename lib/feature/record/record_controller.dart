@@ -43,8 +43,13 @@ class RecordController extends StateNotifier<RecordState> {
         final members = membersJson
             .map((e) => RecordMember.fromJson(e))
             .toList();
+        final newStatus =
+            state.status == RecordStatus.idle ||
+                state.status == RecordStatus.connecting
+            ? RecordStatus.ready
+            : state.status;
         state = state.copyWith(
-          status: RecordStatus.ready,
+          status: newStatus,
           roomId: roomId,
           members: members,
           expectedCameraCount:
@@ -60,24 +65,23 @@ class RecordController extends StateNotifier<RecordState> {
           note: msg.data['note'] ?? '',
           isLongJump: msg.data['isLongJump'] ?? false,
           clearSharedRunSessionId: true,
+          isAllUploaded: false,
         );
         break;
       case RecordMessageType.stopRecording:
-        state = state.copyWith(status: RecordStatus.uploading);
+        state = state.copyWith(
+          status: RecordStatus.uploading,
+          isAllUploaded: false,
+        );
         break;
       case RecordMessageType.uploadComplete:
+        final isAllUploaded = msg.data['isAllUploaded'] == true;
         state = state.copyWith(
           sharedRunSessionId: msg.data['runSessionId'],
-          status: RecordStatus.ready,
+          runnerId: msg.data['runnerId'] ?? state.runnerId,
+          isAllUploaded: isAllUploaded,
+          status: isAllUploaded ? RecordStatus.ready : state.status,
         );
-        if (state.myCameraIndex != null) {
-          final isReady = state.isPhysicallyReady && state.anchorIsSet;
-          final responseMsg = RecordMessage(
-            type: RecordMessageType.updateReady,
-            data: {'isReady': isReady},
-          );
-          _channel?.sink.add(jsonEncode(responseMsg.toJson()));
-        }
         break;
       case RecordMessageType.controlRequest:
         state = state.copyWith(
@@ -255,10 +259,18 @@ class RecordController extends StateNotifier<RecordState> {
     _channel?.sink.add(jsonEncode(msg.toJson()));
   }
 
-  void notifyUploadComplete(String runSessionId) {
+  void notifyUploadComplete(
+    String runSessionId, {
+    String? runnerId,
+    bool isAllUploaded = false,
+  }) {
     final msg = RecordMessage(
       type: RecordMessageType.uploadComplete,
-      data: {'runSessionId': runSessionId},
+      data: {
+        'runSessionId': runSessionId,
+        if (runnerId != null) 'runnerId': runnerId,
+        'isAllUploaded': isAllUploaded,
+      },
     );
     _channel?.sink.add(jsonEncode(msg.toJson()));
   }

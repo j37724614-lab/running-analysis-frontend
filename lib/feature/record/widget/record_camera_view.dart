@@ -154,35 +154,38 @@ class _RecordCameraViewState extends ConsumerState<RecordCameraView>
       prev,
       next,
     ) async {
-      if (_controller == null || !_controller!.value.isInitialized) return;
-
-      if (next == RecordStatus.recording && prev != RecordStatus.recording) {
-        try {
-          await _controller!.startVideoRecording();
-        } catch (e) {
-          if (kDebugMode) print('錄影啟動失敗: $e');
-        }
-      } else if (next == RecordStatus.uploading &&
-          prev == RecordStatus.recording) {
-        try {
-          final file = await _controller!.stopVideoRecording();
+      if (next == RecordStatus.recording) {
+        if (mounted) {
           setState(() {
-            _recordedFile = file;
+            _recordedFile = null;
+            _isUploading = false;
           });
-          notifyListeners();
-          _processUpload();
-        } catch (e) {
-          if (kDebugMode) print('錄影停止失敗: $e');
         }
-      }
-    });
-
-    ref.listen(recordControllerProvider.select((s) => s.sharedRunSessionId), (
-      prev,
-      next,
-    ) {
-      if (next != null && _recordedFile != null && !_isUploading) {
-        _processUpload();
+        if (_controller != null &&
+            _controller!.value.isInitialized &&
+            !_controller!.value.isRecordingVideo) {
+          try {
+            await _controller!.startVideoRecording();
+          } catch (e) {
+            if (kDebugMode) print('錄影啟動失敗: $e');
+          }
+        }
+      } else if (next == RecordStatus.uploading) {
+        if (_controller != null &&
+            _controller!.value.isInitialized &&
+            _controller!.value.isRecordingVideo) {
+          try {
+            final file = await _controller!.stopVideoRecording();
+            if (mounted) {
+              setState(() {
+                _recordedFile = file;
+              });
+            }
+            _processUpload();
+          } catch (e) {
+            if (kDebugMode) print('錄影停止失敗: $e');
+          }
+        }
       }
     });
   }
@@ -252,33 +255,22 @@ class _RecordCameraViewState extends ConsumerState<RecordCameraView>
   Future<void> _processUpload() async {
     if (_recordedFile == null || _isUploading) return;
 
-    final state = ref.read(recordControllerProvider);
     final backend = ref.read(backendProvider);
     final controller = ref.read(recordControllerProvider.notifier);
 
-    // 判斷是否滿足上傳條件
-    // 找出所有參與錄影的成員中，最小的相機索引，該成員負責建立 RunSession
-    final recordingMembers = state.members
-        .where((m) => m.cameraIndex != null)
-        .toList();
-    recordingMembers.sort((a, b) => a.cameraIndex!.compareTo(b.cameraIndex!));
-
-    final minCameraIndex = recordingMembers.isNotEmpty
-        ? recordingMembers.first.cameraIndex
-        : 0;
-    final isLeader = (state.myCameraIndex == minCameraIndex);
-
-    if (!isLeader && state.sharedRunSessionId == null) {
-      if (kDebugMode) print('等待主相機 SessionID...');
-      return;
+    if (mounted) {
+      setState(() {
+        _isUploading = true;
+      });
     }
 
-    setState(() {
-      _isUploading = true;
-    });
-
     try {
-      if (kDebugMode) print('開始處理自動上傳: ${state.myCameraIndex}');
+      final initialState = ref.read(recordControllerProvider);
+      if (kDebugMode) {
+        print(
+          '開始處理自動上傳: 相機 ${initialState.myCameraIndex != null ? initialState.myCameraIndex! + 1 : '未知'}',
+        );
+      }
 
       final bytes = await _recordedFile!.readAsBytes();
 
@@ -309,41 +301,107 @@ class _RecordCameraViewState extends ConsumerState<RecordCameraView>
         mimeType: mimeType,
       );
 
+      // 所有設備先平行上傳影片檔，取得各自的 tempVideoId。
       final tempVideoId = await backend.uploadVideo(
-        state.myCameraIndex ?? 0,
+        initialState.myCameraIndex ?? 0,
         uploadFile,
       );
 
+      // temp upload 完成後再判斷由哪一台相機建立 run session。
+      final currentState = ref.read(recordControllerProvider);
+      final recordingMembers =
+          currentState.members
+              .where((member) => member.cameraIndex != null)
+              .toList()
+            ..sort((a, b) => a.cameraIndex!.compareTo(b.cameraIndex!));
+      final minCameraIndex = recordingMembers.isNotEmpty
+          ? recordingMembers.first.cameraIndex
+          : 0;
+      final isLeader = currentState.myCameraIndex == minCameraIndex;
+
       if (isLeader) {
-        String? actualRunnerId = state.runnerId;
-        if (actualRunnerId == null && state.runnerName != null) {
-          actualRunnerId = await backend.addRunner(state.runnerName!);
+        String? actualRunnerId = currentState.runnerId;
+        if (actualRunnerId == null && currentState.runnerName != null) {
+          actualRunnerId = await backend.addRunner(currentState.runnerName!);
           if (kDebugMode) print('建立新選手: $actualRunnerId');
         }
 
+        if (actualRunnerId == null) {
+          throw Exception('未指定選手');
+        }
+
         final status = await backend.uploadSeperatelyNew(
-          actualRunnerId!,
+          actualRunnerId,
           DateTime.now(),
-          state.expectedCameraCount,
-          state.fps,
-          state.note,
-          state.isLongJump,
-          state.myCameraIndex!,
+          currentState.expectedCameraCount,
+          currentState.fps,
+          currentState.note,
+          currentState.isLongJump,
+          currentState.myCameraIndex!,
           tempVideoId,
-          state.anchorResult,
+          currentState.anchorResult,
         );
-        controller.notifyUploadComplete(status.runSessionId);
+        controller.notifyUploadComplete(
+          status.runSessionId,
+          runnerId: actualRunnerId,
+          isAllUploaded: status.isAllUploaded,
+        );
       } else {
-        await backend.uploadSeperatelySelect(
-          state.runnerId!,
-          state.sharedRunSessionId!,
-          state.myCameraIndex!,
+        // Slave 已完成 temp upload，只等待 Leader 建立 session（最多 30 秒）。
+        String? runSessionId = ref
+            .read(recordControllerProvider)
+            .sharedRunSessionId;
+        if (runSessionId == null) {
+          for (var i = 0; i < 60; i++) {
+            if (!mounted) return;
+            await Future.delayed(const Duration(milliseconds: 500));
+            runSessionId = ref
+                .read(recordControllerProvider)
+                .sharedRunSessionId;
+            if (runSessionId != null) break;
+          }
+        }
+
+        if (runSessionId == null) {
+          throw Exception('等待主相機建立 Session 超時');
+        }
+
+        var currentRunnerId = ref.read(recordControllerProvider).runnerId;
+        if (currentRunnerId == null && currentState.runnerName != null) {
+          currentRunnerId = await backend.addRunner(currentState.runnerName!);
+        }
+        if (currentRunnerId == null) {
+          throw Exception('未指定選手');
+        }
+
+        final status = await backend.uploadSeperatelySelect(
+          currentRunnerId,
+          runSessionId,
+          currentState.myCameraIndex!,
           tempVideoId,
-          state.anchorResult,
+          currentState.anchorResult,
+        );
+
+        if (status.isAllUploaded) {
+          controller.notifyUploadComplete(
+            status.runSessionId,
+            runnerId: currentRunnerId,
+            isAllUploaded: true,
+          );
+        }
+      }
+
+      if (kDebugMode) {
+        print(
+          '自動上傳完成: 相機 ${currentState.myCameraIndex != null ? currentState.myCameraIndex! + 1 : '未知'}',
         );
       }
 
-      if (kDebugMode) print('自動上傳完成: 相機 ${state.myCameraIndex! + 1}');
+      final finalState = ref.read(recordControllerProvider);
+      controller.updateReadyStatus(
+        finalState.isPhysicallyReady && finalState.anchorIsSet,
+      );
+
       if (mounted) {
         setState(() {
           _isUploading = false;
@@ -352,9 +410,24 @@ class _RecordCameraViewState extends ConsumerState<RecordCameraView>
       }
     } catch (e) {
       if (kDebugMode) print('上傳過程發生錯誤: $e');
-      setState(() {
-        _isUploading = false;
-      });
+      if (mounted) {
+        setState(() {
+          _isUploading = false;
+          _recordedFile = null;
+        });
+        toastification.show(
+          context: context,
+          title: const Text(
+            'Error',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          description: Text('上傳失敗: $e'),
+          type: ToastificationType.error,
+          style: ToastificationStyle.minimal,
+          alignment: Alignment.bottomCenter,
+          autoCloseDuration: const Duration(seconds: 4),
+        );
+      }
     }
   }
 
@@ -715,7 +788,9 @@ class _RecordCameraViewState extends ConsumerState<RecordCameraView>
             child: Container(
               decoration: BoxDecoration(
                 color: Colors.black54,
-                borderRadius: BorderRadius.circular(16),
+                borderRadius: isFullscreen
+                    ? BorderRadius.zero
+                    : BorderRadius.circular(16),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -736,7 +811,9 @@ class _RecordCameraViewState extends ConsumerState<RecordCameraView>
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.black.withValues(alpha: 0.3),
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: isFullscreen
+                      ? BorderRadius.zero
+                      : BorderRadius.circular(16),
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -1475,6 +1552,26 @@ class _FullScreenCameraDialogState
   // ── Build ───────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
+    ref.listen(recordControllerProvider.select((state) => state.status), (
+      previous,
+      next,
+    ) {
+      if (next == RecordStatus.idle || next == RecordStatus.connecting) {
+        if (mounted && Navigator.of(context).canPop()) {
+          Navigator.of(context).pop();
+        }
+      }
+    });
+
+    ref.listen(recordControllerProvider.select((state) => state.roomId), (
+      previous,
+      next,
+    ) {
+      if (next == null && mounted && Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      }
+    });
+
     ref.watch(recordControllerProvider);
 
     return Scaffold(

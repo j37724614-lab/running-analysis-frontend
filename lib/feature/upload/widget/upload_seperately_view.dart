@@ -324,12 +324,14 @@ class _UploadSeperatelyViewState extends ConsumerState<UploadSeperatelyView> {
 
                           await controller.uploadVideo(_index, uploadFile);
 
+                          if (!context.mounted) return;
+
                           // After upload, prompt anchor selection
                           final updatedState = ref.read(
                             uploadSeperatelyControllerProvider,
                           );
                           final thumbnailUrl = updatedState.thumbnail;
-                          if (mounted && thumbnailUrl != null) {
+                          if (thumbnailUrl != null) {
                             final anchor = await showAnchorPointDialog(
                               context: context,
                               thumbnailUrl: thumbnailUrl,
@@ -338,6 +340,7 @@ class _UploadSeperatelyViewState extends ConsumerState<UploadSeperatelyView> {
                                   .read(uploadSeperatelyControllerProvider)
                                   .anchorResult,
                             );
+                            if (!context.mounted) return;
                             ref
                                 .read(
                                   uploadSeperatelyControllerProvider.notifier,
@@ -385,6 +388,7 @@ class _UploadSeperatelyViewState extends ConsumerState<UploadSeperatelyView> {
                                             cameraIndex: _index,
                                             initialAnchor: state.anchorResult,
                                           );
+                                      if (!context.mounted) return;
                                       ref
                                           .read(
                                             uploadSeperatelyControllerProvider
@@ -475,50 +479,46 @@ class _UploadSeperatelyViewState extends ConsumerState<UploadSeperatelyView> {
                     state.anchorResult,
                   );
             }
-            if (mounted && status != null) {
-              // 無論是否上傳完成，都更新未分析紀錄列表，確保「選擇紀錄」能看到最新狀態
-              ref.invalidate(runnerUnanalyzedHistoryProvider(runnerId));
+            if (status == null || !context.mounted) return;
+            final uploadStatus = status;
 
-              if (status.isAllUploaded == true) {
-                // Invalidate history to ensure we fetch the latest list
-                ref.invalidate(runnerHistoryProvider(runnerId));
+            // 無論是否上傳完成，都更新未分析紀錄列表，確保「選擇紀錄」能看到最新狀態
+            ref.invalidate(runnerUnanalyzedHistoryProvider(runnerId));
 
-                if (mounted) {
-                  context.goNamed(
-                    AppRoute.playback.name,
-                    queryParameters: {
-                      'runnerId': runnerId,
-                      'videoId': status.runSessionId,
-                    },
-                  );
-                }
-              } else {
-                showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      title: const Text('Notice'),
-                      content: Text(
-                        '${l10n.pleaseUploadAllVideos}: ${status!.unuploadedCameraIndexes.map((e) => "${l10n.camera} ${e + 1}").join(', ')}',
+            if (uploadStatus.isAllUploaded == true) {
+              // Invalidate history to ensure we fetch the latest list
+              ref.invalidate(runnerHistoryProvider(runnerId));
+              context.goNamed(
+                AppRoute.playback.name,
+                queryParameters: {
+                  'runnerId': runnerId,
+                  'videoId': uploadStatus.runSessionId,
+                },
+              );
+            } else {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: const Text('Notice'),
+                    content: Text(
+                      '${l10n.pleaseUploadAllVideos}: ${uploadStatus.unuploadedCameraIndexes.map((e) => "${l10n.camera} ${e + 1}").join(', ')}',
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          // 上傳部分成功後，重置縮圖以便上傳下一個
+                          ref
+                              .read(uploadSeperatelyControllerProvider.notifier)
+                              .resetState();
+                          Navigator.of(context).pop();
+                        },
+                        child: Text(l10n.confirm),
                       ),
-                      actions: [
-                        TextButton(
-                          onPressed: () {
-                            // 上傳部分成功後，重置縮圖以便上傳下一個
-                            ref
-                                .read(
-                                  uploadSeperatelyControllerProvider.notifier,
-                                )
-                                .resetState();
-                            Navigator.of(context).pop();
-                          },
-                          child: Text(l10n.confirm),
-                        ),
-                      ],
-                    );
-                  },
-                );
-              }
+                    ],
+                  );
+                },
+              );
             }
           },
           child: Text(l10n.upload),

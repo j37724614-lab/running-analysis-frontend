@@ -665,37 +665,37 @@ abstract class AppLocalizations {
   /// No description provided for @point1.
   ///
   /// In zh, this message translates to:
-  /// **'點 1 (左起)'**
+  /// **'點 1 (左上)'**
   String get point1;
 
   /// No description provided for @point2.
   ///
   /// In zh, this message translates to:
-  /// **'點 2 (右起)'**
+  /// **'點 2 (右上)'**
   String get point2;
 
   /// No description provided for @point3.
   ///
   /// In zh, this message translates to:
-  /// **'點 3 (右終)'**
+  /// **'點 3 (右下)'**
   String get point3;
 
   /// No description provided for @point4.
   ///
   /// In zh, this message translates to:
-  /// **'點 4 (左終)'**
+  /// **'點 4 (左下)'**
   String get point4;
 
   /// No description provided for @point5.
   ///
   /// In zh, this message translates to:
-  /// **'點 5 (中起)'**
+  /// **'點 5 (中上)'**
   String get point5;
 
   /// No description provided for @point6.
   ///
   /// In zh, this message translates to:
-  /// **'點 6 (中終)'**
+  /// **'點 6 (中下)'**
   String get point6;
 
   /// No description provided for @cameraNotAssigned.
@@ -851,37 +851,37 @@ abstract class AppLocalizations {
   /// No description provided for @leftStart.
   ///
   /// In zh, this message translates to:
-  /// **'左起點'**
+  /// **'左上'**
   String get leftStart;
 
   /// No description provided for @rightStart.
   ///
   /// In zh, this message translates to:
-  /// **'右起點'**
+  /// **'右上'**
   String get rightStart;
 
   /// No description provided for @rightEnd.
   ///
   /// In zh, this message translates to:
-  /// **'右終點'**
+  /// **'右下'**
   String get rightEnd;
 
   /// No description provided for @leftEnd.
   ///
   /// In zh, this message translates to:
-  /// **'左終點'**
+  /// **'左下'**
   String get leftEnd;
 
   /// No description provided for @centerStart.
   ///
   /// In zh, this message translates to:
-  /// **'中起點'**
+  /// **'中上'**
   String get centerStart;
 
   /// No description provided for @centerEnd.
   ///
   /// In zh, this message translates to:
-  /// **'中終點'**
+  /// **'中下'**
   String get centerEnd;
 
   /// No description provided for @undo.
@@ -911,7 +911,7 @@ abstract class AppLocalizations {
   /// No description provided for @guideDescription.
   ///
   /// In zh, this message translates to:
-  /// **'請依序標註跑道四角點（左起、右起、右終、左終），中線起點與終點將自動計算，亦可點擊或拖曳微調。'**
+  /// **'請依序標註跑道四角點（左上、右上、右下、左下），中線起點與終點將自動計算，亦可點擊或拖曳微調。'**
   String get guideDescription;
 
   /// No description provided for @noUnanalyzedSessions.
@@ -1411,6 +1411,12 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'使用錨點幾何與起跳前腳步校正偵測起跳、最長騰空及落地；錨點範圍須涵蓋跑道與沙坑'**
   String get longJumpModeDescription;
+
+  /// No description provided for @viewUploadedVideo.
+  ///
+  /// In zh, this message translates to:
+  /// **'查看影片'**
+  String get viewUploadedVideo;
 }
 
 class _AppLocalizationsDelegate

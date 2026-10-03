@@ -293,22 +293,22 @@ class AppLocalizationsZh extends AppLocalizations {
   String get tapToMarkPoint => '點擊或滑動以標註';
 
   @override
-  String get point1 => '點 1 (左起)';
+  String get point1 => '點 1 (左上)';
 
   @override
-  String get point2 => '點 2 (右起)';
+  String get point2 => '點 2 (右上)';
 
   @override
-  String get point3 => '點 3 (右終)';
+  String get point3 => '點 3 (右下)';
 
   @override
-  String get point4 => '點 4 (左終)';
+  String get point4 => '點 4 (左下)';
 
   @override
-  String get point5 => '點 5 (中起)';
+  String get point5 => '點 5 (中上)';
 
   @override
-  String get point6 => '點 6 (中終)';
+  String get point6 => '點 6 (中下)';
 
   @override
   String get cameraNotAssigned => '尚未分配相機編號';
@@ -390,22 +390,22 @@ class AppLocalizationsZh extends AppLocalizations {
   String get selectAnchorToMark => '選擇要標註的錨點：';
 
   @override
-  String get leftStart => '左起點';
+  String get leftStart => '左上';
 
   @override
-  String get rightStart => '右起點';
+  String get rightStart => '右上';
 
   @override
-  String get rightEnd => '右終點';
+  String get rightEnd => '右下';
 
   @override
-  String get leftEnd => '左終點';
+  String get leftEnd => '左下';
 
   @override
-  String get centerStart => '中起點';
+  String get centerStart => '中上';
 
   @override
-  String get centerEnd => '中終點';
+  String get centerEnd => '中下';
 
   @override
   String get undo => '上一步';
@@ -421,7 +421,7 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get guideDescription =>
-      '請依序標註跑道四角點（左起、右起、右終、左終），中線起點與終點將自動計算，亦可點擊或拖曳微調。';
+      '請依序標註跑道四角點（左上、右上、右下、左下），中線起點與終點將自動計算，亦可點擊或拖曳微調。';
 
   @override
   String get noUnanalyzedSessions => '暫無未分析紀錄';
@@ -676,4 +676,7 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String get longJumpModeDescription =>
       '使用錨點幾何與起跳前腳步校正偵測起跳、最長騰空及落地；錨點範圍須涵蓋跑道與沙坑';
+
+  @override
+  String get viewUploadedVideo => '查看影片';
 }
