@@ -2,6 +2,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/entities/upload_video_file.dart';
+import 'package:frontend/feature/guide/guide_steps_factory.dart';
 import 'package:frontend/feature/upload/upload_controller.dart';
 import 'package:frontend/feature/upload/upload_provider.dart';
 import 'package:frontend/feature/upload/widget/anchor_point_dialog.dart';
@@ -38,6 +39,7 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
           spacing: 16,
           children: [
             DateTimeSelectionWidget(
+              key: GuideKeys.uploadConfigKey,
               onDateSelected: (date) {
                 formNotifier.state = formData.copyWith(selectedDate: date);
               },
@@ -45,9 +47,7 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
                 formNotifier.state = formData.copyWith(selectedTime: time);
               },
               onCameraCountSelected: (cameraCount) {
-                ref
-                    .read(uploadAllControllerProvider.notifier)
-                    .setCameraCount(cameraCount);
+                ref.read(uploadAllControllerProvider.notifier).setCameraCount(cameraCount);
               },
               onFpsSelected: (fps) {
                 formNotifier.state = formData.copyWith(fps: fps);
@@ -83,6 +83,7 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
                 final itemHeight = itemWidth * 9 / 16;
 
                 return Wrap(
+                  key: GuideKeys.uploadVideoKey,
                   alignment: WrapAlignment.center,
                   spacing: spacing,
                   runSpacing: spacing,
@@ -91,11 +92,22 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
                       onTap: state.tempVideoStates[index].isUploading
                           ? null
                           : () async {
-                              final result = await FilePicker.platform
-                                  .pickFiles(
-                                    type: FileType.video,
-                                    withData: true,
-                                  );
+                              final result = await FilePicker.platform.pickFiles(
+                                type: FileType.custom,
+                                allowedExtensions: [
+                                  'mp4',
+                                  'mov',
+                                  'avi',
+                                  'mkv',
+                                  'webm',
+                                  'm4v',
+                                  '3gp',
+                                  'flv',
+                                  'wmv',
+                                  'ts',
+                                ],
+                                withData: true,
+                              );
 
                               if (result == null) return;
 
@@ -104,8 +116,7 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
                               final uploadFile = UploadVideoFile(
                                 bytes: file.bytes!,
                                 filename: file.name,
-                                mimeType:
-                                    lookupMimeType(file.name) ?? 'video/mp4',
+                                mimeType: lookupMimeType(file.name) ?? 'video/mp4',
                               );
 
                               await ref
@@ -147,8 +158,7 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
                           ),
                           child: state.tempVideoStates[index].isUploading
                               ? const LoadingIcon()
-                              : state.tempVideoStates[index].thumbnailUrl !=
-                                    null
+                              : state.tempVideoStates[index].thumbnailUrl != null
                               ? Stack(
                                   fit: StackFit.expand,
                                   children: [
@@ -162,9 +172,7 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
                                           ),
                                         ),
                                         child: Image.network(
-                                          state
-                                              .tempVideoStates[index]
-                                              .thumbnailUrl!,
+                                          state.tempVideoStates[index].thumbnailUrl!,
                                           fit: BoxFit.cover,
                                         ),
                                       ),
@@ -189,18 +197,12 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
                                               );
                                           if (!context.mounted) return;
                                           ref
-                                              .read(
-                                                uploadAllControllerProvider
-                                                    .notifier,
-                                              )
+                                              .read(uploadAllControllerProvider.notifier)
                                               .setAnchor(index, anchor);
                                         },
                                         child: _AnchorBadge(
-                                          isSet:
-                                              state
-                                                  .tempVideoStates[index]
-                                                  .anchorResult !=
-                                              null,
+                                          key: index == 0 ? GuideKeys.uploadAnchorKey : null,
+                                          isSet: state.tempVideoStates[index].anchorResult != null,
                                         ),
                                       ),
                                     ),
@@ -224,13 +226,12 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
               },
             ),
             ElevatedButton(
+              key: GuideKeys.uploadSubmitKey,
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.black,
                 backgroundColor: Theme.of(context).primaryColor,
-                textStyle: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+                textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 padding: const EdgeInsets.symmetric(horizontal: 48),
               ),
               onPressed: () async {
@@ -317,7 +318,7 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
 class _AnchorBadge extends StatelessWidget {
   final bool isSet;
 
-  const _AnchorBadge({required this.isSet});
+  const _AnchorBadge({super.key, required this.isSet});
 
   @override
   Widget build(BuildContext context) {
@@ -325,14 +326,9 @@ class _AnchorBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: isSet
-            ? const Color(0xFF00BFA5).withValues(alpha: 0.9)
-            : Colors.black54,
+        color: isSet ? const Color(0xFF00BFA5).withValues(alpha: 0.9) : Colors.black54,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: isSet ? const Color(0xFF00BFA5) : Colors.white24,
-          width: 1,
-        ),
+        border: Border.all(color: isSet ? const Color(0xFF00BFA5) : Colors.white24, width: 1),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -345,11 +341,7 @@ class _AnchorBadge extends StatelessWidget {
           const SizedBox(width: 4),
           Text(
             isSet ? l10n.anchorSet : l10n.setAnchor,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 11,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold),
           ),
         ],
       ),

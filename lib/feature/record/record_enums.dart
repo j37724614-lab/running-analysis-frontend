@@ -8,12 +8,7 @@ class RecordMember {
   final bool isReady;
   final bool isMaster;
 
-  RecordMember({
-    required this.id,
-    this.cameraIndex,
-    this.isReady = false,
-    this.isMaster = false,
-  });
+  RecordMember({required this.id, this.cameraIndex, this.isReady = false, this.isMaster = false});
 
   factory RecordMember.fromJson(Map<String, dynamic> json) {
     return RecordMember(

@@ -96,16 +96,28 @@ class RestBackendRepo implements BackendInterface {
   }
 
   @override
-  Future<List<UnanalyzedRunSessionInfo>> getRunnerUnanalyzedHistory(
-    String runnerId,
-  ) async {
+  Future<List<UnanalyzedRunSessionInfo>> getRunnerUnanalyzedHistory(String runnerId) async {
     final response = await NetUtils().reqeustData(
       API.getRunnerUnanalyzedHistory(runnerId)[1],
       method: API.getRunnerUnanalyzedHistory(runnerId)[0],
     );
-    return (response as List)
-        .map((e) => UnanalyzedRunSessionInfo.fromJson(e))
-        .toList();
+    return (response as List).map((e) => UnanalyzedRunSessionInfo.fromJson(e)).toList();
+  }
+
+  @override
+  Future<UnanalyzedRunSessionInfo?> getUnanalyzedRunSessionById(String runSessionId) async {
+    try {
+      final response = await NetUtils().reqeustData(
+        API.getUnanalyzedRunSessionById(runSessionId)[1],
+        method: API.getUnanalyzedRunSessionById(runSessionId)[0],
+      );
+      if (response != null) {
+        return UnanalyzedRunSessionInfo.fromJson(response);
+      }
+      return null;
+    } catch (_) {
+      return null;
+    }
   }
 
   @override

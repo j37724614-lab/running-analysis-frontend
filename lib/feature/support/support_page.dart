@@ -60,10 +60,7 @@ class SupportPage extends StatelessWidget {
                       SizedBox(height: 12),
                       Text(
                         '百米分析 支援中心',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                       ),
                       SizedBox(height: 4),
                       Text(
@@ -99,15 +96,13 @@ class SupportPage extends StatelessWidget {
                 _buildUsageStep(
                   stepNumber: '3',
                   title: '查看報告與回放 (Results)',
-                  description:
-                      '分析完成後，可在「回放」頁面播放帶有骨骼標記的拼接影片，並同步對照各路段的速度、加速度、左右膝/髖/肘關節角度變化的互動圖表。',
+                  description: '分析完成後，可在「回放」頁面播放帶有骨骼標記的拼接影片，並同步對照各路段的速度、加速度、左右膝/髖/肘關節角度變化的互動圖表。',
                 ),
 
                 _buildSectionTitle('三、 常見問題 (FAQ)'),
                 _buildFAQ(
                   question: 'Q: 需要多少台設備才能進行分析？',
-                  answer:
-                      'A: 系統支援單相機分析，但為了完整紀錄 100 公尺的跑步軌跡，推薦沿跑道依序擺放 2 到 5 台設備進行接力串聯錄影。',
+                  answer: 'A: 系統支援單相機分析，但為了完整紀錄 100 公尺的跑步軌跡，推薦沿跑道依序擺放 2 到 5 台設備進行接力串聯錄影。',
                 ),
                 _buildFAQ(
                   question: 'Q: 什麼是「錨點」？為什麼需要設定？',
@@ -116,14 +111,11 @@ class SupportPage extends StatelessWidget {
                 ),
                 _buildFAQ(
                   question: 'Q: 運算分析通常需要多久？',
-                  answer:
-                      'A: 依據錄製長度及鏡頭數量，AI 運算通常會在 1 至 3 分鐘內完成，您可以在歷史清單中即時查看處理進度。',
+                  answer: 'A: 依據錄製長度及鏡頭數量，AI 運算通常會在 1 至 3 分鐘內完成，您可以在歷史清單中即時查看處理進度。',
                 ),
 
                 _buildSectionTitle('四、 聯絡我們 (Contact Us)'),
-                _buildBodyText(
-                  '如果您在使用過程中有任何疑問、遇到技術問題，或是對功能有任何建議，歡迎隨時透過下方電子信箱與我們聯絡：',
-                ),
+                _buildBodyText('如果您在使用過程中有任何疑問、遇到技術問題，或是對功能有任何建議，歡迎隨時透過下方電子信箱與我們聯絡：'),
                 const SizedBox(height: 8),
                 _buildContactInfo('catscats92a27@gmail.com'),
 
@@ -173,8 +165,7 @@ class SupportPage extends StatelessWidget {
                       'A: The app supports single-camera analysis, but to capture a complete 100m sprint, we recommend lining up 2 to 4 devices sequentially.',
                 ),
                 _buildFAQ(
-                  question:
-                      'Q: What are "Anchor Points" and why are they needed?',
+                  question: 'Q: What are "Anchor Points" and why are they needed?',
                   answer:
                       'A: Anchors are visual reference points on the track. They allow the backend to align coordinate systems of different cameras to stitch footage seamlessly.',
                 ),
@@ -221,14 +212,7 @@ class SupportPage extends StatelessWidget {
   Widget _buildBodyText(String text) {
     final parts = text.split('**');
     if (parts.length < 3) {
-      return Text(
-        text,
-        style: const TextStyle(
-          fontSize: 14,
-          color: Colors.black87,
-          height: 1.6,
-        ),
-      );
+      return Text(text, style: const TextStyle(fontSize: 14, color: Colors.black87, height: 1.6));
     }
 
     final List<TextSpan> spans = [];
@@ -247,11 +231,7 @@ class SupportPage extends StatelessWidget {
 
     return RichText(
       text: TextSpan(
-        style: const TextStyle(
-          fontSize: 14,
-          color: Colors.black87,
-          height: 1.6,
-        ),
+        style: const TextStyle(fontSize: 14, color: Colors.black87, height: 1.6),
         children: spans,
       ),
     );
@@ -300,11 +280,7 @@ class SupportPage extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   description,
-                  style: TextStyle(
-                    fontSize: 13.5,
-                    color: Colors.grey[700],
-                    height: 1.5,
-                  ),
+                  style: TextStyle(fontSize: 13.5, color: Colors.grey[700], height: 1.5),
                 ),
               ],
             ),
@@ -329,14 +305,7 @@ class SupportPage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 4),
-          Text(
-            answer,
-            style: TextStyle(
-              fontSize: 13.5,
-              color: Colors.grey[700],
-              height: 1.5,
-            ),
-          ),
+          Text(answer, style: TextStyle(fontSize: 13.5, color: Colors.grey[700], height: 1.5)),
           const SizedBox(height: 4),
         ],
       ),
@@ -346,18 +315,11 @@ class SupportPage extends StatelessWidget {
   Widget _buildContactInfo(String email) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: Colors.blue[50],
-        borderRadius: BorderRadius.circular(8),
-      ),
+      decoration: BoxDecoration(color: Colors.blue[50], borderRadius: BorderRadius.circular(8)),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(
-            Icons.email,
-            size: 18,
-            color: Color.fromARGB(255, 80, 143, 232),
-          ),
+          const Icon(Icons.email, size: 18, color: Color.fromARGB(255, 80, 143, 232)),
           const SizedBox(width: 8),
           SelectableText(
             email,

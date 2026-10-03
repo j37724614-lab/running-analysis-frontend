@@ -1,6 +1,14 @@
 {
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "Dart-Code.dart-code",
+  "[dart]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "Dart-Code.dart-code",
+    "editor.formatOnType": false,
+    "editor.rulers": [100]
+  },
+  "dart.lineLength": 100,
   "dart.flutterSdkPath": ".fvm/flutter_sdk",
-  // 以下是建議增加的，可以加速 VS Code 效能並避免干擾
   "search.exclude": {
     "**/.fvm": true
   },

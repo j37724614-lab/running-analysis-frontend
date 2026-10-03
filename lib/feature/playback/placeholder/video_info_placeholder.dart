@@ -37,10 +37,7 @@ class VideoInfoPlaceholder extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Table(
         border: const TableBorder(
-          horizontalInside: BorderSide(
-            width: 3,
-            color: Colors.white,
-          ), // 只要橫向分隔線
+          horizontalInside: BorderSide(width: 3, color: Colors.white), // 只要橫向分隔線
           verticalInside: BorderSide(width: 3, color: Colors.white),
           top: BorderSide.none, // 不要最上面
           bottom: BorderSide.none, // 不要最下面

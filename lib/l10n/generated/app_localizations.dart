@@ -911,8 +911,14 @@ abstract class AppLocalizations {
   /// No description provided for @guideDescription.
   ///
   /// In zh, this message translates to:
-  /// **'請依序標註跑道四角點（左上、右上、右下、左下），中線起點與終點將自動計算，亦可點擊或拖曳微調。'**
+  /// **'依序點擊畫面標記跑道四角點（左上、右上、右下、左下），中線點將自動計算產生，完成後可直接拖曳微調。'**
   String get guideDescription;
+
+  /// No description provided for @guideDescriptionMobile.
+  ///
+  /// In zh, this message translates to:
+  /// **'點選下方「點 1 (左上)」至「點 6 (中下)」按鈕選定目標點，再點擊或拖曳畫面標註位置；中線點將自動計算，亦可手動微調。'**
+  String get guideDescriptionMobile;
 
   /// No description provided for @noUnanalyzedSessions.
   ///
@@ -1417,6 +1423,858 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'查看影片'**
   String get viewUploadedVideo;
+
+  /// No description provided for @tourStep.
+  ///
+  /// In zh, this message translates to:
+  /// **'步驟 {current} / {total}'**
+  String tourStep(int current, int total);
+
+  /// No description provided for @tourPrevious.
+  ///
+  /// In zh, this message translates to:
+  /// **'上一步'**
+  String get tourPrevious;
+
+  /// No description provided for @tourNext.
+  ///
+  /// In zh, this message translates to:
+  /// **'下一步'**
+  String get tourNext;
+
+  /// No description provided for @tourSkip.
+  ///
+  /// In zh, this message translates to:
+  /// **'跳過導覽'**
+  String get tourSkip;
+
+  /// No description provided for @tourFinish.
+  ///
+  /// In zh, this message translates to:
+  /// **'完成導覽'**
+  String get tourFinish;
+
+  /// No description provided for @tourHelp.
+  ///
+  /// In zh, this message translates to:
+  /// **'操作指引'**
+  String get tourHelp;
+
+  /// No description provided for @tourReplay.
+  ///
+  /// In zh, this message translates to:
+  /// **'重新觀看教學'**
+  String get tourReplay;
+
+  /// No description provided for @tourNavSidebarTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'主選單導覽列'**
+  String get tourNavSidebarTitle;
+
+  /// No description provided for @tourNavSidebarDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'可在此快速切換「跑步分析」、「影片上傳」與「同步錄影」三大功能模組。'**
+  String get tourNavSidebarDesc;
+
+  /// No description provided for @tourNavLangTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'多國語系切換'**
+  String get tourNavLangTitle;
+
+  /// No description provided for @tourNavLangDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'支援繁體中文與 English 即時切換，系統也會自動辨識瀏覽器預設語系。'**
+  String get tourNavLangDesc;
+
+  /// No description provided for @tourNavHelpTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'隨時開啟操作指引'**
+  String get tourNavHelpTitle;
+
+  /// No description provided for @tourNavHelpDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'在任何畫面點擊「❓」即可重新啟動該頁面的步驟式操作說明。'**
+  String get tourNavHelpDesc;
+
+  /// No description provided for @tourPlaybackRunnerTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'跑者選擇與切換'**
+  String get tourPlaybackRunnerTitle;
+
+  /// No description provided for @tourPlaybackRunnerDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'點擊此處可下拉選擇欲查看的跑者，並載入該跑者的所有歷史分析紀錄。'**
+  String get tourPlaybackRunnerDesc;
+
+  /// No description provided for @tourPlaybackSidebarToggleTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'側邊欄收摺與展開'**
+  String get tourPlaybackSidebarToggleTitle;
+
+  /// No description provided for @tourPlaybackSidebarToggleDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'點擊此圖示按鈕可快速收摺或展開左側的歷史分析紀錄面板，釋放更多空間以檢視影像與圖表。'**
+  String get tourPlaybackSidebarToggleDesc;
+
+  /// No description provided for @tourPlaybackHistoryTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'歷史紀錄列表'**
+  String get tourPlaybackHistoryTitle;
+
+  /// No description provided for @tourPlaybackHistoryDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'列出該跑者的所有跑步分析場次，點擊可切換至不同紀錄。'**
+  String get tourPlaybackHistoryDesc;
+
+  /// No description provided for @tourPlaybackMobileRecordTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'開啟歷史紀錄選單'**
+  String get tourPlaybackMobileRecordTitle;
+
+  /// No description provided for @tourPlaybackMobileRecordDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'點擊此卡片可開啟該跑者的歷史分析紀錄列表，切換至不同紀錄場次。'**
+  String get tourPlaybackMobileRecordDesc;
+
+  /// No description provided for @tourPlaybackPlayerTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'連續跑步影像播放器'**
+  String get tourPlaybackPlayerTitle;
+
+  /// No description provided for @tourPlaybackPlayerDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'依序串接各相機機位的連續跑步動態影像，拖曳時間軸可與運動學圖表即時連動同步分析。'**
+  String get tourPlaybackPlayerDesc;
+
+  /// No description provided for @tourPlaybackInfoTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'動作與統計資訊'**
+  String get tourPlaybackInfoTitle;
+
+  /// No description provided for @tourPlaybackInfoDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'呈現步頻、步幅、平均速度、總時間等關鍵數據與分析狀態。'**
+  String get tourPlaybackInfoDesc;
+
+  /// No description provided for @tourPlaybackChartsTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'運動學指標與關節角度圖表'**
+  String get tourPlaybackChartsTitle;
+
+  /// No description provided for @tourPlaybackChartsDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'包含距離、速度、加速度與各關節（膝/髖/手肘/軀幹）隨時間變化的波形曲線，支援點擊展開收摺與懸浮數值查看。'**
+  String get tourPlaybackChartsDesc;
+
+  /// No description provided for @tourPlaybackActionsTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'操作功能與報表匯出'**
+  String get tourPlaybackActionsTitle;
+
+  /// No description provided for @tourPlaybackActionsDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'提供下載 PDF 跑步分析綜合報告、匯出 CSV 關節運動學原始數據，以及刪除此筆分析場次的功能。'**
+  String get tourPlaybackActionsDesc;
+
+  /// No description provided for @tourRecordMasterTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'主控端：建立房間'**
+  String get tourRecordMasterTitle;
+
+  /// No description provided for @tourRecordMasterDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'欲作為總控制端的裝置，在此設定預期參與的相機總數 (1~5 台)，點擊「建立錄影房間」生成專屬房號。'**
+  String get tourRecordMasterDesc;
+
+  /// No description provided for @tourRecordSlaveTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'從機端：加入房間與機位'**
+  String get tourRecordSlaveTitle;
+
+  /// No description provided for @tourRecordSlaveDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'作為各視角相機的從機裝置，在此輸入主控端生成的房號並選擇負責的相機機位（如相機 2）後加入房間。'**
+  String get tourRecordSlaveDesc;
+
+  /// No description provided for @tourRecordConfigTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'主控端：參數配置與跑者設定'**
+  String get tourRecordConfigTitle;
+
+  /// No description provided for @tourRecordConfigDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'主控端可指定跑者、預期相機總數 (1~5 台)、幀率 (FPS) 與備註資訊。'**
+  String get tourRecordConfigDesc;
+
+  /// No description provided for @tourRecordLocalTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'主控端：本機鏡頭錄影'**
+  String get tourRecordLocalTitle;
+
+  /// No description provided for @tourRecordLocalDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'主控端亦可作為其中一台相機機位參與錄影，開啟開關後可指派主控端鏡頭所負責的相機機位編號。'**
+  String get tourRecordLocalDesc;
+
+  /// No description provided for @tourRecordDevicesTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'連線設備清單與機位就緒'**
+  String get tourRecordDevicesTitle;
+
+  /// No description provided for @tourRecordDevicesDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'即時監控主控端與所有從機連線狀態。各相機裝置將手機水平橫放並完成跑道校正後，即會亮起綠燈代表已就緒。'**
+  String get tourRecordDevicesDesc;
+
+  /// No description provided for @tourRecordCameraTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'相機即時預覽與進入全螢幕'**
+  String get tourRecordCameraTitle;
+
+  /// No description provided for @tourRecordCameraDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'呈現即時相機畫面，支援鏡頭切換與變焦拉桿。點擊右上角全螢幕按鈕即可放大進入全螢幕畫面。'**
+  String get tourRecordCameraDesc;
+
+  /// No description provided for @tourRecordAnchorToggleTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'全螢幕相機與啟動錨點設定'**
+  String get tourRecordAnchorToggleTitle;
+
+  /// No description provided for @tourRecordAnchorToggleDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'進入全螢幕相機後，點擊左上角「設定錨點」按鈕，系統將自動擷取即時畫面並進入跑道空間校正模式。'**
+  String get tourRecordAnchorToggleDesc;
+
+  /// No description provided for @tourRecordAnchorPointsTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'跑道六點空間校正'**
+  String get tourRecordAnchorPointsTitle;
+
+  /// No description provided for @tourRecordAnchorPointsDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'在凍結畫面上依序點擊標記跑道四角點與中線點（或直接拖曳既有錨點進行微調），確認 6 點標註完成後點擊「確認錨點」。'**
+  String get tourRecordAnchorPointsDesc;
+
+  /// No description provided for @tourRecordAnchorPointsDescMobile.
+  ///
+  /// In zh, this message translates to:
+  /// **'點選下方「點 1 (左上)」至「點 6 (中下)」錨點按鈕切換目標，在全螢幕畫面上點擊或拖曳以精確標註跑道 6 個錨點，完成後點擊「確認錨點」。'**
+  String get tourRecordAnchorPointsDescMobile;
+
+  /// No description provided for @tourRecordDistanceDialogTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'設定跑道實際物理長度'**
+  String get tourRecordDistanceDialogTitle;
+
+  /// No description provided for @tourRecordDistanceDialogDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'在此對話框中輸入跑道頂部（左至中）與底部（中至右）的真實公尺距離，點擊「套用並儲存」建立精確空間坐標系。'**
+  String get tourRecordDistanceDialogDesc;
+
+  /// No description provided for @tourRecordFullscreenRecordTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'主控端：全螢幕同步錄影'**
+  String get tourRecordFullscreenRecordTitle;
+
+  /// No description provided for @tourRecordFullscreenRecordDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'主控端在全螢幕相機畫面下，亦可直接點擊右下角的紅色錄影按鈕啟動所有相機同步錄影，無需返回房間主畫面。'**
+  String get tourRecordFullscreenRecordDesc;
+
+  /// No description provided for @tourRecordAnchorDoneTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'校正完成與返回房間'**
+  String get tourRecordAnchorDoneTitle;
+
+  /// No description provided for @tourRecordAnchorDoneDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'儲存後畫面回復即時相機預覽，左上角顯示綠色「錨點已設定」標籤。點擊右上角按鈕即可離開全螢幕返回房間。'**
+  String get tourRecordAnchorDoneDesc;
+
+  /// No description provided for @tourRecordButtonTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'從機控制權與一鍵同步錄影'**
+  String get tourRecordButtonTitle;
+
+  /// No description provided for @tourRecordButtonDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'從機可隨時點擊「請求控制權」升級為主控端。全員就緒後由主控端一鍵發送同步錄影指令，錄影結束後所有相機並行自動上傳！'**
+  String get tourRecordButtonDesc;
+
+  /// No description provided for @tourRecordMasterButtonTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'主控端：一鍵同步錄影與並行上傳'**
+  String get tourRecordMasterButtonTitle;
+
+  /// No description provided for @tourRecordMasterButtonDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'待所有機位設備皆完成校正並就緒（綠燈），由主控端點擊紅色「開始錄影」按鈕即可同步啟動所有相機，錄影結束後全機位自動並行上傳！'**
+  String get tourRecordMasterButtonDesc;
+
+  /// No description provided for @tourRecordSlaveButtonTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'從機端：等待指令與請求控制權'**
+  String get tourRecordSlaveButtonTitle;
+
+  /// No description provided for @tourRecordSlaveButtonDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'從機端將等待主控端發送同步錄影指令；若現場有需求，從機亦可點擊「請求控制權」升級為主控端接管全場控制！'**
+  String get tourRecordSlaveButtonDesc;
+
+  /// No description provided for @tourRecordSlaveCameraPosTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'從機端：更改相機機位'**
+  String get tourRecordSlaveCameraPosTitle;
+
+  /// No description provided for @tourRecordSlaveCameraPosDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'從機加入房間後，若需切換負責的相機視角（例如改為相機 3），可在此下拉選單隨時切換，系統將即時同步更新機位配置。'**
+  String get tourRecordSlaveCameraPosDesc;
+
+  /// No description provided for @tourRecordRequestControlTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'從機端：請求主控權'**
+  String get tourRecordRequestControlTitle;
+
+  /// No description provided for @tourRecordRequestControlDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'從機端完成空間校正並確認就緒後，將等待主控端發送錄影指令；若現場需要變更操作者，可點擊此按鈕向主控端「請求控制權」，經主控端確認同意後即可接管房間轉為主控端身份。'**
+  String get tourRecordRequestControlDesc;
+
+  /// No description provided for @tourRecordLeaveRoomTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'離開房間'**
+  String get tourRecordLeaveRoomTitle;
+
+  /// No description provided for @tourRecordLeaveRoomDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'點擊此按鈕可中斷目前房間連線並返回錄影首頁。若為主控端離開將會結束該房間連線，從機端離開則僅退出本機連線。'**
+  String get tourRecordLeaveRoomDesc;
+
+  /// No description provided for @tourRecordChoicePrompt.
+  ///
+  /// In zh, this message translates to:
+  /// **'請選擇欲說明的流程：'**
+  String get tourRecordChoicePrompt;
+
+  /// No description provided for @tourRecordChoiceBoth.
+  ///
+  /// In zh, this message translates to:
+  /// **'兩者皆看'**
+  String get tourRecordChoiceBoth;
+
+  /// No description provided for @tourRecordChoiceMaster.
+  ///
+  /// In zh, this message translates to:
+  /// **'僅看「主控端」'**
+  String get tourRecordChoiceMaster;
+
+  /// No description provided for @tourRecordChoiceSlave.
+  ///
+  /// In zh, this message translates to:
+  /// **'僅看「從機端 (Slave)」'**
+  String get tourRecordChoiceSlave;
+
+  /// No description provided for @tourRecordRoomInfoTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'房間號碼與目前身分'**
+  String get tourRecordRoomInfoTitle;
+
+  /// No description provided for @tourRecordRoomInfoDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'進入房間後，頂部清楚標示當前專屬「房間號碼」（提供其他相機裝置輸入加入）以及本機在此房間中的「目前身分」（主控端或從機端）。'**
+  String get tourRecordRoomInfoDesc;
+
+  /// No description provided for @tourRecordMasterRoomInfoDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'建立房間後生成專屬「房間號碼」，並標記為「主控端」身分。其他相機裝置輸入此房號即可加入此連線房間。'**
+  String get tourRecordMasterRoomInfoDesc;
+
+  /// No description provided for @tourRecordSlaveRoomInfoDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'成功加入房間後，頂部顯示當前連線之「房間號碼」與「從機端」身分標籤，確認已正確連入主控端所建立之錄影房間。'**
+  String get tourRecordSlaveRoomInfoDesc;
+
+  /// No description provided for @tourRecordShareTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'邀請相機加入（QR Code 與連結）'**
+  String get tourRecordShareTitle;
+
+  /// No description provided for @tourRecordShareDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'主控端可點擊「分享房間」產生專屬 QR Code 供其他手機掃描，或點擊「複製連結」發送加入房間網址，其他裝置開啟後將自動進入此房間進行同步錄影。'**
+  String get tourRecordShareDesc;
+
+  /// No description provided for @tourRecordInquiryTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'請選擇欲導覽的錄影流程'**
+  String get tourRecordInquiryTitle;
+
+  /// No description provided for @tourRecordInquirySubtitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'主控端與從機端 (Slave) 的初始操作流程不同，請選擇您欲了解的角色模式：'**
+  String get tourRecordInquirySubtitle;
+
+  /// No description provided for @tourRecordInquiryBothTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'兩者皆看 (完整流程)'**
+  String get tourRecordInquiryBothTitle;
+
+  /// No description provided for @tourRecordInquiryBothDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'完整檢視主控端與從機端雙方的所有操作步驟與協作流程。'**
+  String get tourRecordInquiryBothDesc;
+
+  /// No description provided for @tourRecordInquiryBothSteps.
+  ///
+  /// In zh, this message translates to:
+  /// **'共 17 步驟'**
+  String get tourRecordInquiryBothSteps;
+
+  /// No description provided for @tourRecordInquiryMasterTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'主控端流程 (Master)'**
+  String get tourRecordInquiryMasterTitle;
+
+  /// No description provided for @tourRecordInquiryMasterDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'建立房間、全域參數配置、監控各機位狀態、跑道空間校正與一鍵同步錄影。'**
+  String get tourRecordInquiryMasterDesc;
+
+  /// No description provided for @tourRecordInquiryMasterSteps.
+  ///
+  /// In zh, this message translates to:
+  /// **'共 14 步驟'**
+  String get tourRecordInquiryMasterSteps;
+
+  /// No description provided for @tourRecordInquirySlaveTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'從機端流程 (Slave)'**
+  String get tourRecordInquirySlaveTitle;
+
+  /// No description provided for @tourRecordInquirySlaveDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'輸入房號加入指定機位、確認設備就緒、跑道空間校正與隨時請求控制權。'**
+  String get tourRecordInquirySlaveDesc;
+
+  /// No description provided for @tourRecordInquirySlaveSteps.
+  ///
+  /// In zh, this message translates to:
+  /// **'共 11 步驟'**
+  String get tourRecordInquirySlaveSteps;
+
+  /// No description provided for @tourRecordInquiryStartButton.
+  ///
+  /// In zh, this message translates to:
+  /// **'開始導覽'**
+  String get tourRecordInquiryStartButton;
+
+  /// No description provided for @tourUploadTabsTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'上傳模式選擇'**
+  String get tourUploadTabsTitle;
+
+  /// No description provided for @tourUploadTabsDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'提供「一次上傳所有視角」（單人多機同步上傳）與「分批上傳」（各相機分別上傳或接續未完成紀錄）兩種工作模式。'**
+  String get tourUploadTabsDesc;
+
+  /// No description provided for @tourUploadRunnerTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'跑者身分選取'**
+  String get tourUploadRunnerTitle;
+
+  /// No description provided for @tourUploadRunnerDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'可切換「選擇現有跑者」從下拉清單快速選取，或切換「新增跑者」直接輸入跑者姓名建立新檔案。'**
+  String get tourUploadRunnerDesc;
+
+  /// No description provided for @tourUploadConfigTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'拍攝參數與錄影配置'**
+  String get tourUploadConfigTitle;
+
+  /// No description provided for @tourUploadConfigDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'設定影片拍攝日期與時間、預期機位總數 (1~5 台)、相機幀率 (FPS) 及相關備註資訊。'**
+  String get tourUploadConfigDesc;
+
+  /// No description provided for @tourUploadVideoTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'影片檔案選取與預覽'**
+  String get tourUploadVideoTitle;
+
+  /// No description provided for @tourUploadVideoDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'選取各機位所拍攝的影片檔案，支援 MP4、MOV、AVI、MKV、WebM、M4V 等多種主流格式並即時產生預覽縮圖。'**
+  String get tourUploadVideoDesc;
+
+  /// No description provided for @tourUploadAnchorTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'跑道空間錨點校正'**
+  String get tourUploadAnchorTitle;
+
+  /// No description provided for @tourUploadAnchorDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'於影片首幀依序點擊標註跑道四角點（左上、右上、右下、左下）並輸入實際公尺距離，建立精準空間坐標系（中線點自動計算產生，亦可拖曳微調）。'**
+  String get tourUploadAnchorDesc;
+
+  /// No description provided for @tourUploadAnchorDescMobile.
+  ///
+  /// In zh, this message translates to:
+  /// **'點選下方「點 1 (左上)」至「點 6 (中下)」按鈕選定目標錨點，於影片畫面上點擊或拖曳標註跑道各點，並輸入實際公尺距離以建立空間坐標系。'**
+  String get tourUploadAnchorDescMobile;
+
+  /// No description provided for @tourUploadSubmitTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'上傳並啟動 AI 分析'**
+  String get tourUploadSubmitTitle;
+
+  /// No description provided for @tourUploadSubmitDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'點擊後將影片與錨點資料提交至後端，自動執行骨架追蹤、姿勢估計與運動學運算流水線。'**
+  String get tourUploadSubmitDesc;
+
+  /// No description provided for @tourUploadSepTabsTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'分批工作模式切換'**
+  String get tourUploadSepTabsTitle;
+
+  /// No description provided for @tourUploadSepTabsDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'分批上傳提供「新增紀錄」（建立全新場次）與「選擇紀錄」（接續未完成場次）兩種途徑。可點選下方選項切換流程，點擊「下一步」開始導覽。'**
+  String get tourUploadSepTabsDesc;
+
+  /// No description provided for @tourUploadSepNewTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'新增紀錄（拍攝參數設定）'**
+  String get tourUploadSepNewTitle;
+
+  /// No description provided for @tourUploadSepNewDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'設定全新場次的錄製日期與時間、預期相機總數 (1~5 台)、FPS 與備註，從第 1 台相機開始依序上傳。'**
+  String get tourUploadSepNewDesc;
+
+  /// No description provided for @tourUploadSepSelectTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'選擇紀錄（接續未完成場次）'**
+  String get tourUploadSepSelectTitle;
+
+  /// No description provided for @tourUploadSepSelectDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'列出該跑者先前尚未上傳齊全的歷史場次（如已傳機位 1、尚缺機位 2 與 3），選取後即可接續補傳剩餘機位。'**
+  String get tourUploadSepSelectDesc;
+
+  /// No description provided for @tourUploadSepCameraTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'當前相機機位選取'**
+  String get tourUploadSepCameraTitle;
+
+  /// No description provided for @tourUploadSepCameraDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'從下拉選單切換目前欲上傳的相機編號（如相機 1 至相機 5）。'**
+  String get tourUploadSepCameraDesc;
+
+  /// No description provided for @tourUploadSepVideoTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'單機位影片檔案選取'**
+  String get tourUploadSepVideoTitle;
+
+  /// No description provided for @tourUploadSepVideoDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'點擊選取或拖曳該機位所對應的影片檔案，支援 MP4、MOV、AVI 等主流格式並預覽首幀縮圖。'**
+  String get tourUploadSepVideoDesc;
+
+  /// No description provided for @tourUploadSepSubmitTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'分批提交與分析啟動'**
+  String get tourUploadSepSubmitTitle;
+
+  /// No description provided for @tourUploadSepSubmitDesc.
+  ///
+  /// In zh, this message translates to:
+  /// **'點擊上傳目前機位影片；待所有機位影片皆上傳完畢後，系統將自動合併並啟動 AI 運動學分析。'**
+  String get tourUploadSepSubmitDesc;
+
+  /// No description provided for @tourUploadSepChoicePrompt.
+  ///
+  /// In zh, this message translates to:
+  /// **'請選擇欲說明的流程：'**
+  String get tourUploadSepChoicePrompt;
+
+  /// No description provided for @tourUploadSepChoiceBoth.
+  ///
+  /// In zh, this message translates to:
+  /// **'兩者皆看'**
+  String get tourUploadSepChoiceBoth;
+
+  /// No description provided for @tourUploadSepChoiceNew.
+  ///
+  /// In zh, this message translates to:
+  /// **'僅看「新增紀錄」'**
+  String get tourUploadSepChoiceNew;
+
+  /// No description provided for @tourUploadSepChoiceSelect.
+  ///
+  /// In zh, this message translates to:
+  /// **'僅看「選擇紀錄」'**
+  String get tourUploadSepChoiceSelect;
+
+  /// No description provided for @uncompletedRecordsPlaceholder.
+  ///
+  /// In zh, this message translates to:
+  /// **'未分析歷史紀錄'**
+  String get uncompletedRecordsPlaceholder;
+
+  /// No description provided for @shareRoom.
+  ///
+  /// In zh, this message translates to:
+  /// **'分享房間'**
+  String get shareRoom;
+
+  /// No description provided for @copyLink.
+  ///
+  /// In zh, this message translates to:
+  /// **'複製連結'**
+  String get copyLink;
+
+  /// No description provided for @copyJoinLink.
+  ///
+  /// In zh, this message translates to:
+  /// **'複製加入連結'**
+  String get copyJoinLink;
+
+  /// No description provided for @joinLinkCopied.
+  ///
+  /// In zh, this message translates to:
+  /// **'已複製房間加入連結！'**
+  String get joinLinkCopied;
+
+  /// No description provided for @showJoinQrCode.
+  ///
+  /// In zh, this message translates to:
+  /// **'顯示 QR Code'**
+  String get showJoinQrCode;
+
+  /// No description provided for @inviteDeviceTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'邀請相機裝置加入'**
+  String get inviteDeviceTitle;
+
+  /// No description provided for @inviteDeviceSubtitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'使用手機相機掃描下方 QR Code，或透過分享連結直接加入此房間'**
+  String get inviteDeviceSubtitle;
+
+  /// No description provided for @roomJoinUrl.
+  ///
+  /// In zh, this message translates to:
+  /// **'加入連結'**
+  String get roomJoinUrl;
+
+  /// No description provided for @autoFilledRoomNumber.
+  ///
+  /// In zh, this message translates to:
+  /// **'已自動帶入房間號碼'**
+  String get autoFilledRoomNumber;
+
+  /// No description provided for @deepLinkAppFallbackHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'若裝置已安裝 App 將優先自動開啟 App，若未安裝則由瀏覽器開啟網頁版。'**
+  String get deepLinkAppFallbackHint;
+
+  /// No description provided for @enterSessionCodeOrLink.
+  ///
+  /// In zh, this message translates to:
+  /// **'輸入補傳代碼或貼上連結'**
+  String get enterSessionCodeOrLink;
+
+  /// No description provided for @sessionCodeInputHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'輸入 Session ID 或貼上完整連結'**
+  String get sessionCodeInputHint;
+
+  /// No description provided for @loadSession.
+  ///
+  /// In zh, this message translates to:
+  /// **'載入'**
+  String get loadSession;
+
+  /// No description provided for @loadSessionFailed.
+  ///
+  /// In zh, this message translates to:
+  /// **'找不到此待補傳紀錄或該紀錄已分析完成'**
+  String get loadSessionFailed;
+
+  /// No description provided for @loadSessionSuccess.
+  ///
+  /// In zh, this message translates to:
+  /// **'已成功載入待補傳紀錄！'**
+  String get loadSessionSuccess;
+
+  /// No description provided for @copySessionCode.
+  ///
+  /// In zh, this message translates to:
+  /// **'複製補傳代碼'**
+  String get copySessionCode;
+
+  /// No description provided for @copySessionLink.
+  ///
+  /// In zh, this message translates to:
+  /// **'複製補傳連結'**
+  String get copySessionLink;
+
+  /// No description provided for @sessionCodeCopied.
+  ///
+  /// In zh, this message translates to:
+  /// **'已複製補傳代碼！'**
+  String get sessionCodeCopied;
+
+  /// No description provided for @sessionLinkCopied.
+  ///
+  /// In zh, this message translates to:
+  /// **'已複製補傳連結！'**
+  String get sessionLinkCopied;
+
+  /// No description provided for @sharedSessionBadge.
+  ///
+  /// In zh, this message translates to:
+  /// **'外部協同補傳'**
+  String get sharedSessionBadge;
+
+  /// No description provided for @allCamerasUploadedExternalNotice.
+  ///
+  /// In zh, this message translates to:
+  /// **'所有相機影片已全數上傳完畢！系統已自動為房主啟動 AI 運動學分析。'**
+  String get allCamerasUploadedExternalNotice;
+
+  /// No description provided for @uploadSuccessNotice.
+  ///
+  /// In zh, this message translates to:
+  /// **'上傳完成通知'**
+  String get uploadSuccessNotice;
+
+  /// No description provided for @sessionLoadedBannerTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'已載入外部補傳紀錄'**
+  String get sessionLoadedBannerTitle;
+
+  /// No description provided for @sessionLoadedBannerSubtitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'選手：{runnerName} ｜ 缺機位：{missingCameras}'**
+  String sessionLoadedBannerSubtitle(String runnerName, String missingCameras);
+
+  /// No description provided for @missingCameras.
+  ///
+  /// In zh, this message translates to:
+  /// **'缺相機 {cameras}'**
+  String missingCameras(String cameras);
+
+  /// No description provided for @selectRunnerOrEnterCodePrompt.
+  ///
+  /// In zh, this message translates to:
+  /// **'請先選擇跑者，或於上方輸入補傳代碼/連結'**
+  String get selectRunnerOrEnterCodePrompt;
 }
 
 class _AppLocalizationsDelegate

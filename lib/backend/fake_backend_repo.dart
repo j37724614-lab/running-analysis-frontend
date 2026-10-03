@@ -139,9 +139,7 @@ class FakeBackendRepo implements BackendInterface {
   }
 
   @override
-  Future<List<UnanalyzedRunSessionInfo>> getRunnerUnanalyzedHistory(
-    String runnerId,
-  ) {
+  Future<List<UnanalyzedRunSessionInfo>> getRunnerUnanalyzedHistory(String runnerId) {
     return Future.delayed(
       const Duration(seconds: 100),
       () => [
@@ -168,6 +166,24 @@ class FakeBackendRepo implements BackendInterface {
           videoPaths: ['videoPath0', 'videoPath1'],
         ),
       ],
+    );
+  }
+
+  @override
+  Future<UnanalyzedRunSessionInfo?> getUnanalyzedRunSessionById(String runSessionId) {
+    return Future.delayed(
+      const Duration(milliseconds: 200),
+      () => UnanalyzedRunSessionInfo(
+        runSessionId: runSessionId,
+        runnerId: 'runnerId1',
+        runnerName: 'runnerName1',
+        date: DateTime.now(),
+        cameraCount: 5,
+        fps: 60,
+        note: 'shared session',
+        unuploadedCameraIndexes: [1, 2],
+        videoPaths: ['videoPath0'],
+      ),
     );
   }
 

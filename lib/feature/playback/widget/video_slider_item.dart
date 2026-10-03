@@ -33,9 +33,7 @@ class VideoSliderView extends ConsumerWidget {
           ref.read(videoPlaybackStateProvider.notifier).setDragging(true);
         },
         onChanged: (value) {
-          ref
-              .read(videoPlaybackStateProvider.notifier)
-              .setPosition(value.toInt());
+          ref.read(videoPlaybackStateProvider.notifier).setPosition(value.toInt());
         },
         onChangeEnd: (value) {
           ref.read(videoPlaybackStateProvider.notifier).setDragging(false);

@@ -40,9 +40,7 @@ class VideoInfoView extends ConsumerWidget {
 
         final statusText = video.status == 'failed'
             ? l10n.statusFailed
-            : (video.status == 'processing'
-                ? l10n.statusProcessing
-                : l10n.statusDone);
+            : (video.status == 'processing' ? l10n.statusProcessing : l10n.statusDone);
 
         final List<MapEntry<String, String>> allInfo = [
           MapEntry(l10n.analysisStatus, statusText),
@@ -51,8 +49,14 @@ class VideoInfoView extends ConsumerWidget {
           MapEntry(l10n.cameraCount, video.cameraCount.toString()),
           MapEntry(l10n.fps, video.fps.toString()),
           MapEntry('${l10n.avgVelocity} (${l10n.unitMps})', video.avgVelocity?.toString() ?? ''),
-          MapEntry('${l10n.avgAcceleration} (${l10n.unitMps2})', video.avgAcceleration?.toString() ?? ''),
-          MapEntry('${l10n.avgStepLength} (${l10n.unitMeters})', video.avgStepLength?.toString() ?? ''),
+          MapEntry(
+            '${l10n.avgAcceleration} (${l10n.unitMps2})',
+            video.avgAcceleration?.toString() ?? '',
+          ),
+          MapEntry(
+            '${l10n.avgStepLength} (${l10n.unitMeters})',
+            video.avgStepLength?.toString() ?? '',
+          ),
           MapEntry('${l10n.totalTime} (${l10n.unitSeconds})', video.totalTime.toString()),
           MapEntry(l10n.notes, video.note.toString()),
         ];
@@ -63,10 +67,7 @@ class VideoInfoView extends ConsumerWidget {
 
         return Table(
           border: TableBorder(
-            horizontalInside: BorderSide(
-              width: 3,
-              color: Colors.white,
-            ), // 只要橫向分隔線
+            horizontalInside: BorderSide(width: 3, color: Colors.white), // 只要橫向分隔線
             verticalInside: BorderSide(width: 3, color: Colors.white),
             top: BorderSide.none, // 不要最上面
             bottom: BorderSide.none, // 不要最下面

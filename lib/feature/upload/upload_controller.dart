@@ -5,6 +5,7 @@ import 'package:frontend/backend/backend_interface.dart';
 import 'package:frontend/backend/backend_provider.dart';
 import 'package:frontend/entities/runner_info.dart';
 import 'package:frontend/entities/upload_seperately_status.dart';
+import 'package:frontend/feature/auth/auth_provider.dart';
 import 'package:frontend/utils/combine_date_and_time.dart';
 import 'package:frontend/feature/upload/widget/anchor_point_dialog.dart';
 import 'package:frontend/feature/upload/upload_completion.dart';
@@ -121,8 +122,7 @@ final uploadControllerProvider =
       );
     });
 
-class UploadRunnerListNotifier
-    extends StateNotifier<AsyncValue<List<RunnerInfo>>> {
+class UploadRunnerListNotifier extends StateNotifier<AsyncValue<List<RunnerInfo>>> {
   final BackendInterface backend;
 
   UploadRunnerListNotifier(this.backend) : super(const AsyncValue.loading()) {
@@ -145,7 +145,7 @@ class UploadRunnerListNotifier
 }
 
 final uploadRunnerListProvider =
-    StateNotifierProvider<
-      UploadRunnerListNotifier,
-      AsyncValue<List<RunnerInfo>>
-    >((ref) => UploadRunnerListNotifier(ref.watch(backendProvider)));
+    StateNotifierProvider<UploadRunnerListNotifier, AsyncValue<List<RunnerInfo>>>((ref) {
+      ref.watch(authProvider);
+      return UploadRunnerListNotifier(ref.watch(backendProvider));
+    });

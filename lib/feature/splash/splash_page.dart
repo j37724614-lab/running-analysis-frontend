@@ -25,11 +25,7 @@ class _SplashPageState extends State<SplashPage> {
     return Scaffold(
       backgroundColor: const Color(0xFFA5C3ED),
       body: Center(
-        child: SizedBox(
-          width: 200,
-          height: 200,
-          child: Lottie.asset('assets/splash.json'),
-        ),
+        child: SizedBox(width: 200, height: 200, child: Lottie.asset('assets/splash.json')),
       ),
     );
   }

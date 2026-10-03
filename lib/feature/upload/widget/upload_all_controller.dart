@@ -89,10 +89,7 @@ class UploadAllController extends StateNotifier<UploadAllState> {
       // 增加數量：補上空的狀態
       newStates = [
         ...currentStates,
-        ...List.generate(
-          count - state.cameraCount,
-          (_) => const UploadThumbnailState(),
-        ),
+        ...List.generate(count - state.cameraCount, (_) => const UploadThumbnailState()),
       ];
     } else {
       // 減少數量：直接截斷
@@ -123,13 +120,11 @@ class UploadAllController extends StateNotifier<UploadAllState> {
       );
       state = state.copyWith(tempVideoStates: updated);
     } catch (e) {
-      updated[index] = updated[index].copyWith(
-        isUploading: false,
-        error: e.toString(),
-      );
+      updated[index] = updated[index].copyWith(isUploading: false, error: e.toString());
       state = state.copyWith(tempVideoStates: updated);
     }
   }
+
   /// 設定某個相機的錨點結果
   void setAnchor(int index, AnchorResult? result) {
     final updated = [...state.tempVideoStates];
@@ -143,9 +138,7 @@ class UploadAllController extends StateNotifier<UploadAllState> {
 }
 
 final uploadAllControllerProvider =
-    StateNotifierProvider.autoDispose<UploadAllController, UploadAllState>((
-      ref,
-    ) {
+    StateNotifierProvider.autoDispose<UploadAllController, UploadAllState>((ref) {
       final backend = ref.watch(backendProvider);
       return UploadAllController(backend, ref);
     });

@@ -23,8 +23,7 @@ class RecordCameraView extends ConsumerStatefulWidget {
   ConsumerState<RecordCameraView> createState() => _RecordCameraViewState();
 }
 
-class _RecordCameraViewState extends ConsumerState<RecordCameraView>
-    with ChangeNotifier {
+class _RecordCameraViewState extends ConsumerState<RecordCameraView> with ChangeNotifier {
   CameraController? _controller;
   bool _isInitialized = false;
   XFile? _recordedFile;
@@ -121,10 +120,7 @@ class _RecordCameraViewState extends ConsumerState<RecordCameraView>
       if (mounted) {
         toastification.show(
           context: context,
-          title: const Text(
-            'Error',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
+          title: const Text('Error', style: TextStyle(fontWeight: FontWeight.bold)),
           description: Text('無法存取相機: $e'),
           type: ToastificationType.error,
           style: ToastificationStyle.minimal,
@@ -142,8 +138,7 @@ class _RecordCameraViewState extends ConsumerState<RecordCameraView>
       _isInitialized = false;
     });
 
-    _currentBackCameraIndex =
-        (_currentBackCameraIndex + 1) % _allBackCameras.length;
+    _currentBackCameraIndex = (_currentBackCameraIndex + 1) % _allBackCameras.length;
     await _controller?.dispose();
     await _initializeCamera();
     notifyListeners();
@@ -189,68 +184,6 @@ class _RecordCameraViewState extends ConsumerState<RecordCameraView>
       }
     });
   }
-
-  // void _startPreviewTimer() {
-  //   print('start preview timer');
-  //   _previewTimer?.cancel();
-
-  //   // 定義傳送預覽圖的邏輯
-  //   Future<void> captureAndSend() async {
-  //     print('Preview tick...');
-  //     if (_controller == null) {
-  //       print('Controller is null');
-  //       return;
-  //     }
-  //     if (!_controller!.value.isInitialized) {
-  //       print('Controller is not initialized');
-  //       return;
-  //     }
-  //     if (_controller!.value.isTakingPicture) {
-  //       print('Controller is currently taking a picture');
-  //       return;
-  //     }
-
-  //     try {
-  //       final xFile = await _controller!.takePicture();
-  //       final bytes = await xFile.readAsBytes();
-  //       print('Took picture: \${bytes.length} bytes');
-
-  //       final base64String = await compute(_compressAndEncodeImage, bytes);
-  //       print('Compressed picture to base64: \${base64String?.length ?? 0} characters');
-
-  //       if (base64String != null && mounted) {
-  //         ref
-  //             .read(recordControllerProvider.notifier)
-  //             .sendCameraPreview("data:image/jpeg;base64,$base64String");
-  //         print('Successfully sent preview to backend.');
-  //       }
-  //     } catch (e, stack) {
-  //       print('Failed to capture or send preview: $e\\n$stack');
-  //     }
-  //   }
-
-  //   // 第一張馬上傳送，然後設定每五秒傳送
-  //   captureAndSend();
-  //   _previewTimer = Timer.periodic(const Duration(seconds: 5), (_) {
-  //     captureAndSend();
-  //   });
-  // }
-
-  // static String? _compressAndEncodeImage(Uint8List bytes) {
-  //   try {
-  //     final originalImage = img.decodeImage(bytes);
-  //     if (originalImage == null) return null;
-
-  //     // 由於只要確認有沒有錄歪，解析度可以縮小到 320x240，保持長寬比
-  //     final resizedImage = img.copyResize(originalImage, width: 320);
-
-  //     // 低品質 JPEG 壓縮，降低網路頻寬使用
-  //     final jpgBytes = img.encodeJpg(resizedImage, quality: 30);
-  //     return base64Encode(jpgBytes);
-  //   } catch (e) {
-  //     return null;
-  //   }
-  // }
 
   Future<void> _processUpload() async {
     if (_recordedFile == null || _isUploading) return;
@@ -482,11 +415,10 @@ class _RecordCameraViewState extends ConsumerState<RecordCameraView>
     if (!mounted) return;
 
     // 使用 rootNavigator: true 以確保對話框覆蓋整個 App（包括主頁的 AppBar 與 Sidebar）
-    await Navigator.of(context, rootNavigator: true).push(
-      MaterialPageRoute(
-        builder: (context) => _FullScreenCameraDialog(cameraViewState: this),
-      ),
-    );
+    await Navigator.of(
+      context,
+      rootNavigator: true,
+    ).push(MaterialPageRoute(builder: (context) => _FullScreenCameraDialog(cameraViewState: this)));
 
     if (mounted) {
       // Re-initialize again so the normal view also gets a fresh camera element.
@@ -509,10 +441,7 @@ class _RecordCameraViewState extends ConsumerState<RecordCameraView>
     final controller = ref.read(recordControllerProvider.notifier);
 
     // 錄影前的驗證邏輯
-    final connectedCameraIndexes = state.members
-        .map((m) => m.cameraIndex)
-        .whereType<int>()
-        .toSet();
+    final connectedCameraIndexes = state.members.map((m) => m.cameraIndex).whereType<int>().toSet();
     final areAllCamerasConnected =
         state.expectedCameraCount > 0 &&
         List.generate(
@@ -520,12 +449,8 @@ class _RecordCameraViewState extends ConsumerState<RecordCameraView>
           (i) => i,
         ).every((i) => connectedCameraIndexes.contains(i));
 
-    final participatingMembers = state.members.where(
-      (m) => m.cameraIndex != null,
-    );
-    final areAllParticipatingReady = participatingMembers.every(
-      (m) => m.isReady,
-    );
+    final participatingMembers = state.members.where((m) => m.cameraIndex != null);
+    final areAllParticipatingReady = participatingMembers.every((m) => m.isReady);
 
     // 強制橫式顯示邏輯
     double rawRatio = _controller!.value.aspectRatio;
@@ -551,10 +476,7 @@ class _RecordCameraViewState extends ConsumerState<RecordCameraView>
           child: Stack(
             fit: StackFit.expand,
             children: [
-              RotatedBox(
-                quarterTurns: quarterTurns,
-                child: CameraPreview(_controller!),
-              ),
+              RotatedBox(quarterTurns: quarterTurns, child: CameraPreview(_controller!)),
               if (isAnchorMode && snapshotBytes != null)
                 Positioned.fill(
                   child: RotatedBox(
@@ -604,10 +526,7 @@ class _RecordCameraViewState extends ConsumerState<RecordCameraView>
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 6,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: Colors.black54,
                     borderRadius: BorderRadius.circular(12),
@@ -628,10 +547,7 @@ class _RecordCameraViewState extends ConsumerState<RecordCameraView>
             right: 0,
             child: Center(
               child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
                   color: Colors.black54,
                   borderRadius: BorderRadius.circular(20),
@@ -649,11 +565,7 @@ class _RecordCameraViewState extends ConsumerState<RecordCameraView>
                         ),
                       ),
                       const SizedBox(width: 4),
-                      const Icon(
-                        Icons.flip_camera_ios,
-                        color: Colors.white,
-                        size: 16,
-                      ),
+                      const Icon(Icons.flip_camera_ios, color: Colors.white, size: 16),
                     ],
                   ),
                 ),
@@ -671,10 +583,7 @@ class _RecordCameraViewState extends ConsumerState<RecordCameraView>
                   : _enterFullscreen,
               child: Container(
                 padding: const EdgeInsets.all(8),
-                decoration: const BoxDecoration(
-                  color: Colors.black54,
-                  shape: BoxShape.circle,
-                ),
+                decoration: const BoxDecoration(color: Colors.black54, shape: BoxShape.circle),
                 child: Icon(
                   isFullscreen ? Icons.fullscreen_exit : Icons.fullscreen,
                   color: Colors.white,
@@ -690,17 +599,10 @@ class _RecordCameraViewState extends ConsumerState<RecordCameraView>
             right: 24,
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: state.status == RecordStatus.recording
-                    ? Colors.black
-                    : Colors.red,
+                backgroundColor: state.status == RecordStatus.recording ? Colors.black : Colors.red,
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 12,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
               ),
               onPressed: () {
                 if (state.status == RecordStatus.recording) {
@@ -727,10 +629,7 @@ class _RecordCameraViewState extends ConsumerState<RecordCameraView>
                   if (!areAllCamerasConnected) {
                     toastification.show(
                       context: context,
-                      title: const Text(
-                        'Error',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
+                      title: const Text('Error', style: TextStyle(fontWeight: FontWeight.bold)),
                       description: Text(
                         context.l10n.camerasNotAllConnected(
                           connectedCameraIndexes.length,
@@ -748,10 +647,7 @@ class _RecordCameraViewState extends ConsumerState<RecordCameraView>
                   if (!areAllParticipatingReady) {
                     toastification.show(
                       context: context,
-                      title: const Text(
-                        'Warning',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
+                      title: const Text('Warning', style: TextStyle(fontWeight: FontWeight.bold)),
                       description: Text(context.l10n.camerasNotAllReady),
                       type: ToastificationType.warning,
                       style: ToastificationStyle.minimal,
@@ -769,9 +665,7 @@ class _RecordCameraViewState extends ConsumerState<RecordCameraView>
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
-                    state.status == RecordStatus.recording
-                        ? Icons.stop
-                        : Icons.fiber_manual_record,
+                    state.status == RecordStatus.recording ? Icons.stop : Icons.fiber_manual_record,
                   ),
                   const SizedBox(width: 8),
                   Text(
@@ -797,10 +691,7 @@ class _RecordCameraViewState extends ConsumerState<RecordCameraView>
                 children: [
                   const CircularProgressIndicator(color: Colors.white),
                   const SizedBox(height: 8),
-                  Text(
-                    context.l10n.autoUploading,
-                    style: const TextStyle(color: Colors.white),
-                  ),
+                  Text(context.l10n.autoUploading, style: const TextStyle(color: Colors.white)),
                 ],
               ),
             ),
@@ -830,13 +721,7 @@ class _RecordCameraViewState extends ConsumerState<RecordCameraView>
                         color: Colors.white,
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        shadows: [
-                          Shadow(
-                            blurRadius: 4,
-                            color: Colors.black,
-                            offset: Offset(0, 2),
-                          ),
-                        ],
+                        shadows: [Shadow(blurRadius: 4, color: Colors.black, offset: Offset(0, 2))],
                       ),
                     ),
                   ],
@@ -852,19 +737,14 @@ class _RecordCameraViewState extends ConsumerState<RecordCameraView>
             child: GestureDetector(
               onTap: _enterFullscreen, // 引導進入全螢幕設定
               child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 5,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                 decoration: BoxDecoration(
                   color: state.anchorIsSet
                       ? const Color(0xFF00BFA5).withValues(alpha: 0.88)
                       : Colors.deepOrange.withValues(alpha: 0.88),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color: state.anchorIsSet
-                        ? const Color(0xFF00BFA5)
-                        : Colors.deepOrangeAccent,
+                    color: state.anchorIsSet ? const Color(0xFF00BFA5) : Colors.deepOrangeAccent,
                     width: 1,
                   ),
                 ),
@@ -872,9 +752,7 @@ class _RecordCameraViewState extends ConsumerState<RecordCameraView>
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
-                      state.anchorIsSet
-                          ? Icons.my_location
-                          : Icons.warning_amber_rounded,
+                      state.anchorIsSet ? Icons.my_location : Icons.warning_amber_rounded,
                       size: 12,
                       color: Colors.white,
                     ),
@@ -912,21 +790,13 @@ class _FullScreenCameraDialog extends ConsumerStatefulWidget {
   const _FullScreenCameraDialog({required this.cameraViewState});
 
   @override
-  ConsumerState<_FullScreenCameraDialog> createState() =>
-      _FullScreenCameraDialogState();
+  ConsumerState<_FullScreenCameraDialog> createState() => _FullScreenCameraDialogState();
 }
 
 // ── Anchor overlay constants ────────────────────────────────────
 List<String> _getAnchorLabels(BuildContext context) {
   final l10n = context.l10n;
-  return [
-    l10n.point1,
-    l10n.point2,
-    l10n.point3,
-    l10n.point4,
-    l10n.point5,
-    l10n.point6,
-  ];
+  return [l10n.point1, l10n.point2, l10n.point3, l10n.point4, l10n.point5, l10n.point6];
 }
 
 const _kAnchorColors = [
@@ -941,8 +811,7 @@ const _kAnchorHitRadius = 12.0;
 const _kAnchorMagRadius = 60.0;
 const _kAnchorMagZoom = 2.8;
 
-class _FullScreenCameraDialogState
-    extends ConsumerState<_FullScreenCameraDialog> {
+class _FullScreenCameraDialogState extends ConsumerState<_FullScreenCameraDialog> {
   // ── Camera state listener ───────────────────────────────────
   void _handleStateChange() {
     if (mounted) setState(() {});
@@ -1045,10 +914,8 @@ class _FullScreenCameraDialogState
   bool get _full => _pts.length >= 4;
   int get _nextIdx => _pts.length;
 
-  Offset _norm(Offset local) => Offset(
-    (local.dx / _imgW).clamp(0.0, 1.0),
-    (local.dy / _imgH).clamp(0.0, 1.0),
-  );
+  Offset _norm(Offset local) =>
+      Offset((local.dx / _imgW).clamp(0.0, 1.0), (local.dy / _imgH).clamp(0.0, 1.0));
 
   bool _isMobile(BuildContext context) {
     final isMobilePlatform =
@@ -1190,17 +1057,10 @@ class _FullScreenCameraDialogState
                     style: const TextStyle(color: Colors.white, fontSize: 14),
                     decoration: InputDecoration(
                       labelText: l10n.distanceLeftToCenter,
-                      labelStyle: const TextStyle(
-                        color: Colors.white70,
-                        fontSize: 12,
-                      ),
+                      labelStyle: const TextStyle(color: Colors.white70, fontSize: 12),
                       suffixText: 'm',
                       suffixStyle: const TextStyle(color: Colors.white60),
-                      prefixIcon: Icon(
-                        Icons.square,
-                        size: 12,
-                        color: _kAnchorColors[0],
-                      ),
+                      prefixIcon: Icon(Icons.square, size: 12, color: _kAnchorColors[0]),
                       filled: true,
                       fillColor: Colors.white.withValues(alpha: 0.06),
                       border: OutlineInputBorder(
@@ -1236,17 +1096,10 @@ class _FullScreenCameraDialogState
                     style: const TextStyle(color: Colors.white, fontSize: 14),
                     decoration: InputDecoration(
                       labelText: l10n.distanceCenterToRight,
-                      labelStyle: const TextStyle(
-                        color: Colors.white70,
-                        fontSize: 12,
-                      ),
+                      labelStyle: const TextStyle(color: Colors.white70, fontSize: 12),
                       suffixText: 'm',
                       suffixStyle: const TextStyle(color: Colors.white60),
-                      prefixIcon: Icon(
-                        Icons.square,
-                        size: 12,
-                        color: _kAnchorColors[4],
-                      ),
+                      prefixIcon: Icon(Icons.square, size: 12, color: _kAnchorColors[4]),
                       filled: true,
                       fillColor: Colors.white.withValues(alpha: 0.06),
                       border: OutlineInputBorder(
@@ -1322,10 +1175,7 @@ class _FullScreenCameraDialogState
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogCtx).pop(false),
-              child: Text(
-                l10n.cancel,
-                style: const TextStyle(color: Colors.white60),
-              ),
+              child: Text(l10n.cancel, style: const TextStyle(color: Colors.white60)),
             ),
             ElevatedButton(
               onPressed: () {
@@ -1339,14 +1189,9 @@ class _FullScreenCameraDialogState
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF00BFA5),
                 foregroundColor: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
-              child: Text(
-                l10n.applyAndSave,
-                style: const TextStyle(fontWeight: FontWeight.bold),
-              ),
+              child: Text(l10n.applyAndSave, style: const TextStyle(fontWeight: FontWeight.bold)),
             ),
           ],
         );
@@ -1552,10 +1397,7 @@ class _FullScreenCameraDialogState
   // ── Build ───────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
-    ref.listen(recordControllerProvider.select((state) => state.status), (
-      previous,
-      next,
-    ) {
+    ref.listen(recordControllerProvider.select((s) => s.status), (prev, next) {
       if (next == RecordStatus.idle || next == RecordStatus.connecting) {
         if (mounted && Navigator.of(context).canPop()) {
           Navigator.of(context).pop();
@@ -1563,12 +1405,11 @@ class _FullScreenCameraDialogState
       }
     });
 
-    ref.listen(recordControllerProvider.select((state) => state.roomId), (
-      previous,
-      next,
-    ) {
-      if (next == null && mounted && Navigator.of(context).canPop()) {
-        Navigator.of(context).pop();
+    ref.listen(recordControllerProvider.select((s) => s.roomId), (prev, next) {
+      if (next == null) {
+        if (mounted && Navigator.of(context).canPop()) {
+          Navigator.of(context).pop();
+        }
       }
     });
 
@@ -1596,9 +1437,7 @@ class _FullScreenCameraDialogState
                 ? const Positioned(
                     top: 16,
                     left: 16,
-                    child: SafeArea(
-                      child: CircularProgressIndicator(color: Colors.white),
-                    ),
+                    child: SafeArea(child: CircularProgressIndicator(color: Colors.white)),
                   )
                 : _buildAnchorToggleButton(),
         ],
@@ -1608,9 +1447,7 @@ class _FullScreenCameraDialogState
 
   Widget _buildAnchorToggleButton() {
     final l10n = context.l10n;
-    final isSet = ref.watch(
-      recordControllerProvider.select((s) => s.anchorIsSet),
-    );
+    final isSet = ref.watch(recordControllerProvider.select((s) => s.anchorIsSet));
     return Positioned(
       top: 16,
       left: 16,
@@ -1620,9 +1457,7 @@ class _FullScreenCameraDialogState
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             decoration: BoxDecoration(
-              color: isSet
-                  ? const Color(0xFF00BFA5).withValues(alpha: 0.85)
-                  : Colors.black54,
+              color: isSet ? const Color(0xFF00BFA5).withValues(alpha: 0.85) : Colors.black54,
               borderRadius: BorderRadius.circular(22),
               border: Border.all(
                 color: isSet ? const Color(0xFF00BFA5) : Colors.white24,
@@ -1693,18 +1528,14 @@ class _FullScreenCameraDialogState
                     final isActive =
                         _isMobile(context) && i == _selectedActivePointIdx;
                     return Positioned(
-                      left: pt.dx * _imgW - 18,
-                      top: pt.dy * _imgH - 18,
-                      child: AnimatedScale(
-                        scale: (isDragging || isActive) ? 1.35 : 1.0,
-                        duration: const Duration(milliseconds: 150),
-                        child: _AnchorMarkerOverlay(
-                          label: labels[i],
-                          color: _kAnchorColors[i],
-                          index: i + 1,
-                          isDragging: isDragging,
-                          isActive: isActive,
-                        ),
+                      left: pt.dx * _imgW,
+                      top: pt.dy * _imgH,
+                      child: _AnchorMarkerOverlay(
+                        label: labels[i],
+                        color: _kAnchorColors[i],
+                        index: i + 1,
+                        isDragging: isDragging,
+                        isActive: isActive,
                       ),
                     );
                   }),
@@ -1718,7 +1549,7 @@ class _FullScreenCameraDialogState
                       child: Center(
                         child: _PulsingBadge(
                           color: _kAnchorColors[_nextIdx],
-                          label: 'Pt ${_nextIdx + 1}：${labels[_nextIdx]}',
+                          label: labels[_nextIdx],
                         ),
                       ),
                     ),
@@ -1737,10 +1568,7 @@ class _FullScreenCameraDialogState
                             onTap: _isCapturing ? null : _recaptureSnapshot,
                             borderRadius: BorderRadius.circular(20),
                             child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 10,
-                                vertical: 6,
-                              ),
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                               decoration: BoxDecoration(
                                 color: Colors.black.withValues(alpha: 0.65),
                                 borderRadius: BorderRadius.circular(20),
@@ -1782,8 +1610,7 @@ class _FullScreenCameraDialogState
                   ),
 
                   // ── Magnifier ──────────────────────────────
-                  if (_draggingIdx != null && _magPos != null)
-                    _buildMagnifier(),
+                  if (_draggingIdx != null && _magPos != null) _buildMagnifier(),
 
                   // ── Action bar & Anchor point buttons (bottom) ────────────────────
                   Positioned(
@@ -1843,11 +1670,7 @@ class _FullScreenCameraDialogState
           shape: BoxShape.circle,
           border: Border.all(color: dragColor, width: 2.5),
           boxShadow: [
-            BoxShadow(
-              color: dragColor.withValues(alpha: 0.45),
-              blurRadius: 14,
-              spreadRadius: 3,
-            ),
+            BoxShadow(color: dragColor.withValues(alpha: 0.45), blurRadius: 14, spreadRadius: 3),
           ],
         ),
         clipBehavior: Clip.antiAlias,
@@ -1916,9 +1739,7 @@ class _FullScreenCameraDialogState
             foregroundColor: Colors.white70,
             side: const BorderSide(color: Colors.white30),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           ),
           icon: const Icon(Icons.close, size: 14),
           label: Text(l10n.cancel, style: const TextStyle(fontSize: 12)),
@@ -1940,9 +1761,7 @@ class _FullScreenCameraDialogState
             foregroundColor: Colors.white60,
             side: const BorderSide(color: Colors.white24),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           ),
           icon: const Icon(Icons.undo, size: 14),
           label: Text(l10n.undo, style: const TextStyle(fontSize: 12)),
@@ -1960,9 +1779,7 @@ class _FullScreenCameraDialogState
             foregroundColor: Colors.white38,
             side: const BorderSide(color: Colors.white12),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           ),
           icon: const Icon(Icons.refresh, size: 14),
           label: Text(l10n.clear, style: const TextStyle(fontSize: 12)),
@@ -1978,9 +1795,7 @@ class _FullScreenCameraDialogState
               backgroundColor: const Color(0xFF00BFA5),
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
             ),
             icon: const Icon(Icons.check_circle_outline, size: 16),
             label: Text(
@@ -2016,14 +1831,10 @@ class _FullScreenCameraDialogState
           decoration: BoxDecoration(
             color: isActive
                 ? color.withValues(alpha: 0.35)
-                : (isSet
-                      ? color.withValues(alpha: 0.12)
-                      : Colors.white.withValues(alpha: 0.04)),
+                : (isSet ? color.withValues(alpha: 0.12) : Colors.white.withValues(alpha: 0.04)),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-              color: isActive
-                  ? color
-                  : (isSet ? color.withValues(alpha: 0.5) : Colors.white12),
+              color: isActive ? color : (isSet ? color.withValues(alpha: 0.5) : Colors.white12),
               width: isActive ? 1.8 : 1.0,
             ),
           ),
@@ -2046,11 +1857,7 @@ class _FullScreenCameraDialogState
                     ? const Icon(Icons.check, size: 8, color: Colors.white)
                     : Text(
                         '${i + 1}',
-                        style: TextStyle(
-                          color: color,
-                          fontSize: 8,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: TextStyle(color: color, fontSize: 8, fontWeight: FontWeight.bold),
                       ),
               ),
               const SizedBox(width: 3),
@@ -2059,9 +1866,7 @@ class _FullScreenCameraDialogState
                   labels[i],
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    color: isActive
-                        ? Colors.white
-                        : (isSet ? Colors.white70 : Colors.white38),
+                    color: isActive ? Colors.white : (isSet ? Colors.white70 : Colors.white38),
                     fontSize: 10.5,
                     fontWeight: isActive ? FontWeight.bold : FontWeight.normal,
                   ),
@@ -2084,10 +1889,7 @@ class _FullScreenCameraDialogState
       ),
       child: Row(
         spacing: 4,
-        children: List.generate(
-          6,
-          (i) => Expanded(child: _buildAnchorPointButton(i)),
-        ),
+        children: List.generate(6, (i) => Expanded(child: _buildAnchorPointButton(i))),
       ),
     );
   }
@@ -2106,9 +1908,7 @@ class _CameraLoadingShimmer extends StatelessWidget {
           alignment: Alignment.center,
           children: [
             Shimmer.fromColors(
-              baseColor: Theme.of(
-                context,
-              ).primaryColorDark.withValues(alpha: 0.3),
+              baseColor: Theme.of(context).primaryColorDark.withValues(alpha: 0.3),
               highlightColor: Colors.white,
               child: Container(
                 decoration: BoxDecoration(
@@ -2146,54 +1946,63 @@ class _AnchorMarkerOverlay extends StatelessWidget {
   Widget build(BuildContext context) {
     final highlight = isDragging || isActive;
     final size = highlight ? 36.0 : 30.0;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          width: size,
-          height: size,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: color,
-            border: Border.all(
-              color: highlight ? Colors.white : Colors.white70,
-              width: highlight ? 2.5 : 2,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: color.withValues(alpha: highlight ? 0.85 : 0.55),
-                blurRadius: highlight ? 16 : 8,
-                spreadRadius: highlight ? 3 : 1,
+
+    return Transform.translate(
+      offset: Offset(0, -size / 2),
+      child: FractionalTranslation(
+        translation: const Offset(-0.5, 0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              width: size,
+              height: size,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: color,
+                border: Border.all(
+                  color: highlight ? Colors.white : Colors.white70,
+                  width: highlight ? 2.5 : 2,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: color.withValues(alpha: highlight ? 0.85 : 0.55),
+                    blurRadius: highlight ? 16 : 8,
+                    spreadRadius: highlight ? 3 : 1,
+                  ),
+                ],
               ),
-            ],
-          ),
-          alignment: Alignment.center,
-          child: Text(
-            '$index',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: highlight ? 15 : 13,
-              fontWeight: FontWeight.bold,
+              alignment: Alignment.center,
+              child: Text(
+                '$index',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: highlight ? 15 : 13,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
-          ),
-        ),
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-          decoration: BoxDecoration(
-            color: color.withValues(alpha: highlight ? 1.0 : 0.85),
-            borderRadius: BorderRadius.circular(4),
-          ),
-          child: Text(
-            label,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 10,
-              fontWeight: FontWeight.bold,
-              fontFamily: 'NotoSansTC',
+            const SizedBox(height: 2),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: highlight ? 1.0 : 0.85),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Text(
+                label,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'NotoSansTC',
+                ),
+              ),
             ),
-          ),
+          ],
         ),
-      ],
+      ),
     );
   }
 }
@@ -2346,26 +2155,10 @@ class _LiveMagnifierPainter extends CustomPainter {
       ..strokeWidth = 1.6
       ..style = PaintingStyle.stroke;
 
-    canvas.drawLine(
-      Offset(cx - gap - lineLen, cy),
-      Offset(cx - gap, cy),
-      linePaint,
-    );
-    canvas.drawLine(
-      Offset(cx + gap, cy),
-      Offset(cx + gap + lineLen, cy),
-      linePaint,
-    );
-    canvas.drawLine(
-      Offset(cx, cy - gap - lineLen),
-      Offset(cx, cy - gap),
-      linePaint,
-    );
-    canvas.drawLine(
-      Offset(cx, cy + gap),
-      Offset(cx, cy + gap + lineLen),
-      linePaint,
-    );
+    canvas.drawLine(Offset(cx - gap - lineLen, cy), Offset(cx - gap, cy), linePaint);
+    canvas.drawLine(Offset(cx + gap, cy), Offset(cx + gap + lineLen, cy), linePaint);
+    canvas.drawLine(Offset(cx, cy - gap - lineLen), Offset(cx, cy - gap), linePaint);
+    canvas.drawLine(Offset(cx, cy + gap), Offset(cx, cy + gap + lineLen), linePaint);
 
     // Center dot
     canvas.drawCircle(Offset(cx, cy), 4, Paint()..color = color);
@@ -2396,18 +2189,15 @@ class _PulsingBadge extends StatefulWidget {
   State<_PulsingBadge> createState() => _PulsingBadgeState();
 }
 
-class _PulsingBadgeState extends State<_PulsingBadge>
-    with SingleTickerProviderStateMixin {
+class _PulsingBadgeState extends State<_PulsingBadge> with SingleTickerProviderStateMixin {
   late AnimationController _ctrl;
   late Animation<double> _anim;
 
   @override
   void initState() {
     super.initState();
-    _ctrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 900),
-    )..repeat(reverse: true);
+    _ctrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 900))
+      ..repeat(reverse: true);
     _anim = Tween<double>(
       begin: 0.85,
       end: 1.15,

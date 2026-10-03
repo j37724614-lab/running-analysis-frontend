@@ -34,15 +34,14 @@ class VideoControllerManager {
   }
 }
 
-final videoManagerProvider =
-    FutureProvider.family<VideoControllerManager, String>((ref, id) async {
-      final authState = ref.watch(authProvider);
-      final token = authState.token;
-      var urls = API.getRunSessionVideo(id)[1] as String;
-      if (token != null && token.isNotEmpty) {
-        final separator = urls.contains('?') ? '&' : '?';
-        urls = '$urls${separator}token=$token';
-      }
+final videoManagerProvider = FutureProvider.family<VideoControllerManager, String>((ref, id) async {
+  final authState = ref.watch(authProvider);
+  final token = authState.token;
+  var urls = API.getRunSessionVideo(id)[1] as String;
+  if (token != null && token.isNotEmpty) {
+    final separator = urls.contains('?') ? '&' : '?';
+    urls = '$urls${separator}token=$token';
+  }
 
       final manager = VideoControllerManager(urls);
       try {

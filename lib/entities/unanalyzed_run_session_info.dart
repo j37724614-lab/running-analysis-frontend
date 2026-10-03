@@ -34,4 +34,28 @@ class UnanalyzedRunSessionInfo {
       videoPaths: List<String?>.from(json['videoPaths']),
     );
   }
+
+  UnanalyzedRunSessionInfo copyWith({
+    String? runSessionId,
+    String? runnerId,
+    String? runnerName,
+    DateTime? date,
+    int? cameraCount,
+    int? fps,
+    String? note,
+    List<int>? unuploadedCameraIndexes,
+    List<String?>? videoPaths,
+  }) {
+    return UnanalyzedRunSessionInfo(
+      runSessionId: runSessionId ?? this.runSessionId,
+      runnerId: runnerId ?? this.runnerId,
+      runnerName: runnerName ?? this.runnerName,
+      date: date ?? this.date,
+      cameraCount: cameraCount ?? this.cameraCount,
+      fps: fps ?? this.fps,
+      note: note ?? this.note,
+      unuploadedCameraIndexes: unuploadedCameraIndexes ?? this.unuploadedCameraIndexes,
+      videoPaths: videoPaths ?? this.videoPaths,
+    );
+  }
 }

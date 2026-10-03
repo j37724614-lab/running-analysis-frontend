@@ -9,20 +9,14 @@ class LoadingOverlay extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        const Opacity(
-          opacity: 0.5,
-          child: ModalBarrier(dismissible: false, color: Colors.black),
-        ),
+        const Opacity(opacity: 0.5, child: ModalBarrier(dismissible: false, color: Colors.black)),
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             SpinKitCircle(
               size: 80,
               itemBuilder: (context, index) {
-                final colors = [
-                  Colors.white,
-                  Theme.of(context).primaryColorDark,
-                ];
+                final colors = [Colors.white, Theme.of(context).primaryColorDark];
                 final color = colors[index % colors.length];
                 return DecoratedBox(decoration: BoxDecoration(color: color));
               },

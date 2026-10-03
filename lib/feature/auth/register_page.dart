@@ -31,11 +31,10 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
-    
-    await ref.read(authProvider.notifier).register(
-      _usernameController.text.trim(),
-      _passwordController.text,
-    );
+
+    await ref
+        .read(authProvider.notifier)
+        .register(_usernameController.text.trim(), _passwordController.text);
   }
 
   @override
@@ -49,10 +48,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Color(0xFFEDF4FE),
-              Color(0xFFC7DCF8),
-            ],
+            colors: [Color(0xFFEDF4FE), Color(0xFFC7DCF8)],
           ),
         ),
         child: Center(
@@ -63,9 +59,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
               child: Card(
                 elevation: 12,
                 shadowColor: Colors.black.withValues(alpha: 0.1),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(24.0),
-                ),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
                 color: Colors.white.withValues(alpha: 0.85),
                 margin: const EdgeInsets.symmetric(vertical: 24.0),
                 child: Container(
@@ -73,10 +67,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                   padding: const EdgeInsets.all(32.0),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(24.0),
-                    border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.5),
-                      width: 1.5,
-                    ),
+                    border: Border.all(color: Colors.white.withValues(alpha: 0.5), width: 1.5),
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -112,31 +103,24 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                       Text(
                         l10n.appTitle,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Color(0xFF6B7280),
-                        ),
+                        style: const TextStyle(fontSize: 14, color: Color(0xFF6B7280)),
                       ),
                       const SizedBox(height: 32),
-                      
+
                       // Username field
                       TextFormField(
                         controller: _usernameController,
                         style: const TextStyle(color: Color(0xFF1F2937)),
                         decoration: InputDecoration(
                           labelText: l10n.username,
-                          labelStyle: const TextStyle(
-                            color: Color(0xFF6B7280),
-                          ),
+                          labelStyle: const TextStyle(color: Color(0xFF6B7280)),
                           prefixIcon: const Icon(
                             Icons.person_outline_rounded,
                             color: Color(0xFF508FE8),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(16.0),
-                            borderSide: const BorderSide(
-                              color: Color(0x55508FE8),
-                            ),
+                            borderSide: const BorderSide(color: Color(0x55508FE8)),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(16.0),
@@ -159,7 +143,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                         },
                       ),
                       const SizedBox(height: 20),
-                      
+
                       // Password field
                       TextFormField(
                         controller: _passwordController,
@@ -167,18 +151,16 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                         style: const TextStyle(color: Color(0xFF1F2937)),
                         decoration: InputDecoration(
                           labelText: l10n.password,
-                          labelStyle: const TextStyle(
-                            color: Color(0xFF6B7280),
-                          ),
+                          labelStyle: const TextStyle(color: Color(0xFF6B7280)),
                           prefixIcon: const Icon(
                             Icons.lock_outline_rounded,
                             color: Color(0xFF508FE8),
                           ),
                           suffixIcon: IconButton(
                             icon: Icon(
-                              _obscurePassword 
-                                ? Icons.visibility_off_outlined
-                                : Icons.visibility_outlined,
+                              _obscurePassword
+                                  ? Icons.visibility_off_outlined
+                                  : Icons.visibility_outlined,
                               color: const Color(0xFF6B7280),
                             ),
                             onPressed: () {
@@ -189,9 +171,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(16.0),
-                            borderSide: const BorderSide(
-                              color: Color(0x55508FE8),
-                            ),
+                            borderSide: const BorderSide(color: Color(0x55508FE8)),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(16.0),
@@ -214,7 +194,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                         },
                       ),
                       const SizedBox(height: 20),
-                      
+
                       // Confirm Password field
                       TextFormField(
                         controller: _confirmPasswordController,
@@ -222,18 +202,16 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                         style: const TextStyle(color: Color(0xFF1F2937)),
                         decoration: InputDecoration(
                           labelText: l10n.confirmPassword,
-                          labelStyle: const TextStyle(
-                            color: Color(0xFF6B7280),
-                          ),
+                          labelStyle: const TextStyle(color: Color(0xFF6B7280)),
                           prefixIcon: const Icon(
                             Icons.lock_outline_rounded,
                             color: Color(0xFF508FE8),
                           ),
                           suffixIcon: IconButton(
                             icon: Icon(
-                              _obscureConfirmPassword 
-                                ? Icons.visibility_off_outlined
-                                : Icons.visibility_outlined,
+                              _obscureConfirmPassword
+                                  ? Icons.visibility_off_outlined
+                                  : Icons.visibility_outlined,
                               color: const Color(0xFF6B7280),
                             ),
                             onPressed: () {
@@ -244,9 +222,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(16.0),
-                            borderSide: const BorderSide(
-                              color: Color(0x55508FE8),
-                            ),
+                            borderSide: const BorderSide(color: Color(0x55508FE8)),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(16.0),
@@ -272,7 +248,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                         },
                       ),
                       const SizedBox(height: 24),
-                      
+
                       // Error display
                       if (authState.status == AuthStatus.error && authState.errorMessage != null)
                         Padding(
@@ -287,7 +263,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                             ),
                           ),
                         ),
-                      
+
                       // Register Button
                       SizedBox(
                         height: 50,
@@ -301,32 +277,26 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                             elevation: 2,
                           ),
                           child: authState.status == AuthStatus.loading
-                            ? const SpinKitThreeBounce(
-                                color: Colors.white,
-                                size: 20,
-                              )
-                            : Text(
-                                l10n.register,
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white,
+                              ? const SpinKitThreeBounce(color: Colors.white, size: 20)
+                              : Text(
+                                  l10n.register,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white,
+                                  ),
                                 ),
-                              ),
                         ),
                       ),
                       const SizedBox(height: 24),
-                      
+
                       // Switch to Login Page
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
                             l10n.alreadyHaveAccount,
-                            style: const TextStyle(
-                              color: Color(0xFF6B7280),
-                              fontSize: 14,
-                            ),
+                            style: const TextStyle(color: Color(0xFF6B7280), fontSize: 14),
                           ),
                           TextButton(
                             onPressed: () {

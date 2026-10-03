@@ -64,6 +64,7 @@ dependencies:
   image: ^4.8.0
   expansion_tile_group: ^2.3.0
   shared_preferences: ^2.5.3
+  qr_flutter: ^4.1.0
 
 dev_dependencies:
   flutter_test:
@@ -94,6 +95,7 @@ flutter:
   assets:
     - assets/splash.json
     - assets/icon.png
+    - assets/mock_runner_frame.jpg
 
 flutter_launcher_icons:
   android: true

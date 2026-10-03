@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
+import 'package:frontend/feature/auth/auth_provider.dart';
 import 'package:frontend/feature/record/record_enums.dart';
 import 'package:frontend/feature/record/record_state.dart';
 import 'package:frontend/feature/upload/widget/anchor_point_dialog.dart';
@@ -16,11 +18,21 @@ class RecordController extends StateNotifier<RecordState> {
   RecordController(this._ref) : super(RecordState());
 
   String get _wsUrl {
+    if (kIsWeb) {
+      final base = Uri.base;
+      final isSecure = base.scheme == 'https';
+      final wsScheme = isSecure ? 'wss' : 'ws';
+      if (base.host == 'localhost' || base.host == '127.0.0.1') {
+        return '$wsScheme://${base.host}:19130/running_analysis/api/ws';
+      } else {
+        final portStr = (base.hasPort && base.port != 80 && base.port != 443)
+            ? ':${base.port}'
+            : '';
+        return '$wsScheme://${base.host}$portStr/running_analysis/api/ws';
+      }
+    }
     final baseUrl = API.baseUrl;
-    final url =
-        '${baseUrl.replaceFirst('https://', 'wss://').replaceFirst('http://', 'ws://')}/ws';
-
-    return url;
+    return '${baseUrl.replaceFirst('https://', 'wss://').replaceFirst('http://', 'ws://')}/ws';
   }
 
   void _connect() {
@@ -30,6 +42,18 @@ class RecordController extends StateNotifier<RecordState> {
       _onError(e);
     });
     _channel!.stream.listen(_listen, onError: _onError, onDone: _onDone);
+  }
+
+  Future<void> _send(RecordMessage msg) async {
+    try {
+      if (_channel == null) {
+        _connect();
+      }
+      await _channel?.ready;
+      _channel?.sink.add(jsonEncode(msg.toJson()));
+    } catch (e) {
+      _onError(e);
+    }
   }
 
   void _listen(dynamic message) {
@@ -52,8 +76,7 @@ class RecordController extends StateNotifier<RecordState> {
           status: newStatus,
           roomId: roomId,
           members: members,
-          expectedCameraCount:
-              msg.data['expectedCameraCount'] ?? state.expectedCameraCount,
+          expectedCameraCount: msg.data['expectedCameraCount'] ?? state.expectedCameraCount,
         );
         break;
       case RecordMessageType.startRecording:
@@ -84,21 +107,13 @@ class RecordController extends StateNotifier<RecordState> {
         );
         break;
       case RecordMessageType.controlRequest:
-        state = state.copyWith(
-          pendingControlRequestFrom: msg.data['requesterId'],
-        );
+        state = state.copyWith(pendingControlRequestFrom: msg.data['requesterId']);
         break;
       case RecordMessageType.controlGranted:
-        state = state.copyWith(
-          role: RecordRole.master,
-          isWaitingForControlApproval: false,
-        );
+        state = state.copyWith(role: RecordRole.master, isWaitingForControlApproval: false);
         break;
       case RecordMessageType.controlRevoked:
-        state = state.copyWith(
-          role: RecordRole.slave,
-          isRecordingEnabled: false,
-        );
+        state = state.copyWith(role: RecordRole.slave, isRecordingEnabled: false);
         break;
       case RecordMessageType.controlRejected:
         state = state.copyWith(
@@ -107,10 +122,7 @@ class RecordController extends StateNotifier<RecordState> {
         );
         break;
       case RecordMessageType.error:
-        state = state.copyWith(
-          status: RecordStatus.idle,
-          error: msg.data['message'],
-        );
+        state = state.copyWith(status: RecordStatus.idle, error: msg.data['message']);
         break;
       default:
         break;
@@ -140,26 +152,19 @@ class RecordController extends StateNotifier<RecordState> {
       type: RecordMessageType.createRoom,
       data: {'expectedCameraCount': expectedCameraCount},
     );
-    _channel!.sink.add(jsonEncode(msg.toJson()));
+    _send(msg);
   }
 
   void toggleMasterRecording(bool enabled, [int? index]) {
-    state = state.copyWith(
-      isRecordingEnabled: enabled,
-      myCameraIndex: enabled ? index : null,
-    );
+    state = state.copyWith(isRecordingEnabled: enabled, myCameraIndex: enabled ? index : null);
 
     if (state.status == RecordStatus.ready) {
       // 1. 回報加入/離開為相機身分
       final msg = RecordMessage(
         type: RecordMessageType.joinRoom,
-        data: {
-          'roomId': state.roomId,
-          'cameraIndex': enabled ? index : null,
-          'isMaster': true,
-        },
+        data: {'roomId': state.roomId, 'cameraIndex': enabled ? index : null, 'isMaster': true},
       );
-      _channel?.sink.add(jsonEncode(msg.toJson()));
+      _send(msg);
 
       // 2. 如果是正在加入且目前設備已橫放，則立即主動補送 Ready 狀態
       if (enabled && state.isPhysicallyReady) {
@@ -203,7 +208,7 @@ class RecordController extends StateNotifier<RecordState> {
       type: RecordMessageType.joinRoom,
       data: {'roomId': roomId, 'cameraIndex': cameraIndex},
     );
-    _channel!.sink.add(jsonEncode(msg.toJson()));
+    _send(msg);
   }
 
   void setRunnerSource(RunnerSource source) {
@@ -250,13 +255,13 @@ class RecordController extends StateNotifier<RecordState> {
         'isLongJump': state.isLongJump,
       },
     );
-    _channel?.sink.add(jsonEncode(msg.toJson()));
+    _send(msg);
   }
 
   void stopRecording() {
     if (state.role != RecordRole.master) return;
     final msg = RecordMessage(type: RecordMessageType.stopRecording, data: {});
-    _channel?.sink.add(jsonEncode(msg.toJson()));
+    _send(msg);
   }
 
   void notifyUploadComplete(
@@ -272,31 +277,25 @@ class RecordController extends StateNotifier<RecordState> {
         'isAllUploaded': isAllUploaded,
       },
     );
-    _channel?.sink.add(jsonEncode(msg.toJson()));
+    _send(msg);
   }
 
   void updateReadyStatus(bool isReady) {
     if (state.status != RecordStatus.ready) return;
-    final msg = RecordMessage(
-      type: RecordMessageType.updateReady,
-      data: {'isReady': isReady},
-    );
-    _channel?.sink.add(jsonEncode(msg.toJson()));
+    final msg = RecordMessage(type: RecordMessageType.updateReady, data: {'isReady': isReady});
+    _send(msg);
   }
 
   void sendCameraPreview(String base64Image) {
     if (state.role != RecordRole.slave) return;
-    final msg = RecordMessage(
-      type: RecordMessageType.cameraPreview,
-      data: {'image': base64Image},
-    );
-    _channel?.sink.add(jsonEncode(msg.toJson()));
+    final msg = RecordMessage(type: RecordMessageType.cameraPreview, data: {'image': base64Image});
+    _send(msg);
   }
 
   void requestControl() {
     state = state.copyWith(isWaitingForControlApproval: true);
     final msg = RecordMessage(type: RecordMessageType.requestControl, data: {});
-    _channel?.sink.add(jsonEncode(msg.toJson()));
+    _send(msg);
   }
 
   void respondControlRequest(String requesterId, bool agree) {
@@ -305,7 +304,7 @@ class RecordController extends StateNotifier<RecordState> {
       type: RecordMessageType.respondControlRequest,
       data: {'requesterId': requesterId, 'agree': agree},
     );
-    _channel?.sink.add(jsonEncode(msg.toJson()));
+    _send(msg);
   }
 
   void leaveRoom() {
@@ -320,7 +319,25 @@ class RecordController extends StateNotifier<RecordState> {
   }
 }
 
-final recordControllerProvider =
-    StateNotifierProvider.autoDispose<RecordController, RecordState>((ref) {
-      return RecordController(ref);
-    });
+final recordControllerProvider = StateNotifierProvider.autoDispose<RecordController, RecordState>((
+  ref,
+) {
+  ref.watch(authProvider);
+  return RecordController(ref);
+});
+
+final recordTourDemoInRoomProvider = StateProvider<bool>((ref) => false);
+final recordTourDemoRoleProvider = StateProvider<RecordRole>((ref) => RecordRole.master);
+
+final recordTourAnchorFullscreenOpenProvider = StateProvider<bool>((ref) => false);
+
+enum RecordTourAnchorStage {
+  normalFullscreen, // 全螢幕相機預覽（尚未進入錨點設定）
+  anchorMode, // 6 點跑道錨點校正畫布模式
+  distanceDialog, // 輸入跑道實際物理長度對話框
+  calibratedFullscreen, // 校正完成後的全螢幕預覽（無錨點殘留，左上角綠燈就緒）
+}
+
+final recordTourAnchorStageProvider = StateProvider<RecordTourAnchorStage>(
+  (ref) => RecordTourAnchorStage.normalFullscreen,
+);

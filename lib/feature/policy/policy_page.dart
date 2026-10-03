@@ -60,10 +60,7 @@ class PolicyPage extends StatelessWidget {
                       SizedBox(height: 12),
                       Text(
                         '百米分析 隱私權政策',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
+                        style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                       ),
                       SizedBox(height: 4),
                       Text(
@@ -190,14 +187,7 @@ class PolicyPage extends StatelessWidget {
   Widget _buildBodyText(String text) {
     final parts = text.split('**');
     if (parts.length < 3) {
-      return Text(
-        text,
-        style: const TextStyle(
-          fontSize: 14,
-          color: Colors.black87,
-          height: 1.5,
-        ),
-      );
+      return Text(text, style: const TextStyle(fontSize: 14, color: Colors.black87, height: 1.5));
     }
 
     final List<TextSpan> spans = [];
@@ -216,11 +206,7 @@ class PolicyPage extends StatelessWidget {
 
     return RichText(
       text: TextSpan(
-        style: const TextStyle(
-          fontSize: 14,
-          color: Colors.black87,
-          height: 1.5,
-        ),
+        style: const TextStyle(fontSize: 14, color: Colors.black87, height: 1.5),
         children: spans,
       ),
     );
@@ -239,18 +225,11 @@ class PolicyPage extends StatelessWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    '• ',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
+                  const Text('• ', style: TextStyle(fontWeight: FontWeight.bold)),
                   Expanded(
                     child: RichText(
                       text: TextSpan(
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.black87,
-                          height: 1.5,
-                        ),
+                        style: const TextStyle(fontSize: 14, color: Colors.black87, height: 1.5),
                         children: [
                           TextSpan(
                             text: parts[1],
@@ -284,18 +263,11 @@ class PolicyPage extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(top: 8.0),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: Colors.blue[50],
-        borderRadius: BorderRadius.circular(8),
-      ),
+      decoration: BoxDecoration(color: Colors.blue[50], borderRadius: BorderRadius.circular(8)),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(
-            Icons.email,
-            size: 18,
-            color: Color.fromARGB(255, 80, 143, 232),
-          ),
+          const Icon(Icons.email, size: 18, color: Color.fromARGB(255, 80, 143, 232)),
           const SizedBox(width: 8),
           SelectableText(
             email,

@@ -30,7 +30,6 @@ class VideoPlaybackNotifierState extends StateNotifier<VideoPlayback> {
 }
 
 final videoPlaybackStateProvider =
-    StateNotifierProvider.autoDispose<
-      VideoPlaybackNotifierState,
-      VideoPlayback
-    >((ref) => VideoPlaybackNotifierState());
+    StateNotifierProvider.autoDispose<VideoPlaybackNotifierState, VideoPlayback>(
+      (ref) => VideoPlaybackNotifierState(),
+    );

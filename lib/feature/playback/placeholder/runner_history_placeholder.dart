@@ -52,11 +52,7 @@ class OneRunnerHistoryPlaceholder extends StatelessWidget {
             color: Theme.of(context).primaryColor.withValues(alpha: 0.15),
             shape: BoxShape.circle,
           ),
-          child: Icon(
-            Icons.directions_run,
-            color: Theme.of(context).primaryColorDark,
-            size: 20,
-          ),
+          child: Icon(Icons.directions_run, color: Theme.of(context).primaryColorDark, size: 20),
         ),
         const SizedBox(width: 12),
         // 中間文字欄位骨架
@@ -80,18 +76,14 @@ class OneRunnerHistoryPlaceholder extends StatelessWidget {
                   Icon(
                     Icons.videocam_outlined,
                     size: 14,
-                    color: Theme.of(
-                      context,
-                    ).primaryColor.withValues(alpha: 0.3),
+                    color: Theme.of(context).primaryColor.withValues(alpha: 0.3),
                   ),
                   const SizedBox(width: 4),
                   Container(
                     width: 50,
                     height: 12,
                     decoration: BoxDecoration(
-                      color: Theme.of(
-                        context,
-                      ).primaryColor.withValues(alpha: 0.12),
+                      color: Theme.of(context).primaryColor.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),

@@ -31,13 +31,7 @@ class _VideoPlayerViewState extends ConsumerState<VideoPlayerView> {
           borderRadius: BorderRadius.circular(25),
           color: Theme.of(context).primaryColor,
         ),
-        child: Center(
-          child: Icon(
-            Icons.ondemand_video_rounded,
-            size: 64,
-            color: Colors.white,
-          ),
-        ),
+        child: Center(child: Icon(Icons.ondemand_video_rounded, size: 64, color: Colors.white)),
       );
     }
 
@@ -45,10 +39,7 @@ class _VideoPlayerViewState extends ConsumerState<VideoPlayerView> {
     return AsyncValueWidget(
       value: videoInfo,
       loading: RoundedBoxWidget(
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: const VideoPlayerShimmer(),
-        ),
+        child: Padding(padding: const EdgeInsets.all(12), child: const VideoPlayerShimmer()),
       ),
       data: (info) {
         if (info.status == 'failed') {
@@ -80,11 +71,7 @@ class _VideoPlayerViewState extends ConsumerState<VideoPlayerView> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(
-                        Icons.error_outline_rounded,
-                        color: Colors.redAccent,
-                        size: 40,
-                      ),
+                      const Icon(Icons.error_outline_rounded, color: Colors.redAccent, size: 40),
                       const SizedBox(height: 16),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -145,10 +132,7 @@ class _VideoPlayerViewState extends ConsumerState<VideoPlayerView> {
         }
 
         // 只有狀態不是 processing 時，才顯示真正的影片內容組件
-        return _VideoContentPlayer(
-          key: ValueKey(selectedVideoId),
-          videoId: selectedVideoId,
-        );
+        return _VideoContentPlayer(key: ValueKey(selectedVideoId), videoId: selectedVideoId);
       },
     );
   }
@@ -159,8 +143,7 @@ class _VideoContentPlayer extends ConsumerStatefulWidget {
   const _VideoContentPlayer({super.key, required this.videoId});
 
   @override
-  ConsumerState<_VideoContentPlayer> createState() =>
-      _VideoContentPlayerState();
+  ConsumerState<_VideoContentPlayer> createState() => _VideoContentPlayerState();
 }
 
 class _VideoContentPlayerState extends ConsumerState<_VideoContentPlayer> {
@@ -246,16 +229,10 @@ class _VideoContentPlayerState extends ConsumerState<_VideoContentPlayer> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
-                          Icons.close,
-                          size: 64,
-                          color: Colors.white.withValues(alpha: 0.8),
-                        ),
+                        Icon(Icons.close, size: 64, color: Colors.white.withValues(alpha: 0.8)),
                         Text(
                           'Error loading video',
-                          style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.8),
-                          ),
+                          style: TextStyle(color: Colors.white.withValues(alpha: 0.8)),
                         ),
                       ],
                     ),
@@ -303,9 +280,7 @@ class _VideoContentPlayerState extends ConsumerState<_VideoContentPlayer> {
         ),
         VideoSliderView(
           onSeek: (position) {
-            final manager = ref
-                .read(videoManagerProvider(widget.videoId))
-                .value;
+            final manager = ref.read(videoManagerProvider(widget.videoId)).value;
             manager?.controller.seekTo(Duration(milliseconds: position));
           },
         ),

@@ -37,11 +37,7 @@ class RunnerHistoryView extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(
-                    Icons.history_toggle_off_outlined,
-                    size: 32,
-                    color: Colors.grey,
-                  ),
+                  const Icon(Icons.history_toggle_off_outlined, size: 32, color: Colors.grey),
                   const SizedBox(height: 8),
                   Text(
                     l10n.noHistoryFound,
@@ -97,9 +93,7 @@ class RunnerHistoryView extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               child: Container(
                 decoration: BoxDecoration(
-                  color: isSelected
-                      ? Theme.of(context).primaryColorDark
-                      : Colors.white,
+                  color: isSelected ? Theme.of(context).primaryColorDark : Colors.white,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: isSelected
@@ -136,7 +130,7 @@ class RunnerHistoryView extends ConsumerWidget {
                       }
                       ref.read(playbackSelectedRunSessionIdProvider.notifier).state =
                           session.runSessionId;
-                      
+
                       // Notify parent (e.g. to close bottom sheet on mobile)
                       if (onSessionSelected != null) {
                         onSessionSelected!();
@@ -157,9 +151,7 @@ class RunnerHistoryView extends ConsumerWidget {
                             ),
                             child: Icon(
                               Icons.directions_run,
-                              color: isSelected
-                                  ? Colors.white
-                                  : Theme.of(context).primaryColorDark,
+                              color: isSelected ? Colors.white : Theme.of(context).primaryColorDark,
                               size: 20,
                             ),
                           ),
@@ -174,9 +166,7 @@ class RunnerHistoryView extends ConsumerWidget {
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: isSelected ? FontWeight.bold : FontWeight.w600,
-                                    color: isSelected
-                                        ? Colors.white
-                                        : Colors.black87,
+                                    color: isSelected ? Colors.white : Colors.black87,
                                   ),
                                 ),
                                 const SizedBox(height: 4),
@@ -207,9 +197,7 @@ class RunnerHistoryView extends ConsumerWidget {
                                         child: CircularProgressIndicator(
                                           strokeWidth: 2,
                                           valueColor: AlwaysStoppedAnimation<Color>(
-                                            isSelected
-                                                ? Colors.white
-                                                : Colors.orange.shade700,
+                                            isSelected ? Colors.white : Colors.orange.shade700,
                                           ),
                                         ),
                                       ),
@@ -260,9 +248,7 @@ class RunnerHistoryView extends ConsumerWidget {
                               style: TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.bold,
-                                color: isSelected
-                                    ? Colors.white
-                                    : badgeTextColor,
+                                color: isSelected ? Colors.white : badgeTextColor,
                               ),
                             ),
                           ),

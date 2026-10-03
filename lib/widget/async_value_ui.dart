@@ -7,10 +7,7 @@ extension AsyncValueUI on AsyncValue {
     if (!isRefreshing && hasError) {
       toastification.show(
         context: context,
-        title: const Text(
-          'Error',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
+        title: const Text('Error', style: TextStyle(fontWeight: FontWeight.bold)),
         description: Text(error.toString()),
         type: ToastificationType.error,
         style: ToastificationStyle.minimal,

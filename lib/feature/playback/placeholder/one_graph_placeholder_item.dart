@@ -3,11 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:frontend/utils/locale_provider.dart';
 
 class OneGraphPlaceholderItem extends StatelessWidget {
-  const OneGraphPlaceholderItem({
-    super.key,
-    required this.title,
-    required this.yLabel,
-  });
+  const OneGraphPlaceholderItem({super.key, required this.title, required this.yLabel});
   final String title;
   final String yLabel;
 
@@ -18,11 +14,7 @@ class OneGraphPlaceholderItem extends StatelessWidget {
       children: [
         Text(
           title,
-          style: const TextStyle(
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-            fontSize: 20,
-          ),
+          style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 20),
         ),
         Container(
           height: 200,
@@ -32,12 +24,8 @@ class OneGraphPlaceholderItem extends StatelessWidget {
               lineTouchData: const LineTouchData(enabled: false),
               titlesData: FlTitlesData(
                 show: true,
-                topTitles: const AxisTitles(
-                  sideTitles: SideTitles(showTitles: false),
-                ),
-                rightTitles: const AxisTitles(
-                  sideTitles: SideTitles(showTitles: false),
-                ),
+                topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
                 bottomTitles: AxisTitles(
                   axisNameSize: 32,
                   axisNameWidget: Text(
@@ -48,10 +36,7 @@ class OneGraphPlaceholderItem extends StatelessWidget {
                 ),
                 leftTitles: AxisTitles(
                   axisNameSize: 32,
-                  axisNameWidget: Text(
-                    yLabel,
-                    style: TextStyle(color: Colors.white, fontSize: 16),
-                  ),
+                  axisNameWidget: Text(yLabel, style: TextStyle(color: Colors.white, fontSize: 16)),
                   sideTitles: SideTitles(showTitles: true, reservedSize: 35),
                 ),
               ),
@@ -97,10 +82,7 @@ class OneGraphPlaceholderItem extends StatelessWidget {
                   barWidth: 3,
                   isStrokeCapRound: true,
                   dotData: const FlDotData(show: false),
-                  belowBarData: BarAreaData(
-                    show: true,
-                    color: Colors.white.withValues(alpha: 0.1),
-                  ),
+                  belowBarData: BarAreaData(show: true, color: Colors.white.withValues(alpha: 0.1)),
                 ),
               ],
               borderData: FlBorderData(

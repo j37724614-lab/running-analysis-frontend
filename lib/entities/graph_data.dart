@@ -5,10 +5,7 @@ class GraphSeries {
   GraphSeries({required this.name, required this.y});
 
   factory GraphSeries.fromJson(Map<String, dynamic> json) {
-    return GraphSeries(
-      name: json['name'],
-      y: List<double>.from(json['y']),
-    );
+    return GraphSeries(name: json['name'], y: List<double>.from(json['y']));
   }
 }
 
@@ -38,9 +35,7 @@ class GraphData {
       yMin: (json['yMin'] as num).toDouble(),
       yMax: (json['yMax'] as num).toDouble(),
       x: List<double>.from(json['x']),
-      series: (json['series'] as List)
-          .map((s) => GraphSeries.fromJson(s))
-          .toList(),
+      series: (json['series'] as List).map((s) => GraphSeries.fromJson(s)).toList(),
       category: json['category'] ?? 'metrics',
     );
   }
