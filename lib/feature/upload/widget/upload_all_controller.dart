@@ -13,6 +13,9 @@ class UploadThumbnailState {
   final bool isUploading;
   final String? error;
   final AnchorResult? anchorResult;
+  final String? localPath;
+  final String? filename;
+  final UploadVideoFile? uploadFile;
 
   const UploadThumbnailState({
     this.thumbnailUrl,
@@ -20,7 +23,12 @@ class UploadThumbnailState {
     this.isUploading = false,
     this.error,
     this.anchorResult,
+    this.localPath,
+    this.filename,
+    this.uploadFile,
   });
+
+  bool get isSelected => filename != null;
 
   UploadThumbnailState copyWith({
     String? thumbnailUrl,
@@ -28,6 +36,9 @@ class UploadThumbnailState {
     bool? isUploading,
     String? error,
     AnchorResult? anchorResult,
+    String? localPath,
+    String? filename,
+    UploadVideoFile? uploadFile,
     bool clearAnchor = false,
   }) {
     return UploadThumbnailState(
@@ -36,6 +47,9 @@ class UploadThumbnailState {
       isUploading: isUploading ?? this.isUploading,
       error: error,
       anchorResult: clearAnchor ? null : (anchorResult ?? this.anchorResult),
+      localPath: localPath ?? this.localPath,
+      filename: filename ?? this.filename,
+      uploadFile: uploadFile ?? this.uploadFile,
     );
   }
 }
@@ -75,9 +89,21 @@ class UploadAllState {
 
 class UploadAllController extends StateNotifier<UploadAllState> {
   final BackendInterface backend;
-  final Ref ref;
+  final Ref? ref;
 
   UploadAllController(this.backend, this.ref) : super(UploadAllState.initial());
+
+  void stageLocalVideo(int index, {required String path, required String filename}) {
+    final updated = [...state.tempVideoStates];
+    updated[index] = UploadThumbnailState(localPath: path, filename: filename);
+    state = state.copyWith(tempVideoStates: updated);
+  }
+
+  void clearVideos() {
+    state = state.copyWith(
+      tempVideoStates: List.generate(state.cameraCount, (_) => const UploadThumbnailState()),
+    );
+  }
 
   void setCameraCount(int count) {
     if (count == state.cameraCount) return;
@@ -99,15 +125,21 @@ class UploadAllController extends StateNotifier<UploadAllState> {
     state = state.copyWith(tempVideoStates: newStates, cameraCount: count);
   }
 
-  Future<void> uploadVideo(int index, UploadVideoFile file) async {
+  Future<void> uploadVideo(int index, UploadVideoFile file, {String? localPath}) async {
     final updated = [...state.tempVideoStates];
-    updated[index] = updated[index].copyWith(isUploading: true, error: null);
+    updated[index] = updated[index].copyWith(
+      isUploading: true,
+      error: null,
+      uploadFile: file,
+      localPath: localPath,
+      filename: file.filename,
+    );
     state = state.copyWith(tempVideoStates: updated);
 
     try {
       final tempVideoId = await backend.uploadVideo(index, file);
       var thumbnailUrl = API.getTempVideoThumbnail(tempVideoId)[1] as String;
-      final token = ref.read(authProvider).token;
+      final token = ref?.read(authProvider).token;
       if (token != null && token.isNotEmpty) {
         final separator = thumbnailUrl.contains('?') ? '&' : '?';
         thumbnailUrl = '$thumbnailUrl${separator}token=$token';

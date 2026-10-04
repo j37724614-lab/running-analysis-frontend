@@ -2,6 +2,9 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:frontend/entities/upload_video_file.dart';
+import 'package:frontend/feature/analysis/analysis_mode.dart';
+import 'package:frontend/feature/analysis/analysis_request.dart';
+import 'package:frontend/feature/analysis/analysis_run_controller.dart';
 import 'package:frontend/feature/guide/guide_steps_factory.dart';
 import 'package:frontend/feature/upload/upload_controller.dart';
 import 'package:frontend/feature/upload/upload_provider.dart';
@@ -31,6 +34,25 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
     final runnerId = ref.watch(uploadSelectedRunnerIdProvider);
     final formData = ref.watch(uploadAllFormProvider);
     final formNotifier = ref.read(uploadAllFormProvider.notifier);
+    final localEnabled = ref.watch(localAnalysisFeatureEnabledProvider);
+    final compareEnabled = ref.watch(compareAnalysisFeatureEnabledProvider);
+    final analysisMode = ref.watch(uploadAnalysisModeProvider);
+    final analysisState = ref.watch(analysisRunControllerProvider);
+
+    ref.listen(analysisRunControllerProvider, (previous, next) {
+      if (next.mode != AnalysisMode.local ||
+          next.local.outcome != RunOutcome.succeeded ||
+          previous?.local.outcome == RunOutcome.succeeded) {
+        return;
+      }
+      final runSessionId = next.local.runSessionId;
+      if (runnerId == null || runSessionId == null || !context.mounted) return;
+      ref.invalidate(runnerHistoryProvider(runnerId));
+      context.goNamed(
+        AppRoute.playback.name,
+        queryParameters: {'runnerId': runnerId, 'videoId': runSessionId},
+      );
+    });
 
     return Stack(
       alignment: Alignment.topCenter,
@@ -38,6 +60,22 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
         Column(
           spacing: 16,
           children: [
+            if (localEnabled)
+              SegmentedButton<AnalysisMode>(
+                segments: [
+                  const ButtonSegment(value: AnalysisMode.server, label: Text('Server')),
+                  const ButtonSegment(value: AnalysisMode.local, label: Text('Local')),
+                  if (compareEnabled)
+                    const ButtonSegment(value: AnalysisMode.compare, label: Text('Compare')),
+                ],
+                selected: {analysisMode},
+                onSelectionChanged: analysisState.isRunning
+                    ? null
+                    : (selection) {
+                        ref.read(uploadAnalysisModeProvider.notifier).state = selection.single;
+                        ref.read(uploadAllControllerProvider.notifier).clearVideos();
+                      },
+              ),
             DateTimeSelectionWidget(
               key: GuideKeys.uploadConfigKey,
               onDateSelected: (date) {
@@ -92,6 +130,7 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
                       onTap: state.tempVideoStates[index].isUploading
                           ? null
                           : () async {
+                              final needsServerUpload = analysisMode != AnalysisMode.local;
                               final result = await FilePicker.platform.pickFiles(
                                 type: FileType.custom,
                                 allowedExtensions: [
@@ -106,12 +145,31 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
                                   'wmv',
                                   'ts',
                                 ],
-                                withData: true,
+                                withData: needsServerUpload,
                               );
 
                               if (result == null) return;
 
                               final file = result.files.first;
+
+                              if (file.path == null && analysisMode != AnalysisMode.server) {
+                                if (!context.mounted) return;
+                                _showError(context, '這個檔案沒有可供 Local 分析使用的路徑。');
+                                return;
+                              }
+
+                              if (analysisMode == AnalysisMode.local) {
+                                ref
+                                    .read(uploadAllControllerProvider.notifier)
+                                    .stageLocalVideo(index, path: file.path!, filename: file.name);
+                                return;
+                              }
+
+                              if (file.bytes == null) {
+                                if (!context.mounted) return;
+                                _showError(context, '無法讀取要上傳到 Server 的影片。');
+                                return;
+                              }
 
                               final uploadFile = UploadVideoFile(
                                 bytes: file.bytes!,
@@ -121,7 +179,7 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
 
                               await ref
                                   .read(uploadAllControllerProvider.notifier)
-                                  .uploadVideo(index, uploadFile);
+                                  .uploadVideo(index, uploadFile, localPath: file.path);
 
                               if (!context.mounted) return;
 
@@ -199,6 +257,20 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
                                     ),
                                   ],
                                 )
+                              : state.tempVideoStates[index].isSelected
+                              ? Center(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(12),
+                                    child: Text(
+                                      state.tempVideoStates[index].filename!,
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                )
                               : Center(
                                   child: Text(
                                     '${l10n.camera} ${index + 1}\n${l10n.clickToUpload}',
@@ -216,6 +288,76 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
                 );
               },
             ),
+            if (analysisMode != AnalysisMode.server && analysisState.isRunning)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    (analysisMode == AnalysisMode.local
+                                ? analysisState.local.lastEvent
+                                : analysisState.local.lastEvent ?? analysisState.server.lastEvent)
+                            ?.stage
+                            .name ??
+                        'starting',
+                  ),
+                  TextButton(
+                    onPressed: () => ref.read(analysisRunControllerProvider.notifier).cancel(),
+                    child: const Text('Cancel'),
+                  ),
+                ],
+              ),
+            if (analysisMode == AnalysisMode.local &&
+                analysisState.local.outcome == RunOutcome.failed)
+              Wrap(
+                alignment: WrapAlignment.center,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                spacing: 8,
+                children: [
+                  Text(
+                    analysisState.local.lastEvent?.message ?? 'Local analysis failed',
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                  TextButton(
+                    onPressed: () =>
+                        ref.read(analysisRunControllerProvider.notifier).retryFailedSide(),
+                    child: const Text('Retry Local'),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      final switchToServer = await showDialog<bool>(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: const Text('Switch to Server?'),
+                          content: const Text(
+                            'You will need to select the video again. It will then be uploaded '
+                            'to the Server for analysis.',
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(false),
+                              child: const Text('Cancel'),
+                            ),
+                            FilledButton(
+                              onPressed: () => Navigator.of(context).pop(true),
+                              child: const Text('Switch'),
+                            ),
+                          ],
+                        ),
+                      );
+                      if (switchToServer != true) return;
+                      ref.read(uploadAnalysisModeProvider.notifier).state = AnalysisMode.server;
+                      ref.read(uploadAllControllerProvider.notifier).clearVideos();
+                    },
+                    child: const Text('Switch Server'),
+                  ),
+                ],
+              ),
             ElevatedButton(
               key: GuideKeys.uploadSubmitKey,
               style: ElevatedButton.styleFrom(
@@ -246,7 +388,7 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
                   );
                   return;
                 }
-                if (state.tempVideoStates.any((e) => e.thumbnailUrl == null)) {
+                if (state.tempVideoStates.any((e) => !e.isSelected)) {
                   showDialog(
                     context: context,
                     builder: (context) {
@@ -264,6 +406,51 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
                       );
                     },
                   );
+                  return;
+                }
+
+                if (analysisMode != AnalysisMode.local &&
+                    state.tempVideoStates.any((video) => video.tempVideoId == null)) {
+                  _showError(context, '影片仍在上傳到 Server，請等上傳完成後再開始分析。');
+                  return;
+                }
+
+                if (analysisMode != AnalysisMode.server) {
+                  if (state.cameraCount != 1) {
+                    _showError(context, '目前 Local 開發切片只支援單一影片，請將相機數量設為 1。');
+                    return;
+                  }
+                  final selected = state.tempVideoStates.single;
+                  final request = AnalysisRequest(
+                    runnerId: runnerId,
+                    date: DateTime(
+                      formData.selectedDate.year,
+                      formData.selectedDate.month,
+                      formData.selectedDate.day,
+                      formData.selectedTime.hour,
+                      formData.selectedTime.minute,
+                    ),
+                    cameraCount: 1,
+                    fps: formData.fps,
+                    note: formData.note,
+                    isLongJump: formData.isLongJump,
+                    videos: [
+                      AnalysisVideoInput(
+                        cameraIndex: 0,
+                        fps: formData.fps.toDouble(),
+                        rotationDegrees: 0,
+                        frameWidth: 0,
+                        frameHeight: 0,
+                        path: selected.localPath,
+                        file: selected.uploadFile,
+                        tempVideoId: selected.tempVideoId,
+                        anchors: selected.anchorResult,
+                      ),
+                    ],
+                  );
+                  await ref
+                      .read(analysisRunControllerProvider.notifier)
+                      .start(analysisMode, request);
                   return;
                 }
 
@@ -303,6 +490,17 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
       ],
     );
   }
+}
+
+void _showError(BuildContext context, String message) {
+  showDialog<void>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: const Text('Error'),
+      content: Text(message),
+      actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('OK'))],
+    ),
+  );
 }
 
 /// Badge shown on top of the thumbnail to indicate anchor status

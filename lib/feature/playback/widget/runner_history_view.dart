@@ -66,6 +66,9 @@ class RunnerHistoryView extends ConsumerWidget {
             Color badgeBgColor;
             Color badgeTextColor;
             String statusText;
+            final locationText = session.computeLocations.isEmpty
+                ? null
+                : session.computeLocations.map((value) => value.toUpperCase()).join(' + ');
 
             switch (session.status) {
               case 'done':
@@ -244,7 +247,7 @@ class RunnerHistoryView extends ConsumerWidget {
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Text(
-                              statusText,
+                              locationText == null ? statusText : '$locationText · $statusText',
                               style: TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.bold,

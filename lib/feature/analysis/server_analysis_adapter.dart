@@ -40,6 +40,13 @@ class ServerAnalysisAdapter implements AnalysisExecutor {
           return;
         }
         final video = sortedVideos[i];
+        if (video.tempVideoId != null) {
+          uploadedVideos.add({
+            'tempVideoId': video.tempVideoId,
+            'anchors': video.anchors?.toJson(),
+          });
+          continue;
+        }
         if (video.file == null) {
           throw StateError(
             'ServerAnalysisAdapter requires in-memory video bytes (AnalysisVideoInput.file); '

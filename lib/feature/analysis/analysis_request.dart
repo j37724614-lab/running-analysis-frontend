@@ -15,6 +15,7 @@ class AnalysisVideoInput {
     required this.frameHeight,
     this.file,
     this.path,
+    this.tempVideoId,
     this.anchors,
   }) : assert(
          file != null || path != null,
@@ -28,6 +29,7 @@ class AnalysisVideoInput {
   final int frameHeight;
   final UploadVideoFile? file;
   final String? path;
+  final String? tempVideoId;
 
   /// Per-camera homography calibration (規劃書 §4 "anchors / homography
   /// calibration"), matching `upload_all_view.dart`'s existing per-video
@@ -42,6 +44,8 @@ class AnalysisVideoInput {
 class AnalysisRequest {
   const AnalysisRequest({
     this.schemaVersion = '1.0.0',
+    this.requestId,
+    this.comparisonGroupId,
     required this.runnerId,
     required this.date,
     required this.cameraCount,
@@ -56,6 +60,8 @@ class AnalysisRequest {
        );
 
   final String schemaVersion;
+  final String? requestId;
+  final String? comparisonGroupId;
   final String runnerId;
   final DateTime date;
   final int cameraCount;
@@ -66,4 +72,19 @@ class AnalysisRequest {
 
   /// Output policy (規劃書 §4): whether to produce a large overlay video.
   final bool generateOverlay;
+
+  AnalysisRequest withRunIdentifiers({required String requestId, String? comparisonGroupId}) =>
+      AnalysisRequest(
+        schemaVersion: schemaVersion,
+        requestId: requestId,
+        comparisonGroupId: comparisonGroupId ?? this.comparisonGroupId,
+        runnerId: runnerId,
+        date: date,
+        cameraCount: cameraCount,
+        videos: videos,
+        fps: fps,
+        note: note,
+        isLongJump: isLongJump,
+        generateOverlay: generateOverlay,
+      );
 }

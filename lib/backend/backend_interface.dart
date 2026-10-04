@@ -6,6 +6,7 @@ import 'package:frontend/entities/unanalyzed_run_session_info.dart';
 import 'package:frontend/entities/upload_seperately_status.dart';
 import 'package:frontend/entities/upload_video_file.dart';
 import 'package:frontend/entities/run_session_info.dart';
+import 'package:frontend/entities/local_analysis_run_ref.dart';
 import 'package:frontend/feature/upload/widget/anchor_point_dialog.dart';
 
 abstract class BackendInterface {
@@ -45,6 +46,20 @@ abstract class BackendInterface {
     AnchorResult? anchors,
   );
   Future<String> uploadVideo(int index, UploadVideoFile file);
+  Future<LocalAnalysisRunRef> createLocalAnalysisRun({
+    required String runnerId,
+    required DateTime date,
+    required int cameraCount,
+    required int fps,
+    required bool isLongJump,
+    required String note,
+    String? comparisonGroupId,
+  });
+  Future<void> uploadLocalAnalysisBundle({
+    required String analysisRunId,
+    required String bundlePath,
+    required String idempotencyKey,
+  });
   Future<List<int>> getRunSessionPdf(String runSessionId);
   Future<List<int>> getRunSessionCsv(String runSessionId);
   Future<void> deleteRunSession(String runSessionId);

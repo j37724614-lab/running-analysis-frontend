@@ -28,6 +28,18 @@ class FakeLocalPlatform implements RunnerAnalysisPlatform {
   }
 }
 
+class FakeLocalResultSynchronizer implements LocalResultSynchronizer {
+  AnalysisRequest? request;
+  String? bundlePath;
+
+  @override
+  Future<LocalSyncResult> sync(AnalysisRequest request, String bundlePath) async {
+    this.request = request;
+    this.bundlePath = bundlePath;
+    return const LocalSyncResult(runSessionId: 'session-local', analysisRunId: 'run-local');
+  }
+}
+
 AnalysisRequest request() => AnalysisRequest(
   runnerId: 'runner-1',
   date: DateTime(2026, 10, 4),
@@ -116,6 +128,36 @@ void main() {
     await platform.events.close();
 
     await terminal;
+    await adapter.dispose();
+  });
+
+  test('local adapter syncs a completed bundle before exposing runSessionId', () async {
+    final platform = FakeLocalPlatform();
+    final synchronizer = FakeLocalResultSynchronizer();
+    final adapter = LocalAnalysisAdapter(
+      analysis: RunnerAnalysis(platform: platform),
+      synchronizer: synchronizer,
+      requestIdFactory: () => '11111111-1111-4111-8111-111111111111',
+    );
+
+    final receivedFuture = adapter.analyze(request()).toList();
+    await Future<void>.delayed(Duration.zero);
+    platform.events.add(
+      const LocalAnalysisEvent(
+        stage: LocalAnalysisStage.completed,
+        status: LocalAnalysisEventStatus.completed,
+        sequence: 6,
+        bundlePath: '/results/run-id',
+      ),
+    );
+    await platform.events.close();
+    final received = await receivedFuture;
+
+    expect(received.map((event) => event.stage), [AnalysisStage.sync, AnalysisStage.completed]);
+    expect(received.last.runSessionId, 'session-local');
+    expect(received.last.bundlePath, '/results/run-id');
+    expect(synchronizer.bundlePath, '/results/run-id');
+
     await adapter.dispose();
   });
 }

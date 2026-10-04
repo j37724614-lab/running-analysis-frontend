@@ -1,16 +1,21 @@
-import 'dart:math';
-
 import 'package:frontend/feature/analysis/analysis_event.dart';
 import 'package:frontend/feature/analysis/analysis_executor.dart';
 import 'package:frontend/feature/analysis/analysis_request.dart';
+import 'package:frontend/feature/analysis/uuid_v4.dart';
 import 'package:runner_pose/runner_analysis.dart' as native;
 
 /// Path-based on-device adapter. Video bytes never pass through Dart or a
 /// platform channel; RunnerAnalysisKit opens and hashes each local file.
 class LocalAnalysisAdapter implements AnalysisExecutor, DisposableAnalysisExecutor {
-  LocalAnalysisAdapter({native.RunnerAnalysis? analysis, String Function()? requestIdFactory})
-    : _analysis = analysis ?? native.RunnerAnalysis(),
-      _requestIdFactory = requestIdFactory ?? _uuidV4;
+  LocalAnalysisAdapter({
+    native.RunnerAnalysis? analysis,
+    LocalResultSynchronizer? synchronizer,
+    String Function()? requestIdFactory,
+  }) : _synchronizer = synchronizer,
+       _analysis = analysis ?? native.RunnerAnalysis(),
+       _requestIdFactory = requestIdFactory ?? generateUuidV4;
+
+  final LocalResultSynchronizer? _synchronizer;
 
   final native.RunnerAnalysis _analysis;
   final String Function() _requestIdFactory;
@@ -28,9 +33,13 @@ class LocalAnalysisAdapter implements AnalysisExecutor, DisposableAnalysisExecut
       return;
     }
 
+    final effectiveRequest = request.withRunIdentifiers(
+      requestId: request.requestId ?? _requestIdFactory(),
+    );
     final nativeRequest = native.LocalAnalysisRequest(
       schemaVersion: request.schemaVersion,
-      requestId: _requestIdFactory(),
+      requestId: effectiveRequest.requestId!,
+      comparisonGroupId: effectiveRequest.comparisonGroupId,
       // Empty means the native plugin selects Application Support/RunnerAnalysisResults.
       outputDirectoryPath: '',
       videos: [
@@ -58,7 +67,32 @@ class LocalAnalysisAdapter implements AnalysisExecutor, DisposableAnalysisExecut
         continue;
       }
       if (event.stage == native.LocalAnalysisStage.completed) {
-        yield AnalysisEvent.completed(bundlePath: event.bundlePath);
+        final bundlePath = event.bundlePath;
+        if (bundlePath == null || bundlePath.isEmpty) {
+          yield AnalysisEvent.failed(
+            error: StateError('Native analysis completed without a bundle path'),
+            errorCode: 'missing_bundle_path',
+            retriable: true,
+          );
+          continue;
+        }
+        final synchronizer = _synchronizer;
+        if (synchronizer == null) {
+          yield AnalysisEvent.completed(bundlePath: bundlePath);
+          continue;
+        }
+        yield const AnalysisEvent(stage: AnalysisStage.sync, message: 'syncing local result');
+        try {
+          final synced = await synchronizer.sync(effectiveRequest, bundlePath);
+          yield AnalysisEvent.completed(runSessionId: synced.runSessionId, bundlePath: bundlePath);
+        } catch (error) {
+          yield AnalysisEvent.failed(
+            error: error,
+            message: 'Local analysis finished, but result sync failed. The local bundle was kept.',
+            errorCode: 'sync_failed',
+            retriable: true,
+          );
+        }
         continue;
       }
       yield AnalysisEvent(
@@ -76,6 +110,17 @@ class LocalAnalysisAdapter implements AnalysisExecutor, DisposableAnalysisExecut
   Future<void> dispose() => _analysis.dispose();
 }
 
+class LocalSyncResult {
+  const LocalSyncResult({required this.runSessionId, required this.analysisRunId});
+
+  final String runSessionId;
+  final String analysisRunId;
+}
+
+abstract interface class LocalResultSynchronizer {
+  Future<LocalSyncResult> sync(AnalysisRequest request, String bundlePath);
+}
+
 AnalysisStage _stage(native.LocalAnalysisStage stage) => switch (stage) {
   native.LocalAnalysisStage.validating => AnalysisStage.validating,
   native.LocalAnalysisStage.prescan => AnalysisStage.prescan,
@@ -89,13 +134,3 @@ AnalysisStage _stage(native.LocalAnalysisStage stage) => switch (stage) {
   native.LocalAnalysisStage.completed => AnalysisStage.completed,
   native.LocalAnalysisStage.failed => AnalysisStage.failed,
 };
-
-String _uuidV4() {
-  final random = Random.secure();
-  final bytes = List<int>.generate(16, (_) => random.nextInt(256));
-  bytes[6] = (bytes[6] & 0x0f) | 0x40;
-  bytes[8] = (bytes[8] & 0x3f) | 0x80;
-  final hex = bytes.map((byte) => byte.toRadixString(16).padLeft(2, '0')).join();
-  return '${hex.substring(0, 8)}-${hex.substring(8, 12)}-${hex.substring(12, 16)}-'
-      '${hex.substring(16, 20)}-${hex.substring(20)}';
-}

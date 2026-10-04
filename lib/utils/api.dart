@@ -63,6 +63,13 @@ class API {
 
   static List uploadAllInfo = [DioMethod.post, "$baseUrl/upload_all_info"];
 
+  static List createLocalAnalysisRun = [DioMethod.post, "$baseUrl/analysis_run/local"];
+
+  static List uploadLocalAnalysisBundle(String analysisRunId) => [
+    DioMethod.post,
+    "$baseUrl/analysis_run/$analysisRunId/manifest",
+  ];
+
   static List uploadSeperatelyNew = [DioMethod.post, "$baseUrl/upload_seperately_new"];
 
   static List uploadSeperatelySelect = [DioMethod.post, "$baseUrl/upload_seperately_select"];

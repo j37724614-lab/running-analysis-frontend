@@ -9,10 +9,32 @@ import 'package:frontend/entities/unanalyzed_run_session_info.dart';
 import 'package:frontend/entities/upload_seperately_status.dart';
 import 'package:frontend/entities/upload_video_file.dart';
 import 'package:frontend/entities/run_session_info.dart';
+import 'package:frontend/entities/local_analysis_run_ref.dart';
 import 'package:frontend/feature/upload/widget/anchor_point_dialog.dart';
 import 'package:frontend/utils/test_data.dart';
 
 class FakeBackendRepo implements BackendInterface {
+  @override
+  Future<LocalAnalysisRunRef> createLocalAnalysisRun({
+    required String runnerId,
+    required DateTime date,
+    required int cameraCount,
+    required int fps,
+    required bool isLongJump,
+    required String note,
+    String? comparisonGroupId,
+  }) async => const LocalAnalysisRunRef(
+    runSessionId: 'fake-local-session',
+    analysisRunId: 'fake-local-run',
+  );
+
+  @override
+  Future<void> uploadLocalAnalysisBundle({
+    required String analysisRunId,
+    required String bundlePath,
+    required String idempotencyKey,
+  }) async {}
+
   @override
   Future<List<RunnerInfo>> getRunners() {
     return Future.delayed(const Duration(seconds: 1), () => kRunners);

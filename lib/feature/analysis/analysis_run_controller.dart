@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:math';
 
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:frontend/backend/backend_provider.dart';
@@ -7,8 +6,10 @@ import 'package:frontend/feature/analysis/analysis_event.dart';
 import 'package:frontend/feature/analysis/analysis_executor.dart';
 import 'package:frontend/feature/analysis/analysis_mode.dart';
 import 'package:frontend/feature/analysis/analysis_request.dart';
+import 'package:frontend/feature/analysis/backend_local_result_synchronizer.dart';
 import 'package:frontend/feature/analysis/local_analysis_adapter.dart';
 import 'package:frontend/feature/analysis/server_analysis_adapter.dart';
+import 'package:frontend/feature/analysis/uuid_v4.dart';
 
 enum RunOutcome { idle, running, succeeded, failed, cancelled }
 
@@ -122,17 +123,22 @@ class AnalysisRunController extends StateNotifier<AnalysisRunState> {
     await _serverSubscription?.cancel();
     await _localSubscription?.cancel();
 
+    final comparisonGroupId = mode == AnalysisMode.compare ? generateUuidV4() : null;
+    final preparedRequest = request.withRunIdentifiers(
+      requestId: request.requestId ?? generateUuidV4(),
+      comparisonGroupId: comparisonGroupId,
+    );
     state = AnalysisRunState(
       mode: mode,
-      comparisonGroupId: mode == AnalysisMode.compare ? _generateComparisonGroupId() : null,
-      lastRequest: request,
+      comparisonGroupId: comparisonGroupId,
+      lastRequest: preparedRequest,
     );
 
     if (mode == AnalysisMode.server || mode == AnalysisMode.compare) {
-      _startServer(request);
+      _startServer(preparedRequest);
     }
     if (mode == AnalysisMode.local || mode == AnalysisMode.compare) {
-      _startLocal(request);
+      _startLocal(preparedRequest);
     }
   }
 
@@ -200,11 +206,6 @@ class AnalysisRunController extends StateNotifier<AnalysisRunState> {
     }
   }
 
-  String _generateComparisonGroupId() {
-    final random = Random();
-    return List.generate(16, (_) => random.nextInt(256).toRadixString(16).padLeft(2, '0')).join();
-  }
-
   @override
   void dispose() {
     _serverSubscription?.cancel();
@@ -220,6 +221,8 @@ final analysisRunControllerProvider =
     StateNotifierProvider<AnalysisRunController, AnalysisRunState>((ref) {
       return AnalysisRunController(
         serverExecutor: ServerAnalysisAdapter(backend: ref.watch(backendProvider)),
-        localExecutor: LocalAnalysisAdapter(),
+        localExecutor: LocalAnalysisAdapter(
+          synchronizer: BackendLocalResultSynchronizer(backend: ref.watch(backendProvider)),
+        ),
       );
     });

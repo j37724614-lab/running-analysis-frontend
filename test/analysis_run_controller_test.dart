@@ -17,10 +17,12 @@ class FakeAnalysisExecutor implements AnalysisExecutor {
   final controller = StreamController<AnalysisEvent>.broadcast();
   int cancelCallCount = 0;
   int analyzeCallCount = 0;
+  AnalysisRequest? lastRequest;
 
   @override
   Stream<AnalysisEvent> analyze(AnalysisRequest request) {
     analyzeCallCount++;
+    lastRequest = request;
     return controller.stream;
   }
 
@@ -47,11 +49,7 @@ AnalysisRequest _request() => AnalysisRequest(
       rotationDegrees: 0,
       frameWidth: 1920,
       frameHeight: 1080,
-      file: UploadVideoFile(
-        bytes: Uint8List(0),
-        filename: 'a.mov',
-        mimeType: 'video/quicktime',
-      ),
+      file: UploadVideoFile(bytes: Uint8List(0), filename: 'a.mov', mimeType: 'video/quicktime'),
     ),
   ],
 );
@@ -101,26 +99,35 @@ void main() {
     expect(server.analyzeCallCount, 1);
     expect(local.analyzeCallCount, 1);
     expect(controller.state.comparisonGroupId, isNotNull);
-    expect(controller.state.comparisonGroupId, isNotEmpty);
+    expect(
+      controller.state.comparisonGroupId,
+      matches(RegExp(r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$')),
+    );
+    expect(server.lastRequest!.comparisonGroupId, controller.state.comparisonGroupId);
+    expect(local.lastRequest!.comparisonGroupId, controller.state.comparisonGroupId);
+    expect(server.lastRequest!.requestId, local.lastRequest!.requestId);
   });
 
-  test('compare: one side failing while the other succeeds is partial success, not overwritten', () async {
-    await controller.start(AnalysisMode.compare, _request());
+  test(
+    'compare: one side failing while the other succeeds is partial success, not overwritten',
+    () async {
+      await controller.start(AnalysisMode.compare, _request());
 
-    server.emitCompleted('server-session');
-    await Future<void>.delayed(Duration.zero);
-    local.emitFailed(Exception('native bridge unavailable'));
-    await Future<void>.delayed(Duration.zero);
+      server.emitCompleted('server-session');
+      await Future<void>.delayed(Duration.zero);
+      local.emitFailed(Exception('native bridge unavailable'));
+      await Future<void>.delayed(Duration.zero);
 
-    expect(controller.state.isPartialSuccess, isTrue);
-    expect(controller.state.isFullySucceeded, isFalse);
-    expect(controller.state.isFullyFailed, isFalse);
-    // The successful side's result must still be readable - "failure" on the
-    // other side never discards it.
-    expect(controller.state.server.runSessionId, 'server-session');
-    expect(controller.state.server.outcome, RunOutcome.succeeded);
-    expect(controller.state.local.outcome, RunOutcome.failed);
-  });
+      expect(controller.state.isPartialSuccess, isTrue);
+      expect(controller.state.isFullySucceeded, isFalse);
+      expect(controller.state.isFullyFailed, isFalse);
+      // The successful side's result must still be readable - "failure" on the
+      // other side never discards it.
+      expect(controller.state.server.runSessionId, 'server-session');
+      expect(controller.state.server.outcome, RunOutcome.succeeded);
+      expect(controller.state.local.outcome, RunOutcome.failed);
+    },
+  );
 
   test('compare: both sides succeeding is not reported as partial success', () async {
     await controller.start(AnalysisMode.compare, _request());
@@ -132,19 +139,22 @@ void main() {
     expect(controller.state.isPartialSuccess, isFalse);
   });
 
-  test('cancel stops running sides and calls executor.cancel(), without touching a finished side', () async {
-    await controller.start(AnalysisMode.compare, _request());
-    server.emitCompleted('server-session'); // server finishes before cancel
-    await Future<void>.delayed(Duration.zero);
+  test(
+    'cancel stops running sides and calls executor.cancel(), without touching a finished side',
+    () async {
+      await controller.start(AnalysisMode.compare, _request());
+      server.emitCompleted('server-session'); // server finishes before cancel
+      await Future<void>.delayed(Duration.zero);
 
-    await controller.cancel();
+      await controller.cancel();
 
-    expect(server.cancelCallCount, 1);
-    expect(local.cancelCallCount, 1);
-    // Server already succeeded - cancel must not downgrade it.
-    expect(controller.state.server.outcome, RunOutcome.succeeded);
-    expect(controller.state.local.outcome, RunOutcome.cancelled);
-  });
+      expect(server.cancelCallCount, 1);
+      expect(local.cancelCallCount, 1);
+      // Server already succeeded - cancel must not downgrade it.
+      expect(controller.state.server.outcome, RunOutcome.succeeded);
+      expect(controller.state.local.outcome, RunOutcome.cancelled);
+    },
+  );
 
   test('retryFailedSide only re-runs the failed side, leaving the succeeded side alone', () async {
     await controller.start(AnalysisMode.compare, _request());

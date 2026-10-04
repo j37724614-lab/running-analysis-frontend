@@ -8,6 +8,9 @@ import 'package:frontend/entities/unanalyzed_run_session_info.dart';
 import 'package:frontend/entities/upload_seperately_status.dart';
 import 'package:frontend/entities/upload_video_file.dart';
 import 'package:frontend/entities/run_session_info.dart';
+import 'package:frontend/entities/local_analysis_run_ref.dart';
+import 'package:frontend/backend/local_bundle_form_stub.dart'
+    if (dart.library.io) 'package:frontend/backend/local_bundle_form_io.dart';
 import 'package:frontend/feature/upload/widget/anchor_point_dialog.dart';
 import 'package:frontend/utils/api.dart';
 import 'package:frontend/utils/net_utils.dart';
@@ -15,6 +18,46 @@ import 'package:http_parser/http_parser.dart';
 import 'package:intl/intl.dart';
 
 class RestBackendRepo implements BackendInterface {
+  @override
+  Future<LocalAnalysisRunRef> createLocalAnalysisRun({
+    required String runnerId,
+    required DateTime date,
+    required int cameraCount,
+    required int fps,
+    required bool isLongJump,
+    required String note,
+    String? comparisonGroupId,
+  }) async {
+    final response = await NetUtils().reqeustData<Map<String, dynamic>>(
+      API.createLocalAnalysisRun[1],
+      method: API.createLocalAnalysisRun[0],
+      postData: {
+        'runnerId': runnerId,
+        'date': date.toIso8601String(),
+        'cameraCount': cameraCount,
+        'fps': fps,
+        'isLongJump': isLongJump,
+        'note': note,
+        'comparisonGroupId': comparisonGroupId,
+      },
+    );
+    return LocalAnalysisRunRef.fromJson(response);
+  }
+
+  @override
+  Future<void> uploadLocalAnalysisBundle({
+    required String analysisRunId,
+    required String bundlePath,
+    required String idempotencyKey,
+  }) async {
+    final form = await buildLocalBundleForm(bundlePath, idempotencyKey);
+    await NetUtils().reqeustData<Map<String, dynamic>>(
+      API.uploadLocalAnalysisBundle(analysisRunId)[1],
+      method: API.uploadLocalAnalysisBundle(analysisRunId)[0],
+      postData: form,
+    );
+  }
+
   @override
   Future<List<RunnerInfo>> getRunners() async {
     final List response = await NetUtils().reqeustData<List>(
