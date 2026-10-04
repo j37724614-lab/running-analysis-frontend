@@ -693,6 +693,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.3"
+  runner_pose:
+    dependency: "direct main"
+    description:
+      path: "../../runner-pose-ondevice/flutter/runner_pose"
+      relative: true
+    source: path
+    version: "0.1.0"
   shared_preferences:
     dependency: "direct main"
     description:

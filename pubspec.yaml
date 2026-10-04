@@ -65,6 +65,8 @@ dependencies:
   expansion_tile_group: ^2.3.0
   shared_preferences: ^2.5.3
   qr_flutter: ^4.1.0
+  runner_pose:
+    path: ../../runner-pose-ondevice/flutter/runner_pose
 
 dev_dependencies:
   flutter_test:
