@@ -64,6 +64,7 @@ class AnalysisEvent {
     required Object error,
     String? message,
     String? runSessionId,
+    String? bundlePath,
     String? errorCode,
     bool? retriable,
   }) => AnalysisEvent(
@@ -71,6 +72,7 @@ class AnalysisEvent {
     error: error,
     message: message,
     runSessionId: runSessionId,
+    bundlePath: bundlePath,
     errorCode: errorCode,
     retriable: retriable,
   );
