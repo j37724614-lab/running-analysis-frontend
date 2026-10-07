@@ -71,9 +71,9 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
                 selected: {analysisMode},
                 onSelectionChanged: analysisState.isRunning
                     ? null
-                    : (selection) {
+                    : (selection) async {
+                        await ref.read(uploadAllControllerProvider.notifier).clearVideos();
                         ref.read(uploadAnalysisModeProvider.notifier).state = selection.single;
-                        ref.read(uploadAllControllerProvider.notifier).clearVideos();
                       },
               ),
             DateTimeSelectionWidget(
@@ -159,9 +159,18 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
                               }
 
                               if (analysisMode == AnalysisMode.local) {
-                                ref
-                                    .read(uploadAllControllerProvider.notifier)
-                                    .stageLocalVideo(index, path: file.path!, filename: file.name);
+                                try {
+                                  await ref
+                                      .read(uploadAllControllerProvider.notifier)
+                                      .stageLocalVideo(
+                                        index,
+                                        path: file.path!,
+                                        filename: file.name,
+                                      );
+                                } catch (error) {
+                                  if (!context.mounted) return;
+                                  _showError(context, '無法保存 Local 分析影片：$error');
+                                }
                                 return;
                               }
 
@@ -351,8 +360,8 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
                         ),
                       );
                       if (switchToServer != true) return;
+                      await ref.read(uploadAllControllerProvider.notifier).clearVideos();
                       ref.read(uploadAnalysisModeProvider.notifier).state = AnalysisMode.server;
-                      ref.read(uploadAllControllerProvider.notifier).clearVideos();
                     },
                     child: const Text('Switch Server'),
                   ),

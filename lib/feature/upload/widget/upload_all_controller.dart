@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:frontend/backend/backend_interface.dart';
@@ -6,6 +8,8 @@ import 'package:frontend/entities/upload_video_file.dart';
 import 'package:frontend/feature/upload/widget/anchor_point_dialog.dart';
 import 'package:frontend/utils/api.dart';
 import 'package:frontend/feature/auth/auth_provider.dart';
+import 'package:frontend/feature/upload/local_video_stager.dart';
+import 'package:frontend/feature/upload/local_video_stager_factory.dart';
 
 class UploadThumbnailState {
   final String? thumbnailUrl;
@@ -90,19 +94,41 @@ class UploadAllState {
 class UploadAllController extends StateNotifier<UploadAllState> {
   final BackendInterface backend;
   final Ref? ref;
+  final LocalVideoStager localVideoStager;
 
-  UploadAllController(this.backend, this.ref) : super(UploadAllState.initial());
+  UploadAllController(this.backend, this.ref, {LocalVideoStager? localVideoStager})
+    : localVideoStager = localVideoStager ?? createLocalVideoStager(),
+      super(UploadAllState.initial());
 
-  void stageLocalVideo(int index, {required String path, required String filename}) {
+  Future<void> stageLocalVideo(int index, {required String path, required String filename}) async {
     final updated = [...state.tempVideoStates];
-    updated[index] = UploadThumbnailState(localPath: path, filename: filename);
+    final previousPath = updated[index].localPath;
+    updated[index] = updated[index].copyWith(isUploading: true, error: null);
     state = state.copyWith(tempVideoStates: updated);
+
+    try {
+      final stagedPath = await localVideoStager.stage(sourcePath: path, filename: filename);
+      final completed = [...state.tempVideoStates];
+      completed[index] = UploadThumbnailState(localPath: stagedPath, filename: filename);
+      state = state.copyWith(tempVideoStates: completed);
+      if (previousPath != null) await localVideoStager.remove(previousPath);
+    } catch (error) {
+      final failed = [...state.tempVideoStates];
+      failed[index] = failed[index].copyWith(isUploading: false, error: error.toString());
+      state = state.copyWith(tempVideoStates: failed);
+      rethrow;
+    }
   }
 
-  void clearVideos() {
+  Future<void> clearVideos() async {
+    final stagedPaths = state.tempVideoStates
+        .map((video) => video.localPath)
+        .whereType<String>()
+        .toList(growable: false);
     state = state.copyWith(
       tempVideoStates: List.generate(state.cameraCount, (_) => const UploadThumbnailState()),
     );
+    await Future.wait(stagedPaths.map(localVideoStager.remove));
   }
 
   void setCameraCount(int count) {
@@ -119,6 +145,10 @@ class UploadAllController extends StateNotifier<UploadAllState> {
       ];
     } else {
       // 減少數量：直接截斷
+      for (final removed in currentStates.skip(count)) {
+        final path = removed.localPath;
+        if (path != null) unawaited(localVideoStager.remove(path));
+      }
       newStates = currentStates.sublist(0, count);
     }
 
