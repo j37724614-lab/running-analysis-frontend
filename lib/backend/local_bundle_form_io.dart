@@ -3,7 +3,11 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 
-Future<FormData> buildLocalBundleForm(String bundlePath, String idempotencyKey) async {
+Future<FormData> buildLocalBundleForm(
+  String bundlePath,
+  String idempotencyKey, {
+  required List<String> inputVideoPaths,
+}) async {
   final root = Directory(bundlePath);
   final manifestFile = File('${root.path}${Platform.pathSeparator}manifest.json');
   final manifest = jsonDecode(await manifestFile.readAsString()) as Map<String, dynamic>;
@@ -22,6 +26,10 @@ Future<FormData> buildLocalBundleForm(String bundlePath, String idempotencyKey) 
     'manifest': await MultipartFile.fromFile(manifestFile.path, filename: 'manifest.json'),
     'artifacts': artifactFiles,
     'idempotency_key': idempotencyKey,
+    'input_videos': [
+      for (final path in inputVideoPaths)
+        await MultipartFile.fromFile(path, filename: File(path).uri.pathSegments.last),
+    ],
   });
 }
 

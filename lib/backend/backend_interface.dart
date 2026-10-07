@@ -59,6 +59,7 @@ abstract class BackendInterface {
     required String analysisRunId,
     required String bundlePath,
     required String idempotencyKey,
+    required List<String> inputVideoPaths,
   });
   Future<List<int>> getRunSessionPdf(String runSessionId);
   Future<List<int>> getRunSessionCsv(String runSessionId);

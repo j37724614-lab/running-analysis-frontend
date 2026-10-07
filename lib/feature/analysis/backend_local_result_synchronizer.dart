@@ -22,6 +22,7 @@ class BackendLocalResultSynchronizer implements LocalResultSynchronizer {
       analysisRunId: run.analysisRunId,
       bundlePath: bundlePath,
       idempotencyKey: request.requestId!,
+      inputVideoPaths: [for (final video in request.videos) video.path!],
     );
     return LocalSyncResult(runSessionId: run.runSessionId, analysisRunId: run.analysisRunId);
   }

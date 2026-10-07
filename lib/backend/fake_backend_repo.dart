@@ -33,6 +33,7 @@ class FakeBackendRepo implements BackendInterface {
     required String analysisRunId,
     required String bundlePath,
     required String idempotencyKey,
+    required List<String> inputVideoPaths,
   }) async {}
 
   @override

@@ -231,8 +231,14 @@ class _VideoContentPlayerState extends ConsumerState<_VideoContentPlayer> {
                       children: [
                         Icon(Icons.close, size: 64, color: Colors.white.withValues(alpha: 0.8)),
                         Text(
-                          'Error loading video',
+                          videoPlaybackErrorMessage(error),
+                          textAlign: TextAlign.center,
                           style: TextStyle(color: Colors.white.withValues(alpha: 0.8)),
+                        ),
+                        const SizedBox(height: 12),
+                        FilledButton.tonal(
+                          onPressed: () => ref.invalidate(videoManagerProvider(widget.videoId)),
+                          child: const Text('重新載入影片'),
                         ),
                       ],
                     ),

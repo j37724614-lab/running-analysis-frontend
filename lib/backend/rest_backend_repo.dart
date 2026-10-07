@@ -49,8 +49,13 @@ class RestBackendRepo implements BackendInterface {
     required String analysisRunId,
     required String bundlePath,
     required String idempotencyKey,
+    required List<String> inputVideoPaths,
   }) async {
-    final form = await buildLocalBundleForm(bundlePath, idempotencyKey);
+    final form = await buildLocalBundleForm(
+      bundlePath,
+      idempotencyKey,
+      inputVideoPaths: inputVideoPaths,
+    );
     await NetUtils().reqeustData<Map<String, dynamic>>(
       API.uploadLocalAnalysisBundle(analysisRunId)[1],
       method: API.uploadLocalAnalysisBundle(analysisRunId)[0],
