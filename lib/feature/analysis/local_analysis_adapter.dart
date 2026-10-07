@@ -14,7 +14,7 @@ class LocalAnalysisAdapter implements AnalysisExecutor, DisposableAnalysisExecut
     LocalResultSynchronizer? synchronizer,
     String Function()? requestIdFactory,
     Duration nativeInactivityTimeout = const Duration(minutes: 5),
-    Duration syncTimeout = const Duration(seconds: 90),
+    Duration syncTimeout = const Duration(minutes: 5),
   }) : _synchronizer = synchronizer,
        _analysis = analysis ?? native.RunnerAnalysis(),
        _requestIdFactory = requestIdFactory ?? generateUuidV4,
@@ -48,6 +48,7 @@ class LocalAnalysisAdapter implements AnalysisExecutor, DisposableAnalysisExecut
       schemaVersion: request.schemaVersion,
       requestId: effectiveRequest.requestId!,
       comparisonGroupId: effectiveRequest.comparisonGroupId,
+      includeOverlays: effectiveRequest.generateOverlay,
       // Empty means the native plugin selects Application Support/RunnerAnalysisResults.
       outputDirectoryPath: '',
       videos: [

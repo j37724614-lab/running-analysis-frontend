@@ -93,6 +93,7 @@ void main() {
     final received = await receivedFuture;
 
     expect(platform.request!.requestId, '11111111-1111-4111-8111-111111111111');
+    expect(platform.request!.includeOverlays, isTrue);
     expect(platform.request!.videos.single.path, '/tmp/input.mov');
     expect(received.map((event) => event.stage), [AnalysisStage.pose2d, AnalysisStage.completed]);
     expect(received.last.bundlePath, '/results/run-id');
