@@ -7,6 +7,7 @@ import 'package:frontend/entities/upload_seperately_status.dart';
 import 'package:frontend/entities/upload_video_file.dart';
 import 'package:frontend/entities/run_session_info.dart';
 import 'package:frontend/entities/local_analysis_run_ref.dart';
+import 'package:frontend/entities/comparison_report.dart';
 import 'package:frontend/feature/upload/widget/anchor_point_dialog.dart';
 
 abstract class BackendInterface {
@@ -25,8 +26,9 @@ abstract class BackendInterface {
     int fps,
     String note,
     bool isLongJump,
-    List<Map<String, dynamic>> videos,
-  );
+    List<Map<String, dynamic>> videos, {
+    String? comparisonGroupId,
+  });
   Future<UploadSeperatelyStatus> uploadSeperatelyNew(
     String runnerId,
     DateTime date,
@@ -61,6 +63,7 @@ abstract class BackendInterface {
     required String idempotencyKey,
     required List<String> inputVideoPaths,
   });
+  Future<ComparisonReport> getComparisonReport(String comparisonGroupId);
   Future<List<int>> getRunSessionPdf(String runSessionId);
   Future<List<int>> getRunSessionCsv(String runSessionId);
   Future<void> deleteRunSession(String runSessionId);

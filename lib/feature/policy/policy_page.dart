@@ -59,12 +59,12 @@ class PolicyPage extends StatelessWidget {
                       ),
                       SizedBox(height: 12),
                       Text(
-                        '百米分析 隱私權政策',
+                        '跳遠分析 隱私權政策',
                         style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                       ),
                       SizedBox(height: 4),
                       Text(
-                        'Privacy Policy for Sprint Analysis AI',
+                        'Privacy Policy for Long Jump Analysis AI',
                         style: TextStyle(fontSize: 16, color: Colors.grey),
                       ),
                       Divider(height: 40, thickness: 1),
@@ -75,7 +75,7 @@ class PolicyPage extends StatelessWidget {
                 // Traditional Chinese Section
                 _buildSectionTitle('一、 應用程式說明 (App Description)'),
                 _buildBodyText(
-                  '「百米分析」App 是一款專為短跑與跑步姿態分析設計的專業運動力學系統。'
+                  '「跳遠分析」App 是一款專為跳遠助跑、起跳與落地姿態分析設計的專業運動力學系統。'
                   '本程式支援多個行動裝置進行接力式串聯錄影，並將錄影內容自動上傳進行 AI 骨架追蹤、'
                   '速度與關節角度分析，協助選手與教練提升訓練成效。',
                 ),
@@ -123,7 +123,7 @@ class PolicyPage extends StatelessWidget {
                 // English Section
                 _buildSectionTitle('1. App Description'),
                 _buildBodyText(
-                  'Sprint Analysis AI is a professional biomechanics app designed for running and gait analysis. '
+                  'Long Jump Analysis AI is a professional biomechanics app designed for long-jump approach, takeoff, and landing analysis. '
                   'It allows multiple mobile devices to perform sequential recording along the running track. '
                   'The uploaded footages are analyzed by AI to track velocity, step length, and joint angles to assist runners and coaches.',
                 ),

@@ -137,24 +137,32 @@ class AnalysisRunController extends StateNotifier<AnalysisRunState> {
     if (mode == AnalysisMode.server || mode == AnalysisMode.compare) {
       _startServer(preparedRequest);
     }
-    if (mode == AnalysisMode.local || mode == AnalysisMode.compare) {
+    if (mode == AnalysisMode.local) {
       _startLocal(preparedRequest);
     }
   }
 
   void _startServer(AnalysisRequest request) {
     state = state.copyWith(server: const SideProgress(outcome: RunOutcome.running));
-    _serverSubscription = serverExecutor
-        .analyze(request)
-        .listen(
-          (event) => state = state.copyWith(server: _sideProgressFor(event)),
-          onError: (Object error) => state = state.copyWith(
-            server: SideProgress(
-              outcome: RunOutcome.failed,
-              lastEvent: AnalysisEvent.failed(error: error),
-            ),
-          ),
-        );
+    _serverSubscription = serverExecutor.analyze(request).listen(
+      (event) {
+        state = state.copyWith(server: _sideProgressFor(event));
+        // Compare reuses the RunSession created by the Server side. Start
+        // Local only after uploadAllInfo has returned that session; the
+        // backend can then attach both AnalysisRun rows to one owner.
+        if (state.mode == AnalysisMode.compare &&
+            event.stage == AnalysisStage.completed &&
+            state.local.outcome == RunOutcome.idle) {
+          _startLocal(request);
+        }
+      },
+      onError: (Object error) => state = state.copyWith(
+        server: SideProgress(
+          outcome: RunOutcome.failed,
+          lastEvent: AnalysisEvent.failed(error: error),
+        ),
+      ),
+    );
   }
 
   void _startLocal(AnalysisRequest request) {

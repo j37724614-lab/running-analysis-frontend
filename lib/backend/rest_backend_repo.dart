@@ -9,6 +9,7 @@ import 'package:frontend/entities/upload_seperately_status.dart';
 import 'package:frontend/entities/upload_video_file.dart';
 import 'package:frontend/entities/run_session_info.dart';
 import 'package:frontend/entities/local_analysis_run_ref.dart';
+import 'package:frontend/entities/comparison_report.dart';
 import 'package:frontend/backend/local_bundle_form_stub.dart'
     if (dart.library.io) 'package:frontend/backend/local_bundle_form_io.dart';
 import 'package:frontend/feature/upload/widget/anchor_point_dialog.dart';
@@ -18,6 +19,15 @@ import 'package:http_parser/http_parser.dart';
 import 'package:intl/intl.dart';
 
 class RestBackendRepo implements BackendInterface {
+  @override
+  Future<ComparisonReport> getComparisonReport(String comparisonGroupId) async {
+    final response = await NetUtils().reqeustData<Map<String, dynamic>>(
+      API.getComparisonReport(comparisonGroupId)[1],
+      method: API.getComparisonReport(comparisonGroupId)[0],
+    );
+    return ComparisonReport.fromJson(response);
+  }
+
   @override
   Future<LocalAnalysisRunRef> createLocalAnalysisRun({
     required String runnerId,
@@ -125,8 +135,9 @@ class RestBackendRepo implements BackendInterface {
     int fps,
     String note,
     bool isLongJump,
-    List<Map<String, dynamic>> videos,
-  ) async {
+    List<Map<String, dynamic>> videos, {
+    String? comparisonGroupId,
+  }) async {
     final response = await NetUtils().reqeustData(
       API.uploadAllInfo[1],
       method: API.uploadAllInfo[0],
@@ -138,6 +149,7 @@ class RestBackendRepo implements BackendInterface {
         "note": note,
         "isLongJump": isLongJump,
         "videos": videos,
+        "comparisonGroupId": comparisonGroupId,
       },
     );
     return response['runSessionId'];

@@ -40,7 +40,7 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
     final analysisState = ref.watch(analysisRunControllerProvider);
 
     ref.listen(analysisRunControllerProvider, (previous, next) {
-      if (next.mode != AnalysisMode.local ||
+      if ((next.mode != AnalysisMode.local && next.mode != AnalysisMode.compare) ||
           next.local.outcome != RunOutcome.succeeded ||
           previous?.local.outcome == RunOutcome.succeeded) {
         return;
@@ -186,9 +186,30 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
                                 mimeType: lookupMimeType(file.name) ?? 'video/mp4',
                               );
 
+                              String? analysisPath = file.path;
+                              if (analysisMode == AnalysisMode.compare) {
+                                try {
+                                  await ref
+                                      .read(uploadAllControllerProvider.notifier)
+                                      .stageLocalVideo(
+                                        index,
+                                        path: file.path!,
+                                        filename: file.name,
+                                      );
+                                  analysisPath = ref
+                                      .read(uploadAllControllerProvider)
+                                      .tempVideoStates[index]
+                                      .localPath;
+                                } catch (error) {
+                                  if (!context.mounted) return;
+                                  _showError(context, '無法保存 Compare 的 Local 影片：$error');
+                                  return;
+                                }
+                              }
+
                               await ref
                                   .read(uploadAllControllerProvider.notifier)
-                                  .uploadVideo(index, uploadFile, localPath: file.path);
+                                  .uploadVideo(index, uploadFile, localPath: analysisPath);
 
                               if (!context.mounted) return;
 
@@ -298,23 +319,11 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
               },
             ),
             if (analysisMode != AnalysisMode.server && analysisState.isRunning)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              Column(
                 children: [
-                  const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  ),
-                  const SizedBox(width: 12),
-                  Text(
-                    (analysisMode == AnalysisMode.local
-                                ? analysisState.local.lastEvent
-                                : analysisState.local.lastEvent ?? analysisState.server.lastEvent)
-                            ?.stage
-                            .name ??
-                        'starting',
-                  ),
+                  if (analysisMode == AnalysisMode.compare)
+                    _AnalysisSideProgress(label: 'Server', progress: analysisState.server),
+                  _AnalysisSideProgress(label: 'Local', progress: analysisState.local),
                   TextButton(
                     onPressed: () => ref.read(analysisRunControllerProvider.notifier).cancel(),
                     child: const Text('Cancel'),
@@ -425,11 +434,6 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
                 }
 
                 if (analysisMode != AnalysisMode.server) {
-                  if (state.cameraCount != 1) {
-                    _showError(context, '目前 Local 開發切片只支援單一影片，請將相機數量設為 1。');
-                    return;
-                  }
-                  final selected = state.tempVideoStates.single;
                   final request = AnalysisRequest(
                     runnerId: runnerId,
                     date: DateTime(
@@ -439,23 +443,25 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
                       formData.selectedTime.hour,
                       formData.selectedTime.minute,
                     ),
-                    cameraCount: 1,
+                    cameraCount: state.cameraCount,
                     fps: formData.fps,
                     note: formData.note,
                     isLongJump: formData.isLongJump,
-                    videos: [
-                      AnalysisVideoInput(
-                        cameraIndex: 0,
-                        fps: formData.fps.toDouble(),
-                        rotationDegrees: 0,
-                        frameWidth: 0,
-                        frameHeight: 0,
-                        path: selected.localPath,
-                        file: selected.uploadFile,
-                        tempVideoId: selected.tempVideoId,
-                        anchors: selected.anchorResult,
-                      ),
-                    ],
+                    videos: state.tempVideoStates.indexed
+                        .map(
+                          (entry) => AnalysisVideoInput(
+                            cameraIndex: entry.$1,
+                            fps: formData.fps.toDouble(),
+                            rotationDegrees: 0,
+                            frameWidth: 0,
+                            frameHeight: 0,
+                            path: entry.$2.localPath,
+                            file: entry.$2.uploadFile,
+                            tempVideoId: entry.$2.tempVideoId,
+                            anchors: entry.$2.anchorResult,
+                          ),
+                        )
+                        .toList(growable: false),
                   );
                   await ref
                       .read(analysisRunControllerProvider.notifier)
@@ -510,6 +516,32 @@ void _showError(BuildContext context, String message) {
       actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('OK'))],
     ),
   );
+}
+
+class _AnalysisSideProgress extends StatelessWidget {
+  const _AnalysisSideProgress({required this.label, required this.progress});
+
+  final String label;
+  final SideProgress progress;
+
+  @override
+  Widget build(BuildContext context) {
+    final stage = progress.lastEvent?.stage.name ?? progress.outcome.name;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (!progress.isTerminal) ...[
+            const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2)),
+            const SizedBox(width: 10),
+          ],
+          SizedBox(width: 64, child: Text(label)),
+          Text(stage),
+        ],
+      ),
+    );
+  }
 }
 
 /// Badge shown on top of the thumbnail to indicate anchor status

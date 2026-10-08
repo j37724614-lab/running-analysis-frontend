@@ -10,10 +10,23 @@ import 'package:frontend/entities/upload_seperately_status.dart';
 import 'package:frontend/entities/upload_video_file.dart';
 import 'package:frontend/entities/run_session_info.dart';
 import 'package:frontend/entities/local_analysis_run_ref.dart';
+import 'package:frontend/entities/comparison_report.dart';
 import 'package:frontend/feature/upload/widget/anchor_point_dialog.dart';
 import 'package:frontend/utils/test_data.dart';
 
 class FakeBackendRepo implements BackendInterface {
+  @override
+  Future<ComparisonReport> getComparisonReport(String comparisonGroupId) async =>
+      const ComparisonReport(
+        status: 'partial',
+        inputHashesMatch: true,
+        metrics: [],
+        serverDurationSeconds: null,
+        localDurationSeconds: null,
+        localToServerRatio: null,
+        warnings: [],
+      );
+
   @override
   Future<LocalAnalysisRunRef> createLocalAnalysisRun({
     required String runnerId,
@@ -140,8 +153,9 @@ class FakeBackendRepo implements BackendInterface {
     int fps,
     String note,
     bool isLongJump,
-    List<Map<String, dynamic>> videos,
-  ) async {
+    List<Map<String, dynamic>> videos, {
+    String? comparisonGroupId,
+  }) async {
     final videoId = 'videoId${kVideos.length}';
     kVideos.add(
       RunSessionInfo(

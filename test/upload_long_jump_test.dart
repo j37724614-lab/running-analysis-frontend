@@ -18,8 +18,9 @@ class _RecordingBackend extends FakeBackendRepo {
     int fps,
     String note,
     bool isLongJump,
-    List<Map<String, dynamic>> videos,
-  ) async {
+    List<Map<String, dynamic>> videos, {
+    String? comparisonGroupId,
+  }) async {
     uploadAllLongJump.add(isLongJump);
     return 'session-all';
   }

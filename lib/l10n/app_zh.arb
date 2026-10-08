@@ -1,6 +1,6 @@
 {
   "@@locale": "zh",
-  "appTitle": "百米分析",
+  "appTitle": "跳遠分析",
   "confirm": "確認",
   "cancel": "取消",
   "save": "儲存",
@@ -441,4 +441,3 @@
   },
   "selectRunnerOrEnterCodePrompt": "請先選擇跑者，或於上方輸入補傳代碼/連結"
 }
-

@@ -94,16 +94,19 @@ void main() {
     expect(controller.state.isFullySucceeded, isTrue);
   });
 
-  test('compare mode drives both executors and assigns a comparison group id', () async {
+  test('compare starts Local after Server creates the shared RunSession', () async {
     await controller.start(AnalysisMode.compare, _request());
     expect(server.analyzeCallCount, 1);
-    expect(local.analyzeCallCount, 1);
+    expect(local.analyzeCallCount, 0);
     expect(controller.state.comparisonGroupId, isNotNull);
     expect(
       controller.state.comparisonGroupId,
       matches(RegExp(r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$')),
     );
     expect(server.lastRequest!.comparisonGroupId, controller.state.comparisonGroupId);
+    server.emitCompleted('shared-session');
+    await Future<void>.delayed(Duration.zero);
+    expect(local.analyzeCallCount, 1);
     expect(local.lastRequest!.comparisonGroupId, controller.state.comparisonGroupId);
     expect(server.lastRequest!.requestId, local.lastRequest!.requestId);
   });
@@ -132,6 +135,7 @@ void main() {
   test('compare: both sides succeeding is not reported as partial success', () async {
     await controller.start(AnalysisMode.compare, _request());
     server.emitCompleted('server-session');
+    await Future<void>.delayed(Duration.zero);
     local.emitCompleted('local-session');
     await Future<void>.delayed(Duration.zero);
 

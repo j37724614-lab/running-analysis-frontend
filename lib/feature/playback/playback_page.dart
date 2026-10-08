@@ -1,5 +1,6 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show ScrollCacheExtent;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:frontend/backend/backend_provider.dart';
@@ -16,6 +17,7 @@ import 'package:frontend/feature/playback/widget/graph_list_view.dart';
 import 'package:frontend/feature/playback/widget/runner_history_view.dart';
 import 'package:frontend/feature/playback/widget/video_info_view.dart';
 import 'package:frontend/feature/playback/widget/session_actions_view.dart';
+import 'package:frontend/feature/playback/widget/comparison_report_view.dart';
 import 'package:frontend/widget/rounded_box_widget.dart';
 import 'package:frontend/feature/playback/shimmer/runner_dropdown_shimmer.dart';
 import 'package:intl/intl.dart';
@@ -115,6 +117,19 @@ class _PlaybackPageState extends ConsumerState<PlaybackPage> {
               .name,
         ) ??
         '';
+
+    final runnerHistory = activeRunnerId != null
+        ? ref.watch(runnerHistoryProvider(activeRunnerId))
+        : null;
+    final activeSession = runnerHistory?.whenOrNull(
+      data: (sessions) {
+        if (sessions.isEmpty) return null;
+        return sessions.firstWhere(
+          (session) => session.runSessionId == selectedVideoId,
+          orElse: () => sessions.first,
+        );
+      },
+    );
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -226,7 +241,7 @@ class _PlaybackPageState extends ConsumerState<PlaybackPage> {
                       child: selectedVideoId != null && selectedVideoId.isEmpty
                           ? _buildEmptyPlaceholder()
                           : CustomScrollView(
-                              cacheExtent: 50000,
+                              scrollCacheExtent: const ScrollCacheExtent.pixels(50000),
                               slivers: [
                                 SliverPadding(
                                   padding: const EdgeInsets.all(12),
@@ -238,6 +253,10 @@ class _PlaybackPageState extends ConsumerState<PlaybackPage> {
                                           crossAxisCount: 2,
                                         ),
                                     delegate: SliverChildListDelegate([
+                                      if (activeSession?.comparisonGroupId != null)
+                                        ComparisonReportView(
+                                          comparisonGroupId: activeSession!.comparisonGroupId!,
+                                        ),
                                       VideoPlayerView(key: GuideKeys.playbackPlayerKey),
                                       GraphListView(key: GuideKeys.playbackChartsKey),
                                       RoundedBoxWidget(
@@ -262,23 +281,10 @@ class _PlaybackPageState extends ConsumerState<PlaybackPage> {
         }
 
         // Mobile Layout (Stacked)
-        final runnerHistory = activeRunnerId != null
-            ? ref.watch(runnerHistoryProvider(activeRunnerId))
-            : null;
-        final activeSession = runnerHistory?.whenOrNull(
-          data: (sessions) {
-            if (sessions.isEmpty) return null;
-            return sessions.firstWhere(
-              (s) => s.runSessionId == selectedVideoId,
-              orElse: () => sessions.first,
-            );
-          },
-        );
-
         return Stack(
           children: [
             CustomScrollView(
-              cacheExtent: 50000,
+              scrollCacheExtent: const ScrollCacheExtent.pixels(50000),
               slivers: [
                 // Runner Selector
                 SliverToBoxAdapter(
@@ -321,6 +327,10 @@ class _PlaybackPageState extends ConsumerState<PlaybackPage> {
                         crossAxisCount: 1,
                       ),
                       delegate: SliverChildListDelegate([
+                        if (activeSession?.comparisonGroupId != null)
+                          ComparisonReportView(
+                            comparisonGroupId: activeSession!.comparisonGroupId!,
+                          ),
                         VideoPlayerView(key: GuideKeys.playbackPlayerKey),
                         GraphListView(key: GuideKeys.playbackChartsKey),
                         RoundedBoxWidget(

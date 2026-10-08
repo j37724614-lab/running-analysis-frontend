@@ -1,6 +1,6 @@
 {
   "@@locale": "en",
-  "appTitle": "Sprint Analysis",
+  "appTitle": "Long Jump Analysis",
   "confirm": "Confirm",
   "cancel": "Cancel",
   "save": "Save",
@@ -403,4 +403,3 @@
   },
   "selectRunnerOrEnterCodePrompt": "Please select a runner first, or enter session code/link above"
 }
-

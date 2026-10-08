@@ -78,6 +78,7 @@ class ServerAnalysisAdapter implements AnalysisExecutor {
         request.note,
         request.isLongJump,
         uploadedVideos,
+        comparisonGroupId: request.comparisonGroupId,
       );
 
       controller.add(AnalysisEvent.completed(runSessionId: runSessionId));

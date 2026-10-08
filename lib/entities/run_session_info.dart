@@ -13,6 +13,7 @@ class RunSessionInfo {
   String status;
   int progress;
   List<String> computeLocations;
+  String? comparisonGroupId;
 
   RunSessionInfo({
     required this.runSessionId,
@@ -29,6 +30,7 @@ class RunSessionInfo {
     required this.status,
     required this.progress,
     this.computeLocations = const [],
+    this.comparisonGroupId,
   });
 
   factory RunSessionInfo.fromJson(Map<String, dynamic> json) {
@@ -49,6 +51,7 @@ class RunSessionInfo {
       computeLocations: (json['computeLocations'] as List<dynamic>? ?? const [])
           .map((value) => value as String)
           .toList(growable: false),
+      comparisonGroupId: json['comparisonGroupId'] as String?,
     );
   }
 }

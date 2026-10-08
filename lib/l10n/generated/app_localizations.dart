@@ -96,7 +96,7 @@ abstract class AppLocalizations {
   /// No description provided for @appTitle.
   ///
   /// In zh, this message translates to:
-  /// **'百米分析'**
+  /// **'跳遠分析'**
   String get appTitle;
 
   /// No description provided for @confirm.

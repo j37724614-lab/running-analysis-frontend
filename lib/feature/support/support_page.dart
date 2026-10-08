@@ -59,12 +59,12 @@ class SupportPage extends StatelessWidget {
                       ),
                       SizedBox(height: 12),
                       Text(
-                        '百米分析 支援中心',
+                        '跳遠分析 支援中心',
                         style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                       ),
                       SizedBox(height: 4),
                       Text(
-                        'Sprint Analysis AI Support Center',
+                        'Long Jump Analysis AI Support Center',
                         style: TextStyle(fontSize: 16, color: Colors.grey),
                       ),
                       Divider(height: 40, thickness: 1),
@@ -75,7 +75,7 @@ class SupportPage extends StatelessWidget {
                 // Chinese Support Content
                 _buildSectionTitle('一、 產品簡介 (App Description)'),
                 _buildBodyText(
-                  '「百米分析」是一個利用 AI 進行短跑與跑步姿態分析的專業系統。'
+                  '「跳遠分析」是一個利用 AI 進行跳遠助跑、起跳與落地姿態分析的專業系統。'
                   '透過多個行動裝置沿跑道串聯接力錄影，自動拼接並分析選手的全程跑步速度與關節骨架動態。',
                 ),
 
@@ -133,7 +133,7 @@ class SupportPage extends StatelessWidget {
                 // English Support Content
                 _buildSectionTitle('1. Product Description'),
                 _buildBodyText(
-                  'Sprint Analysis AI is an advanced runner biomechanics app. '
+                  'Long Jump Analysis AI is an advanced long-jump biomechanics app. '
                   'It chains multiple smartphones along a track to capture, stitch, and analyze a sprinter\'s full-run posture, speed, and joint movements.',
                 ),
 

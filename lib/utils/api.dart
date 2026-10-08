@@ -70,6 +70,11 @@ class API {
     "$baseUrl/analysis_run/$analysisRunId/manifest",
   ];
 
+  static List getComparisonReport(String comparisonGroupId) => [
+    DioMethod.get,
+    "$baseUrl/comparison_report/$comparisonGroupId",
+  ];
+
   static List uploadSeperatelyNew = [DioMethod.post, "$baseUrl/upload_seperately_new"];
 
   static List uploadSeperatelySelect = [DioMethod.post, "$baseUrl/upload_seperately_select"];
