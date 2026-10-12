@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:frontend/feature/analysis/analysis_event.dart';
 import 'package:frontend/feature/analysis/analysis_request.dart';
 import 'package:frontend/feature/analysis/local_analysis_adapter.dart';
+import 'package:frontend/feature/upload/widget/anchor_point_dialog.dart';
 import 'package:runner_pose/runner_analysis.dart';
 
 class FakeLocalPlatform implements RunnerAnalysisPlatform {
@@ -64,7 +65,72 @@ AnalysisRequest request() => AnalysisRequest(
   ],
 );
 
+AnalysisRequest calibratedLongJumpRequest() => AnalysisRequest(
+  runnerId: 'runner-1',
+  date: DateTime(2026, 10, 8),
+  cameraCount: 1,
+  fps: 60,
+  isLongJump: true,
+  videos: const [
+    AnalysisVideoInput(
+      cameraIndex: 0,
+      fps: 60,
+      rotationDegrees: 0,
+      frameWidth: 1000,
+      frameHeight: 500,
+      path: '/tmp/jump.mov',
+      anchors: AnchorResult(
+        points: [
+          AnchorPoint(0.1, 0.2),
+          AnchorPoint(0.9, 0.2),
+          AnchorPoint(0.9, 0.8),
+          AnchorPoint(0.1, 0.8),
+          AnchorPoint(0.5, 0.2),
+          AnchorPoint(0.5, 0.8),
+        ],
+        leftToMidDistanceM: 10,
+        midToRightDistanceM: 10,
+        runwayWidthM: 1.22,
+      ),
+    ),
+  ],
+);
+
 void main() {
+  test('local adapter forwards long-jump kind and per-camera calibration', () async {
+    final platform = FakeLocalPlatform();
+    final adapter = LocalAnalysisAdapter(
+      analysis: RunnerAnalysis(platform: platform),
+      requestIdFactory: () => '11111111-1111-4111-8111-111111111111',
+    );
+
+    final receivedFuture = adapter.analyze(calibratedLongJumpRequest()).toList();
+    await Future<void>.delayed(Duration.zero);
+    final nativeRequest = platform.request!;
+    expect(nativeRequest.analysisKind, 'long_jump');
+    final calibration = nativeRequest.videos.single.calibration!;
+    expect(calibration.distanceM, 20);
+    expect(calibration.startLine, hasLength(2));
+    expect(calibration.startLine![0].x, 100);
+    expect(calibration.startLine![0].y, 100);
+    expect(calibration.startLine![1].x, 100);
+    expect(calibration.startLine![1].y, 400);
+    expect(calibration.homographyImagePoints, hasLength(6));
+    expect(calibration.homographyWorldPointsM![4].x, 10);
+
+    platform.events.add(
+      const LocalAnalysisEvent(
+        stage: LocalAnalysisStage.completed,
+        status: LocalAnalysisEventStatus.completed,
+        sequence: 1,
+        bundlePath: '/results/calibrated',
+      ),
+    );
+    await platform.events.close();
+    await receivedFuture;
+    await adapter.dispose();
+  });
+
   test('local adapter sends paths and maps completion bundle without video bytes', () async {
     final platform = FakeLocalPlatform();
     final adapter = LocalAnalysisAdapter(

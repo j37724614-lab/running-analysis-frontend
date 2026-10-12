@@ -44,28 +44,30 @@ class LocalAnalysisAdapter implements AnalysisExecutor, DisposableAnalysisExecut
     final effectiveRequest = request.withRunIdentifiers(
       requestId: request.requestId ?? _requestIdFactory(),
     );
-    final nativeRequest = native.LocalAnalysisRequest(
-      schemaVersion: request.schemaVersion,
-      requestId: effectiveRequest.requestId!,
-      comparisonGroupId: effectiveRequest.comparisonGroupId,
-      includeOverlays: effectiveRequest.generateOverlay,
-      // Empty means the native plugin selects Application Support/RunnerAnalysisResults.
-      outputDirectoryPath: '',
-      videos: [
-        for (final video in request.videos)
-          native.LocalAnalysisVideo(
-            cameraIndex: video.cameraIndex,
-            path: video.path!,
-            fps: video.fps,
-            width: video.frameWidth,
-            height: video.frameHeight,
-            rotationDegrees: video.rotationDegrees,
-          ),
-      ],
-    );
 
     var lastStage = AnalysisStage.validating;
     try {
+      final nativeRequest = native.LocalAnalysisRequest(
+        schemaVersion: request.schemaVersion,
+        requestId: effectiveRequest.requestId!,
+        analysisKind: request.isLongJump ? 'long_jump' : 'running',
+        comparisonGroupId: effectiveRequest.comparisonGroupId,
+        includeOverlays: effectiveRequest.generateOverlay,
+        // Empty means the native plugin selects Application Support/RunnerAnalysisResults.
+        outputDirectoryPath: '',
+        videos: [
+          for (final video in request.videos)
+            native.LocalAnalysisVideo(
+              cameraIndex: video.cameraIndex,
+              path: video.path!,
+              fps: video.fps,
+              width: video.frameWidth,
+              height: video.frameHeight,
+              rotationDegrees: video.rotationDegrees,
+              calibration: _nativeCalibration(video),
+            ),
+        ],
+      );
       await for (final event
           in _analysis.analyze(nativeRequest).timeout(_nativeInactivityTimeout)) {
         final failure = event.failure;
@@ -141,6 +143,13 @@ class LocalAnalysisAdapter implements AnalysisExecutor, DisposableAnalysisExecut
         errorCode: 'local_no_progress_timeout',
         retriable: true,
       );
+    } on FormatException catch (error) {
+      yield AnalysisEvent.failed(
+        error: error,
+        message: 'Local 校正資料格式錯誤：${error.message}',
+        errorCode: 'invalid_local_calibration',
+        retriable: false,
+      );
     }
   }
 
@@ -149,6 +158,40 @@ class LocalAnalysisAdapter implements AnalysisExecutor, DisposableAnalysisExecut
 
   @override
   Future<void> dispose() => _analysis.dispose();
+}
+
+native.LocalAnalysisCalibration? _nativeCalibration(AnalysisVideoInput video) {
+  final anchors = video.anchors;
+  if (anchors == null) return null;
+  if (anchors.points.length != 4 && anchors.points.length != 6) {
+    throw const FormatException('錨點數量必須是 4 或 6。');
+  }
+  if (video.frameWidth <= 0 || video.frameHeight <= 0) {
+    throw const FormatException('影片寬高必須大於零，才能把正規化錨點轉回原始座標。');
+  }
+
+  final imagePoints = [
+    for (final point in anchors.points)
+      native.LocalAnalysisPoint(point.x * video.frameWidth, point.y * video.frameHeight),
+  ];
+  final totalLengthM = anchors.leftToMidDistanceM + anchors.midToRightDistanceM;
+  final worldPoints = <native.LocalAnalysisPoint>[
+    const native.LocalAnalysisPoint(0, 0),
+    native.LocalAnalysisPoint(totalLengthM, 0),
+    native.LocalAnalysisPoint(totalLengthM, anchors.runwayWidthM),
+    native.LocalAnalysisPoint(0, anchors.runwayWidthM),
+    if (anchors.points.length == 6) ...[
+      native.LocalAnalysisPoint(anchors.leftToMidDistanceM, 0),
+      native.LocalAnalysisPoint(anchors.leftToMidDistanceM, anchors.runwayWidthM),
+    ],
+  ];
+  return native.LocalAnalysisCalibration(
+    startLine: [imagePoints[0], imagePoints[3]],
+    endLine: [imagePoints[1], imagePoints[2]],
+    distanceM: totalLengthM,
+    homographyImagePoints: imagePoints,
+    homographyWorldPointsM: worldPoints,
+  );
 }
 
 class LocalSyncResult {
