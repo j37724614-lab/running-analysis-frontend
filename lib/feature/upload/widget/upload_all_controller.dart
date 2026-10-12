@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/legacy.dart';
@@ -10,6 +11,7 @@ import 'package:frontend/utils/api.dart';
 import 'package:frontend/feature/auth/auth_provider.dart';
 import 'package:frontend/feature/upload/local_video_stager.dart';
 import 'package:frontend/feature/upload/local_video_stager_factory.dart';
+import 'package:runner_pose/runner_analysis.dart' as runner_pose;
 
 class UploadThumbnailState {
   final String? thumbnailUrl;
@@ -21,6 +23,9 @@ class UploadThumbnailState {
   final String? filename;
   final UploadVideoFile? uploadFile;
 
+  /// First-frame JPEG for Local videos, which have no Server thumbnail.
+  final Uint8List? localThumbnail;
+
   const UploadThumbnailState({
     this.thumbnailUrl,
     this.tempVideoId,
@@ -30,6 +35,7 @@ class UploadThumbnailState {
     this.localPath,
     this.filename,
     this.uploadFile,
+    this.localThumbnail,
   });
 
   bool get isSelected => filename != null;
@@ -43,6 +49,7 @@ class UploadThumbnailState {
     String? localPath,
     String? filename,
     UploadVideoFile? uploadFile,
+    Uint8List? localThumbnail,
     bool clearAnchor = false,
   }) {
     return UploadThumbnailState(
@@ -54,6 +61,7 @@ class UploadThumbnailState {
       localPath: localPath ?? this.localPath,
       filename: filename ?? this.filename,
       uploadFile: uploadFile ?? this.uploadFile,
+      localThumbnail: localThumbnail ?? this.localThumbnail,
     );
   }
 }
@@ -95,10 +103,16 @@ class UploadAllController extends StateNotifier<UploadAllState> {
   final BackendInterface backend;
   final Ref? ref;
   final LocalVideoStager localVideoStager;
+  final Future<Uint8List> Function(String videoPath) firstFrameExtractor;
 
-  UploadAllController(this.backend, this.ref, {LocalVideoStager? localVideoStager})
-    : localVideoStager = localVideoStager ?? createLocalVideoStager(),
-      super(UploadAllState.initial());
+  UploadAllController(
+    this.backend,
+    this.ref, {
+    LocalVideoStager? localVideoStager,
+    Future<Uint8List> Function(String videoPath)? firstFrameExtractor,
+  }) : localVideoStager = localVideoStager ?? createLocalVideoStager(),
+       firstFrameExtractor = firstFrameExtractor ?? runner_pose.extractFirstFrame,
+       super(UploadAllState.initial());
 
   Future<void> stageLocalVideo(int index, {required String path, required String filename}) async {
     final updated = [...state.tempVideoStates];
@@ -118,6 +132,17 @@ class UploadAllController extends StateNotifier<UploadAllState> {
       state = state.copyWith(tempVideoStates: failed);
       rethrow;
     }
+  }
+
+  /// Local videos never reach Server, so the anchor dialog uses this frame
+  /// instead of the Server thumbnail.
+  Future<void> loadLocalThumbnail(int index) async {
+    final localPath = state.tempVideoStates[index].localPath;
+    if (localPath == null) return;
+    final thumbnail = await firstFrameExtractor(localPath);
+    final updated = [...state.tempVideoStates];
+    updated[index] = updated[index].copyWith(localThumbnail: thumbnail);
+    state = state.copyWith(tempVideoStates: updated);
   }
 
   Future<void> clearVideos() async {

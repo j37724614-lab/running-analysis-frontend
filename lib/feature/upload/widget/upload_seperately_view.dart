@@ -323,7 +323,7 @@ class _UploadSeperatelyViewState extends ConsumerState<UploadSeperatelyView> {
                               if (context.mounted && thumbnailUrl != null) {
                                 final anchor = await showAnchorPointDialog(
                                   context: context,
-                                  thumbnailUrl: thumbnailUrl,
+                                  thumbnail: NetworkImage(thumbnailUrl),
                                   cameraIndex: effectiveIndex,
                                   initialAnchor: ref
                                       .read(uploadSeperatelyControllerProvider)
@@ -367,7 +367,7 @@ class _UploadSeperatelyViewState extends ConsumerState<UploadSeperatelyView> {
                                         onTap: () async {
                                           final anchor = await showAnchorPointDialog(
                                             context: context,
-                                            thumbnailUrl: state.thumbnail!,
+                                            thumbnail: NetworkImage(state.thumbnail!),
                                             cameraIndex: effectiveIndex,
                                             initialAnchor: state.anchorResult,
                                           );

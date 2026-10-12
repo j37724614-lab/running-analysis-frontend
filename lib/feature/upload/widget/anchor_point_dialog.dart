@@ -86,7 +86,7 @@ const _kMagZoom = 2.8;
 
 Future<AnchorResult?> showAnchorPointDialog({
   required BuildContext context,
-  required String thumbnailUrl,
+  required ImageProvider thumbnail,
   required int cameraIndex,
   AnchorResult? initialAnchor,
 }) {
@@ -94,7 +94,7 @@ Future<AnchorResult?> showAnchorPointDialog({
     context: context,
     barrierDismissible: false,
     builder: (_) => _AnchorPointDialog(
-      thumbnailUrl: thumbnailUrl,
+      thumbnail: thumbnail,
       cameraIndex: cameraIndex,
       initialAnchor: initialAnchor,
     ),
@@ -104,12 +104,12 @@ Future<AnchorResult?> showAnchorPointDialog({
 // ── Dialog widget ─────────────────────────────────────────────
 
 class _AnchorPointDialog extends StatefulWidget {
-  final String thumbnailUrl;
+  final ImageProvider thumbnail;
   final int cameraIndex;
   final AnchorResult? initialAnchor;
 
   const _AnchorPointDialog({
-    required this.thumbnailUrl,
+    required this.thumbnail,
     required this.cameraIndex,
     this.initialAnchor,
   });
@@ -545,8 +545,8 @@ class _AnchorPointDialogState extends State<_AnchorPointDialog>
                 children: [
                   // ── Background image ──────────────────────
                   Positioned.fill(
-                    child: Image.network(
-                      widget.thumbnailUrl,
+                    child: Image(
+                      image: widget.thumbnail,
                       fit: BoxFit.cover,
                       loadingBuilder: (_, child, prog) {
                         if (prog == null) return child;
@@ -717,7 +717,7 @@ class _AnchorPointDialogState extends State<_AnchorPointDialog>
                 child: SizedBox(
                   width: _imgW * zoom,
                   height: _imgH * zoom,
-                  child: Image.network(widget.thumbnailUrl, fit: BoxFit.cover),
+                  child: Image(image: widget.thumbnail, fit: BoxFit.cover),
                 ),
               ),
             ),

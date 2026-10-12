@@ -170,7 +170,19 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
                                 } catch (error) {
                                   if (!context.mounted) return;
                                   _showError(context, '無法保存 Local 分析影片：$error');
+                                  return;
                                 }
+                                try {
+                                  await ref
+                                      .read(uploadAllControllerProvider.notifier)
+                                      .loadLocalThumbnail(index);
+                                } catch (error) {
+                                  if (!context.mounted) return;
+                                  _showError(context, '無法讀取影片第一幀，無法設定錨點：$error');
+                                  return;
+                                }
+                                if (!context.mounted) return;
+                                await _promptAnchor(context, ref, index);
                                 return;
                               }
 
@@ -214,23 +226,7 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
                               if (!context.mounted) return;
 
                               // After upload, prompt anchor selection
-                              final updatedState = ref.read(uploadAllControllerProvider);
-                              final thumbnailUrl = updatedState.tempVideoStates[index].thumbnailUrl;
-                              if (thumbnailUrl != null) {
-                                final anchor = await showAnchorPointDialog(
-                                  context: context,
-                                  thumbnailUrl: thumbnailUrl,
-                                  cameraIndex: index,
-                                  initialAnchor: ref
-                                      .read(uploadAllControllerProvider)
-                                      .tempVideoStates[index]
-                                      .anchorResult,
-                                );
-                                if (!context.mounted) return;
-                                ref
-                                    .read(uploadAllControllerProvider.notifier)
-                                    .setAnchor(index, anchor);
-                              }
+                              await _promptAnchor(context, ref, index);
                             },
                       child: SizedBox(
                         width: itemWidth,
@@ -242,7 +238,7 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
                           ),
                           child: state.tempVideoStates[index].isUploading
                               ? const LoadingIcon()
-                              : state.tempVideoStates[index].thumbnailUrl != null
+                              : _thumbnailImage(state.tempVideoStates[index]) != null
                               ? Stack(
                                   fit: StackFit.expand,
                                   children: [
@@ -253,8 +249,8 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
                                         decoration: BoxDecoration(
                                           borderRadius: BorderRadius.circular(16),
                                         ),
-                                        child: Image.network(
-                                          state.tempVideoStates[index].thumbnailUrl!,
+                                        child: Image(
+                                          image: _thumbnailImage(state.tempVideoStates[index])!,
                                           fit: BoxFit.cover,
                                         ),
                                       ),
@@ -264,21 +260,7 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
                                       top: 6,
                                       right: 6,
                                       child: GestureDetector(
-                                        onTap: () async {
-                                          final thumbnailUrl =
-                                              state.tempVideoStates[index].thumbnailUrl!;
-                                          final anchor = await showAnchorPointDialog(
-                                            context: context,
-                                            thumbnailUrl: thumbnailUrl,
-                                            cameraIndex: index,
-                                            initialAnchor:
-                                                state.tempVideoStates[index].anchorResult,
-                                          );
-                                          if (!context.mounted) return;
-                                          ref
-                                              .read(uploadAllControllerProvider.notifier)
-                                              .setAnchor(index, anchor);
-                                        },
+                                        onTap: () => _promptAnchor(context, ref, index),
                                         child: _AnchorBadge(
                                           key: index == 0 ? GuideKeys.uploadAnchorKey : null,
                                           isSet: state.tempVideoStates[index].anchorResult != null,
@@ -505,6 +487,29 @@ class _UploadAllViewState extends ConsumerState<UploadAllView> {
       ],
     );
   }
+}
+
+/// Server thumbnail when the video was uploaded, otherwise the Local first frame.
+ImageProvider? _thumbnailImage(UploadThumbnailState video) {
+  final url = video.thumbnailUrl;
+  if (url != null) return NetworkImage(url);
+  final localThumbnail = video.localThumbnail;
+  if (localThumbnail != null) return MemoryImage(localThumbnail);
+  return null;
+}
+
+Future<void> _promptAnchor(BuildContext context, WidgetRef ref, int index) async {
+  final video = ref.read(uploadAllControllerProvider).tempVideoStates[index];
+  final thumbnail = _thumbnailImage(video);
+  if (thumbnail == null) return;
+  final anchor = await showAnchorPointDialog(
+    context: context,
+    thumbnail: thumbnail,
+    cameraIndex: index,
+    initialAnchor: video.anchorResult,
+  );
+  if (!context.mounted) return;
+  ref.read(uploadAllControllerProvider.notifier).setAnchor(index, anchor);
 }
 
 void _showError(BuildContext context, String message) {

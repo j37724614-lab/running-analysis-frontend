@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:frontend/backend/fake_backend_repo.dart';
@@ -30,6 +31,33 @@ void main() {
     expect(selected.tempVideoId, isNull);
     expect(selected.uploadFile, isNull);
     expect(selected.isSelected, isTrue);
+  });
+
+  test('Local selection loads a first-frame thumbnail for anchor picking', () async {
+    final sandbox = await Directory.systemTemp.createTemp('local-video-thumbnail-test-');
+    addTearDown(() => sandbox.delete(recursive: true));
+    final source = File('${sandbox.path}/input.mov')..writeAsStringSync('video-bytes');
+    String? extractedPath;
+    final controller = UploadAllController(
+      FakeBackendRepo(),
+      null,
+      localVideoStager: IoLocalVideoStager(
+        rootDirectory: () async => Directory('${sandbox.path}/application-support'),
+      ),
+      firstFrameExtractor: (videoPath) async {
+        extractedPath = videoPath;
+        return Uint8List.fromList([0xFF, 0xD8]);
+      },
+    );
+    controller.setCameraCount(1);
+    await controller.stageLocalVideo(0, path: source.path, filename: 'input.mov');
+
+    await controller.loadLocalThumbnail(0);
+
+    final selected = controller.state.tempVideoStates.single;
+    expect(extractedPath, selected.localPath);
+    expect(selected.localThumbnail, [0xFF, 0xD8]);
+    expect(selected.thumbnailUrl, isNull);
   });
 
   test('clearing staged videos removes their durable copies', () async {
