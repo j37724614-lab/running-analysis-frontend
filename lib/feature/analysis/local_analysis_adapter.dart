@@ -53,6 +53,7 @@ class LocalAnalysisAdapter implements AnalysisExecutor, DisposableAnalysisExecut
         analysisKind: request.isLongJump ? 'long_jump' : 'running',
         comparisonGroupId: effectiveRequest.comparisonGroupId,
         includeOverlays: effectiveRequest.generateOverlay,
+        kinematicsPolicy: native.LocalAnalysisKinematicsPolicy(laneWidthM: _laneWidthM(request)),
         // Empty means the native plugin selects Application Support/RunnerAnalysisResults.
         outputDirectoryPath: '',
         videos: [
@@ -166,13 +167,11 @@ native.LocalAnalysisCalibration? _nativeCalibration(AnalysisVideoInput video) {
   if (anchors.points.length != 4 && anchors.points.length != 6) {
     throw const FormatException('錨點數量必須是 4 或 6。');
   }
-  if (video.frameWidth <= 0 || video.frameHeight <= 0) {
-    throw const FormatException('影片寬高必須大於零，才能把正規化錨點轉回原始座標。');
-  }
 
+  // Anchors stay normalized; native scales them by the video size it reads
+  // from the file, because Upload All does not know the frame dimensions.
   final imagePoints = [
-    for (final point in anchors.points)
-      native.LocalAnalysisPoint(point.x * video.frameWidth, point.y * video.frameHeight),
+    for (final point in anchors.points) native.LocalAnalysisPoint(point.x, point.y),
   ];
   final totalLengthM = anchors.leftToMidDistanceM + anchors.midToRightDistanceM;
   final worldPoints = <native.LocalAnalysisPoint>[
@@ -191,7 +190,23 @@ native.LocalAnalysisCalibration? _nativeCalibration(AnalysisVideoInput video) {
     distanceM: totalLengthM,
     homographyImagePoints: imagePoints,
     homographyWorldPointsM: worldPoints,
+    roiX: _range([for (final point in imagePoints) point.x]),
+    roiY: _range([for (final point in imagePoints) point.y]),
+    imagePointsNormalized: true,
   );
+}
+
+List<double> _range(List<double> values) => [
+  values.reduce((left, right) => left < right ? left : right),
+  values.reduce((left, right) => left > right ? left : right),
+];
+
+double _laneWidthM(AnalysisRequest request) {
+  for (final video in request.videos) {
+    final width = video.anchors?.runwayWidthM;
+    if (width != null && width > 0) return width;
+  }
+  return 1.22;
 }
 
 class LocalSyncResult {

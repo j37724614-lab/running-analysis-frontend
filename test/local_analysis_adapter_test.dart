@@ -76,8 +76,9 @@ AnalysisRequest calibratedLongJumpRequest() => AnalysisRequest(
       cameraIndex: 0,
       fps: 60,
       rotationDegrees: 0,
-      frameWidth: 1000,
-      frameHeight: 500,
+      // Upload All does not know the video size; native reads it from the file.
+      frameWidth: 0,
+      frameHeight: 0,
       path: '/tmp/jump.mov',
       anchors: AnchorResult(
         points: [
@@ -109,14 +110,18 @@ void main() {
     final nativeRequest = platform.request!;
     expect(nativeRequest.analysisKind, 'long_jump');
     final calibration = nativeRequest.videos.single.calibration!;
+    expect(calibration.imagePointsNormalized, isTrue);
     expect(calibration.distanceM, 20);
     expect(calibration.startLine, hasLength(2));
-    expect(calibration.startLine![0].x, 100);
-    expect(calibration.startLine![0].y, 100);
-    expect(calibration.startLine![1].x, 100);
-    expect(calibration.startLine![1].y, 400);
+    expect(calibration.startLine![0].x, 0.1);
+    expect(calibration.startLine![0].y, 0.2);
+    expect(calibration.startLine![1].x, 0.1);
+    expect(calibration.startLine![1].y, 0.8);
     expect(calibration.homographyImagePoints, hasLength(6));
     expect(calibration.homographyWorldPointsM![4].x, 10);
+    expect(calibration.roiX, [0.1, 0.9]);
+    expect(calibration.roiY, [0.2, 0.8]);
+    expect(nativeRequest.kinematicsPolicy.laneWidthM, 1.22);
 
     platform.events.add(
       const LocalAnalysisEvent(
